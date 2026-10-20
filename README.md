@@ -35,3 +35,9 @@ The agent reads .skill/SKILL.md for its operating spec.
 
 ## Conference context
 Canada West (U Sports) Men's Basketball. The systems library is conference-agnostic; the opponents are not. Empty opponent list seeded for you to fill.
+
+## Working on the website (staff)
+The live site is https://macewan-coaching-hub.netlify.app and it publishes automatically from the
+`main` branch of this repo. To change the site, ask your Claude to work on a branch and open a pull
+request; Netlify posts a preview link on it, and the head coach approves it before it goes live.
+See `CLAUDE.md` for the rules every Claude session follows.

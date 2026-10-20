@@ -1,8 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const plansDir = path.join(__dirname, 'practice-plans', 'plans');
-const listPath = path.join(__dirname, 'practice-plans', 'list.json');
+const ROOT = path.join(__dirname, '..');
+const plansDir = path.join(ROOT, 'practice-plans', 'plans');
+const listPath = path.join(ROOT, 'practice-plans', 'list.json');
 
 console.log('Generating practice plans index...');
 

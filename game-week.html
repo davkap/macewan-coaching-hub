@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="auth-lock.js"></script>
+  <script src="offseason-sc-app/tracking-config.js"></script>
+  <script src="site-tracking.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/site-responsive.css">
+  <title>Game Week | MacEwan Griffins Coaching Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --maroon: #98002e; --maroon-light: #b30036; --gold: #d1ad7d; --gold-soft: rgba(209,173,125,0.14);
+      --bg: #0f1219; --card: #181d28; --card-2: #1f2533; --line: rgba(209,173,125,0.22);
+      --text: #f3f4f6; --mute: #9ca3af; --good: #2ecc71; --bad: #ff5e5e;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--text); }
+    body { font-family: Inter, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 15px; line-height: 1.5; }
+    a { color: var(--gold); }
+    .wrap { max-width: 1000px; margin: 0 auto; padding: 18px 16px 60px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+    .topbar a { text-decoration: none; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; min-height: 44px; }
+    .hero { background: linear-gradient(135deg, rgba(152,0,46,0.55), rgba(152,0,46,0.12) 60%), var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px 20px; margin-bottom: 16px; }
+    .kicker { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); font-weight: 700; }
+    h1 { font-family: Montserrat, sans-serif; font-size: 30px; margin: 6px 0 4px; letter-spacing: -0.01em; }
+    .games { color: #e5e7eb; font-weight: 600; }
+    .coach-note { margin: 12px 0 0; padding: 10px 12px; background: rgba(0,0,0,0.25); border-left: 3px solid var(--gold); border-radius: 6px; overflow-wrap: anywhere; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--maroon); color: #fff; border: none; border-radius: 8px; padding: 11px 16px; font: 700 14px Inter, sans-serif; min-height: 44px; cursor: pointer; text-decoration: none; }
+    .btn:hover { background: var(--maroon-light); }
+    .btn.ghost { background: rgba(0,0,0,0.25); border: 1px solid var(--line); color: var(--text); }
+    .btn:disabled { opacity: 0.6; cursor: wait; }
+    .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; min-width: 0; }
+    h2 { font-family: Montserrat, sans-serif; font-size: 16px; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.04em; }
+    h2 small { text-transform: none; letter-spacing: 0; font-family: Inter, sans-serif; font-weight: 500; color: var(--mute); font-size: 12px; margin-left: 6px; }
+    ol, ul { margin: 0; padding-left: 20px; }
+    li { margin-bottom: 7px; overflow-wrap: anywhere; }
+    li b { color: var(--gold); font-weight: 600; }
+    .empty { color: var(--mute); font-size: 14px; }
+    .players { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+    .pl { background: var(--card-2); border-radius: 10px; padding: 12px; display: flex; gap: 12px; min-width: 0; }
+    .pl img { width: 58px; height: 58px; border-radius: 8px; object-fit: cover; background: #2a3142; flex: none; }
+    .pl .ph { width: 58px; height: 58px; border-radius: 8px; background: #2a3142; display: flex; align-items: center; justify-content: center; font: 800 18px Montserrat, sans-serif; color: var(--mute); flex: none; }
+    .pl .info { min-width: 0; }
+    .pl .nm { font-weight: 700; }
+    .pl .meta { font-size: 12px; color: var(--mute); }
+    .calls { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0; }
+    .call { font-size: 11px; font-weight: 700; background: rgba(255,255,255,0.07); border-radius: 5px; padding: 2px 6px; }
+    .call.hot { background: rgba(255,94,94,0.16); color: #ff9a9a; }
+    .call.gold { background: var(--gold-soft); color: var(--gold); }
+    .pl .nt { font-size: 13px; color: #d1d5db; overflow-wrap: anywhere; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    td, th { padding: 7px 6px; border-bottom: 1px solid rgba(255,255,255,0.07); text-align: left; vertical-align: top; }
+    th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--mute); font-weight: 600; }
+    .tbl-wrap { overflow-x: auto; }
+    .leaders { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+    .ld { background: var(--card-2); border-radius: 10px; padding: 10px 12px; }
+    .ld .k { font-size: 11px; color: var(--mute); text-transform: uppercase; letter-spacing: 0.06em; }
+    .ld .v { font-weight: 700; margin-top: 2px; }
+    .ld .s { font-size: 13px; color: var(--gold); }
+    .loading { color: var(--mute); padding: 30px 0; }
+    /* Staff form */
+    .form .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+    label.lbl { font-size: 12px; font-weight: 600; color: var(--mute); text-transform: uppercase; letter-spacing: 0.06em; }
+    select, input[type=text], textarea { width: 100%; background: var(--card-2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 11px 12px; font: 16px Inter, sans-serif; min-height: 44px; }
+    textarea { min-height: 70px; resize: vertical; }
+    .check { display: flex; gap: 8px; align-items: center; font-size: 14px; min-height: 44px; }
+    .check input { width: 20px; height: 20px; }
+    .note { font-size: 13px; color: var(--mute); }
+    @media (max-width: 760px) {
+      .grid2 { grid-template-columns: minmax(0, 1fr); }
+      h1 { font-size: 24px; }
+      .hero { padding: 18px 16px; }
+    }
+    @media print {
+      .actions, .topbar, #staffBox { display: none !important; }
+      body, html { background: #fff; color: #000; }
+      .card, .hero, .pl, .ld { background: #fff !important; border-color: #ccc; color: #000; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a href="index.html">🏠 Coaching Hub</a>
+    <a href="quiz.html">📝 Griffin Quizzes</a>
+  </div>
+  <div id="app"><div class="loading">Loading game week…</div></div>
+  <div id="staffBox"></div>
+</div>
+
+<script src="quiz-data.js"></script>
+<script>
+(function () {
+  'use strict';
+  const G = window.GriffinData;
+  const { TEAMS, teamBySlug, esc } = G;
+  const KEY = 'game_week';
+  const ASSIGN_KEY = 'quiz_assignment';
+  const isStaff = typeof window.isCoachOrAdmin === 'function' ? window.isCoachOrAdmin() : false;
+  const $ = s => document.querySelector(s);
+  const app = $('#app');
+
+  async function load() {
+    const params = new URLSearchParams(location.search);
+    let week = null, assignment = null;
+    try { week = JSON.parse(await G.getContent(KEY) || 'null'); } catch (e) {}
+    try { assignment = JSON.parse(await G.getContent(ASSIGN_KEY) || 'null'); } catch (e) {}
+    const slug = params.get('team') || (week && week.team);
+    if (isStaff) staffForm(week);
+    if (!slug || !teamBySlug(slug)) {
+      app.innerHTML = `<div class="hero"><div class="kicker">Game Week</div><h1>No opponent set yet</h1>
+        <p class="games">${isStaff ? 'Pick this week\'s opponent below.' : 'Your coaches haven\'t set this week\'s opponent yet. Check back soon.'}</p></div>`;
+      return;
+    }
+    render(teamBySlug(slug), week && week.team === slug ? week : null, assignment);
+  }
+
+  async function render(team, week, assignment) {
+    app.innerHTML = '<div class="loading">Loading the ' + esc(team.title) + ' scout…</div>';
+    const [cards, report, stats] = await Promise.all([
+      G.loadScoutCards(team.slug).catch(() => []),
+      G.loadReport(team.slug, true).catch(() => ({ labels: {}, plan: [], keys: [], practice: [] })),
+      G.loadStats().catch(() => null)
+    ]);
+    const quizIsThis = assignment && assignment.type === 'scout' && assignment.team === team.slug;
+    const labelsIn = re => Object.entries(report.labels).filter(([, v]) => re.test(v.section));
+    const list = (items, numbered) => items.length
+      ? `<${numbered ? 'ol' : 'ul'}>${items.map(x => `<li>${esc(x)}</li>`).join('')}</${numbered ? 'ol' : 'ul'}>`
+      : '<p class="empty">Not filled in on the scouting report yet.</p>';
+    const labelList = entries => entries.length
+      ? `<ul>${entries.map(([k, v]) => `<li><b>${esc(k)}:</b> ${esc(v.value)}</li>`).join('')}</ul>`
+      : '<p class="empty">Not filled in on the scouting report yet.</p>';
+    const starters = cards.filter(c => c.starter);
+    const bench = cards.filter(c => !c.starter);
+    const calls = c => {
+      const t = c.tags, out = [];
+      if (t['C/O']) out.push(`<span class="call ${/klay|book/i.test(t['C/O']) ? 'gold' : ''}">C/O: ${esc(t['C/O'])}</span>`);
+      if (t.DTRAN) out.push(`<span class="call gold">DTRAN: ${esc(t.DTRAN)}</span>`);
+      if (t.PNR) out.push(`<span class="call">PNR: ${esc(t.PNR)}</span>`);
+      if (t['PIN/DHO']) out.push(`<span class="call">PIN/DHO: ${esc(t['PIN/DHO'])}</span>`);
+      if (t.REBOUND) out.push(`<span class="call ${/must/i.test(t.REBOUND) ? 'hot' : ''}">${esc(t.REBOUND)}</span>`);
+      if (/^l/i.test(t.Hand || '')) out.push('<span class="call hot">LEFTY</span>');
+      return out.join('');
+    };
+    const playerCard = c => {
+      const note = G.noteStrengths(c);
+      return `<div class="pl">
+        ${c.photo ? `<img src="${esc(c.photo)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : `<div class="ph">${esc(/^\d+$/.test(c.num) ? '#' + c.num : '')}</div>`}
+        <div class="info"><div class="nm">${esc(G.shortName(c))}</div>
+        <div class="meta">${esc([c.pos, c.ht].filter(x => x && x !== 'N/A').join(' · '))}</div>
+        <div class="calls">${calls(c)}</div>
+        ${note ? `<div class="nt">${esc(note.length > 240 ? note.slice(0, 237) + '…' : note)}</div>` : ''}</div></div>`;
+    };
+    const L = G.statLeaders(team, stats);
+    const leader = (k, list, fmt) => list && list.length ? `<div class="ld"><div class="k">${k}</div><div class="v">${esc(list[0].p.name)}</div><div class="s">${fmt(list[0])}</div></div>` : '';
+
+    app.innerHTML = `
+      <div class="hero">
+        <div class="kicker">Game Week</div>
+        <h1>vs ${esc(team.title)}</h1>
+        ${week && week.games ? `<div class="games">${esc(week.games)}</div>` : ''}
+        ${week && week.note ? `<div class="coach-note">${esc(week.note)}</div>` : ''}
+        <div class="actions">
+          <a class="btn" href="quiz.html?team=${team.slug}&start=1">📝 ${quizIsThis ? 'Take the assigned quiz' : 'Quiz me on ' + esc(team.title)}</a>
+          <a class="btn ghost" href="opponents/${team.slug}/scout-cards.html">🃏 Scout cards</a>
+          <a class="btn ghost" href="opponent-scout.html?team=${team.slug}&type=scout">📋 Full scouting report</a>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="card"><h2>Keys to victory</h2>${list(report.keys.map(x => x.full), true)}</div>
+        <div class="card"><h2>How we attack their D</h2>${list(report.plan.map(x => x.full), true)}</div>
+      </div>
+      <div class="card"><h2>How we defend their O</h2>${labelList(labelsIn(/defend their O/i))}</div>
+      <div class="card"><h2>Their starters <small>from the scout cards</small></h2>
+        ${starters.length ? `<div class="players">${starters.map(playerCard).join('')}</div>` : '<p class="empty">No scout cards yet.</p>'}</div>
+      ${bench.length ? `<div class="card"><h2>Rotation &amp; bench</h2><div class="players">${bench.map(playerCard).join('')}</div></div>` : ''}
+      ${L.rot.length ? `<div class="card"><h2>Stat leaders</h2><div class="leaders">
+        ${leader('Points', L.ppg, x => x.v.toFixed(1) + ' PPG')}
+        ${leader('Rebounds', L.rpg, x => x.v.toFixed(1) + ' RPG')}
+        ${leader('Assists', L.apg, x => x.v.toFixed(1) + ' APG')}
+        ${leader('3-point (2+ a game)', L.three, x => (x.v * 100).toFixed(1) + '% on ' + x.apg.toFixed(1))}
+      </div></div>` : ''}
+      <div class="grid2">
+        <div class="card"><h2>What they run</h2>${labelList(labelsIn(/^Offense/i))}</div>
+        <div class="card"><h2>Their defence</h2>${labelList(labelsIn(/^Defense/i))}</div>
+      </div>
+      ${labelsIn(/Special/i).length ? `<div class="card"><h2>Special situations</h2>${labelList(labelsIn(/Special/i))}</div>` : ''}
+      ${report.practice.length ? `<div class="card"><h2>Practice this week</h2>${list(report.practice.map(x => x.full))}</div>` : ''}`;
+  }
+
+  function staffForm(week) {
+    const w = week || {};
+    $('#staffBox').innerHTML = `<div class="card form"><h2>Set game week <small>staff only</small></h2>
+      <div class="field"><label class="lbl" for="gTeam">Opponent</label><select id="gTeam"><option value="">— Pick a team —</option>${TEAMS.map(t => `<option value="${t.slug}" ${t.slug === w.team ? 'selected' : ''}>${esc(t.title)}</option>`).join('')}</select></div>
+      <div class="field"><label class="lbl" for="gGames">Game day(s)</label><input type="text" id="gGames" maxlength="120" value="${esc(w.games || '')}" placeholder="e.g. Fri Nov 6 & Sat Nov 7 · in Calgary"></div>
+      <div class="field"><label class="lbl" for="gNote">Message to the team (optional)</label><textarea id="gNote" maxlength="400" placeholder="e.g. Film Wednesday 3pm. Know your matchup's C/O.">${esc(w.note || '')}</textarea></div>
+      <label class="check"><input type="checkbox" id="gQuiz" checked> Also assign this team's scouting quiz (10 questions)</label>
+      <div class="actions" style="margin-top:8px"><button class="btn" id="gSave">Save game week</button>${week ? '<button class="btn ghost" id="gClear">Clear</button>' : ''}</div>
+      <p class="note" id="gState">Players see this page from the Hub menu ("Game Week").</p></div>`;
+    const save = async (value, alsoQuiz) => {
+      $('#gState').textContent = 'Saving…';
+      try {
+        const post = (key, content) => fetch('/.netlify/functions/save-content', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key, content }) }).then(r => { if (!r.ok) throw new Error(); });
+        await post(KEY, value ? JSON.stringify(value) : '');
+        if (value && alsoQuiz) await post(ASSIGN_KEY, JSON.stringify({ type: 'scout', team: value.team, length: 10, note: value.games ? 'Before ' + value.games : '', setAt: new Date().toISOString() }));
+        location.href = 'game-week.html';
+      } catch (e) { $('#gState').textContent = 'Could not save. Check your connection.'; }
+    };
+    $('#gSave').onclick = () => {
+      const team = $('#gTeam').value;
+      if (!team) { $('#gState').textContent = 'Pick the opponent first.'; return; }
+      save({ team, games: $('#gGames').value.trim(), note: $('#gNote').value.trim(), setAt: new Date().toISOString() }, $('#gQuiz').checked);
+    };
+    if ($('#gClear')) $('#gClear').onclick = () => { if (confirm('Clear the game week?')) save(null, false); };
+  }
+
+  load();
+})();
+</script>
+</body>
+</html>

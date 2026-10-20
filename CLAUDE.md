@@ -57,7 +57,15 @@ refuses to run without `--force`. Never regenerate the Database from it.
   URL in any file in this repo.** Every file here is publicly downloadable from the site.
 - The repo is public so every coach's commits build on Netlify's free plan (it blocks
   unrecognized contributors only on private repos). Never commit anything private.
-- Player PINs are checked by the Google Apps Script in `offseason-sc-app/tracking-config.js`.
+- Player PINs are checked by `netlify/functions/player-login.js` and stored only as salted
+  scrypt hashes in the Blobs store `player-auth`. Each player's first login after Oct 2026 checks
+  his old Google Sheet PIN once (Apps Script `verifyPlayerPin`): 1234 means he must pick his own
+  PIN before going in, any other PIN is copied over. 8 wrong PINs lock that name for 15 minutes.
+  Coaches reset a forgotten PIN in the Roster Manager (`players.html`, staff pass needed): he then
+  logs in with 1234 and picks a new one. Nobody can see a PIN.
+- The Google Sheet script still returns every Sheet PIN to anyone who adds `&isAdmin=true` to its
+  `getRoster` address. Those Sheet PINs no longer log anyone in, but David should remove the
+  `pin` field from that response in the Apps Script (it isn't in this repo).
 - The login screen only hides pages in the browser. It is not real security: anyone who knows
   a page's address can still load it directly. Don't add anything truly confidential.
 
@@ -140,6 +148,20 @@ Graded quizzes for players. Each quiz is built in the browser from random questi
 - **Griffin Concepts quiz:** terms, mottos and beliefs from `griffin-concepts.html` (plus the saved
   edit in Blobs key `griffin_basketball_concepts_v1`).
 
+- **Question bank:** starter questions in `data/quiz-bank-seed.json` (ids `s-…`, written from the
+  Concepts page) plus coaches' questions and edits, saved by `netlify/functions/quiz-bank.js`
+  (Blobs store `quiz-bank`; an edit of a starter question is saved under the same id and wins, a
+  deleted starter is saved as `{ id, deleted: true }`). Every question has tags (`offence`,
+  `pnr`, `transition`…); a team slug tag (e.g. `calgary-dinos`) puts it in that team's scouting
+  quiz. "Concepts & topics" quizzes pick by tag from the bank plus automatic Concepts questions.
+  Staff can edit or hide any question while previewing a quiz; editing an automatic question
+  saves a copy to the bank and hides the automatic one (hidden keys: `h_<key>` in `quiz-bank`).
+- Shared quiz code (loading cards/reports/concepts/bank, building questions) is in `quiz-data.js`,
+  used by `quiz.html` and `game-week.html`.
+- `game-week.html`: this week's opponent at a glance (keys to victory, how we attack/defend,
+  starters' C/O and coverages, stat leaders) from the same sources. Coaches set it on the page
+  (Blobs key `game_week`), optionally assigning that team's quiz at the same time.
+
 Players' results go to `netlify/functions/quiz-results.js` (its own Blobs store, `quiz-results`).
 Only staff can list or delete them: `verify-access.js` now returns a signed staff pass
 (`netlify/functions/lib/staff-token.js`, 14 days, signed with a key derived from the two passwords),
@@ -164,5 +186,6 @@ GitHub to update that content.
 
 - `.skill/SKILL.md` is the "Griffin" assistant-coach spec for basketball work (scouts,
   practice plans). Follow it for basketball content.
-- The many `inspect_*`, `scrape_*`, `test_*` and `check_*` scripts in the root are one-off
-  helpers from the original build. They are not part of the site build.
+- The one-off `inspect_*` / `scrape_*` / `test_*` / `check_*` helpers from the original build were
+  removed in Oct 2026 (they're still in git history). `scripts/build_practice_plans.js` rebuilds
+  `practice-plans/list.json` from `practice-plans/plans/*.json`.

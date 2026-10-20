@@ -725,8 +725,9 @@
 
       <div class="form-row">
         <div class="form-group">
-          <label for="pPin">Login PIN Code</label>
-          <input type="text" id="pPin" class="form-control" placeholder="1234" maxlength="6" pattern="[0-9]*" inputmode="numeric" required>
+          <label>Login PIN</label>
+          <p style="margin:6px 0 0;font-size:13px;color:#666;line-height:1.4">New players start with 1234 and must choose their own PIN the first time they log in. Use "Reset PIN" on a player's card if he forgets it.</p>
+          <input type="hidden" id="pPin" value="1234">
         </div>
         <div class="form-group">
           <label for="pGoal">Offseason Goal</label>
@@ -884,7 +885,6 @@
 
     players.forEach(p => {
       const slug = p.slug || toSlug(p.name);
-      const pin = p.pin || "1234";
       const goal = p.goal || "hypertrophy";
       const injuries = p.injuries || { knee: false, shoulder: false, back: false, ankle: false };
       const cardio = p.cardioPref || "court";
@@ -923,7 +923,7 @@
           </div>
           <div class="info-row">
             <span class="label">Login PIN:</span>
-            <span class="value" style="font-family:monospace; font-size:14px; color:var(--maroon); letter-spacing:1px;">${pin}</span>
+            <span class="value pin-status" data-slug="${slug}">${pinStatusLabel(slug)}</span>
           </div>
           <div class="info-row">
             <span class="label">S&amp;C Offseason Goal:</span>
@@ -940,12 +940,56 @@
         </div>
         <div class="card-actions">
           <button class="btn btn-outline" onclick="openEditModal('${slug}')">✏️ Edit</button>
+          <button class="btn btn-outline" onclick="resetPin('${slug}', '${p.name.replace(/'/g, "\\'")}')">🔑 Reset PIN</button>
           <button class="btn btn-danger" onclick="deletePlayer('${slug}', '${p.name}')">🗑️ Delete</button>
         </div>
       `;
 
       grid.appendChild(card);
     });
+  }
+
+  // ---- PIN status (PINs are checked by netlify/functions/player-login.js and
+  // stored only as hashes: nobody can see a player's PIN, only whether he set one).
+  let pinStatus = null;
+  function staffToken() { return sessionStorage.getItem('griffin_staff_token') || ''; }
+  function pinStatusLabel(slug) {
+    if (!pinStatus) return '<a href="#" onclick="unlockPinStatus(); return false;" style="color:var(--maroon)">Show PIN status</a>';
+    const st = pinStatus[slug];
+    if (st && st.status === 'personal') return '<span style="color:var(--success);font-weight:700">✓ Own PIN set</span>';
+    if (st && st.status === 'reset') return '<span style="color:#b8860b;font-weight:700">Reset: logs in with 1234, then picks a new PIN</span>';
+    return '<span style="color:#b8860b;font-weight:700">Still on 1234 (picks his own at next login)</span>';
+  }
+  function refreshPinLabels() {
+    document.querySelectorAll('.pin-status').forEach(el => { el.innerHTML = pinStatusLabel(el.dataset.slug); });
+  }
+  async function loadPinStatus() {
+    if (!staffToken()) return false;
+    try {
+      const r = await fetch('/.netlify/functions/player-login', { headers: { 'X-Staff-Token': staffToken() } });
+      if (r.status === 401) { sessionStorage.removeItem('griffin_staff_token'); return false; }
+      const d = await r.json();
+      pinStatus = d.players || {};
+      refreshPinLabels();
+      return true;
+    } catch (e) { return false; }
+  }
+  async function unlockPinStatus() {
+    if (await loadPinStatus()) return;
+    const pw = prompt('Enter the admin password to see PIN status and reset PINs:');
+    if (!pw) return;
+    const r = await fetch('/.netlify/functions/verify-access', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: 'admin', password: pw }) });
+    const d = await r.json().catch(() => ({}));
+    if (d.ok && d.token) { sessionStorage.setItem('griffin_staff_token', d.token); loadPinStatus(); }
+    else showToast(d.message || 'Wrong password.', 'error');
+  }
+  async function resetPin(slug, name) {
+    if (!staffToken()) { await unlockPinStatus(); if (!staffToken()) return; }
+    if (!confirm(`Reset ${name}'s PIN? He will log in with 1234 and then pick a new PIN.`)) return;
+    const r = await fetch('/.netlify/functions/player-login', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Staff-Token': staffToken() }, body: JSON.stringify({ action: 'reset', slug }) });
+    const d = await r.json().catch(() => ({}));
+    if (d.ok) { showToast(`${name}'s PIN was reset. Tell him to log in with 1234.`, 'success'); loadPinStatus(); }
+    else showToast(d.message || 'Could not reset the PIN.', 'error');
   }
 
   // Handle Search Input
@@ -1149,6 +1193,7 @@
 
   // Run on page load
   fetchRoster();
+  loadPinStatus();
 </script>
 
 <script src="/stats-refresh.js"></script>

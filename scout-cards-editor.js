@@ -110,16 +110,72 @@
     }
   }
 
+  // Tags are merged one item at a time (Hand, C/O, DTRAN, PNR, PIN/DHO,
+  // REBOUND), so a coach can set PNR for one player and his C/O still follows
+  // his shooting every stats refresh. data-auto-fields remembers what the
+  // automatic value of each item was; an item that still shows it is updated.
+  const TAG_LABELS = ['Hand', 'C/O', 'DTRAN', 'PNR', 'PIN/DHO', 'REBOUND'];
+  function parseTags(text) {
+    const t = squash(text);
+    const re = /(Hand|C\/O|DTRAN|PIN\/DHO|PNR|REBOUND):/g;
+    const hits = [];
+    let m;
+    while ((m = re.exec(t))) hits.push({ label: m[1], start: m.index, end: re.lastIndex });
+    if (!hits.length) return null;
+    const out = {};
+    hits.forEach((h, i) => {
+      const v = t.slice(h.end, i + 1 < hits.length ? hits[i + 1].start : t.length);
+      out[h.label] = v.replace(/,\s*$/, '').trim();
+    });
+    // Anything that isn't one of the six items: treat the tags as free text.
+    if (t.slice(0, hits[0].start).trim()) return null;
+    return out;
+  }
+  function renderTags(f) {
+    const v = k => (f[k] || '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+    return `\n          <strong>Hand:</strong> ${v('Hand')}, <strong>C/O:</strong> ${v('C/O')}, <strong>DTRAN:</strong> ${v('DTRAN')}` +
+      `\n          <br><strong>PNR:</strong> ${v('PNR')}, <strong>PIN/DHO:</strong> ${v('PIN/DHO')}` +
+      `\n          <br><strong>REBOUND:</strong> ${v('REBOUND')}\n        `;
+  }
+  function applyFreshTags(el, freshHtml) {
+    if (!el || !freshHtml) return;
+    const tmp = document.createElement('div');
+    tmp.innerHTML = freshHtml;
+    const freshF = parseTags(tmp.textContent);
+    if (!freshF) return;
+    const text = squash(el.textContent);
+    let autoF = null;
+    try { autoF = JSON.parse(el.getAttribute('data-auto-fields') || 'null'); } catch (e) {}
+    if (!autoF && (OLD_DEFAULT_TAGS.test(text) ||
+        (el.hasAttribute('data-auto') && el.getAttribute('data-auto') === text))) {
+      autoF = parseTags(text);       // whole field was automatic: every item is
+    }
+    const saved = parseTags(text);
+    if (!autoF || !saved) { el.removeAttribute('data-auto'); return; }   // coach's own text: keep
+    const merged = {};
+    TAG_LABELS.forEach(k => {
+      const s = saved[k] || '';
+      merged[k] = (s === (autoF[k] || '')) ? (freshF[k] || '') : s;
+    });
+    el.innerHTML = renderTags(merged);
+    el.setAttribute('data-auto-fields', JSON.stringify(freshF));
+    el.removeAttribute('data-auto');
+  }
+
   function applyFreshTagsAndNotes(card, fresh) {
-    applyAutoField(card.querySelector('.tactical-tags'), fresh.tagsHtml, t => OLD_DEFAULT_TAGS.test(t));
+    applyFreshTags(card.querySelector('.tactical-tags'), fresh.tagsHtml);
     applyAutoField(card.querySelector('.scout-notes'), fresh.notesHtml, isAutoNote);
   }
 
   // Mark the freshly built (unsaved) cards' fields as automatic, so a save
   // made without touching them still counts as automatic next time.
   function markFreshAuto() {
-    document.querySelectorAll('.card .tactical-tags, .card .scout-notes').forEach(el => {
+    document.querySelectorAll('.card .scout-notes').forEach(el => {
       el.setAttribute('data-auto', squash(el.textContent));
+    });
+    document.querySelectorAll('.card .tactical-tags').forEach(el => {
+      const f = parseTags(el.textContent);
+      if (f) el.setAttribute('data-auto-fields', JSON.stringify(f));
     });
   }
 
@@ -157,11 +213,19 @@
     return (el.hasAttribute('data-auto') && el.getAttribute('data-auto') === text) || looksLikeOldDefault(text);
   }
 
+  function tagsAreAuto(el) {
+    if (!el || isAutoText(el, t => OLD_DEFAULT_TAGS.test(t))) return true;
+    let autoF = null;
+    try { autoF = JSON.parse(el.getAttribute('data-auto-fields') || 'null'); } catch (e) {}
+    const saved = parseTags(el.textContent);
+    return !!(autoF && saved && TAG_LABELS.every(k => (saved[k] || '') === (autoF[k] || '')));
+  }
+
   function noCoachText(container) {
     if (!freshStats) return false;
     const cards = Array.from(container.querySelectorAll('.card'));
     return cards.length > 0 && cards.every(card => freshStats[cardPlayerName(card)] &&
-      isAutoText(card.querySelector('.tactical-tags'), t => OLD_DEFAULT_TAGS.test(t)) &&
+      tagsAreAuto(card.querySelector('.tactical-tags')) &&
       isAutoText(card.querySelector('.scout-notes'), isAutoNote));
   }
 

@@ -68,16 +68,16 @@ function madeAtt(s) {
 /* Closeout call from the player's season 3PT shooting (staff rules):
      under 20%            -> Shaq
      20% to under 33%     -> Rose
-     33% to 38%           -> Book
-     over 38%             -> Klay if he takes 2+ threes a game, otherwise Book
+     33% to 38%           -> Book  (only if he takes 2+ threes a game)
+     over 38%             -> Klay  (only if he takes 2+ threes a game)
+   A good percentage on fewer than 2 threes a game isn't a shooter yet: Rose.
    A player who hasn't played yet gets no call. */
 function closeoutFor(info) {
   if (!info.st || !info.gp) return '';
   const pct = info.fg3a ? (100 * info.fg3m / info.fg3a) : 0;
   if (pct < 20) return 'Shaq';
-  if (pct < 33) return 'Rose';
-  if (pct <= 38) return 'Book';
-  return info.fg3aPg >= 2 ? 'Klay' : 'Book';
+  if (pct < 33 || info.fg3aPg < 2) return 'Rose';
+  return pct <= 38 ? 'Book' : 'Klay';
 }
 
 const f1 = n => (Math.round(n * 10) / 10).toFixed(1);
@@ -109,7 +109,7 @@ function writeNote(i, ctx) {
   else if (i.ppg >= 10) strengths.push(`${ptsRank === 1 ? "the team's leading scorer" : `reliable scorer (${ordinal(ptsRank)} on the team)`} at ${f1(i.ppg)} PPG`);
   else if (i.ppg >= 6 && ptsRank <= 3) strengths.push(`${ordinal(ptsRank)}-leading scorer (${f1(i.ppg)} PPG)`);
   if (ctx.co === 'Klay') strengths.push(`knockdown 3PT shooter (${f1(i.fg3Pct)}% on ${f1(i.fg3aPg)} attempts a game)`);
-  else if (ctx.co === 'Book' && i.fg3aPg >= 1) strengths.push(`capable 3PT shooter (${f1(i.fg3Pct)}% on ${f1(i.fg3aPg)} a game)`);
+  else if (ctx.co === 'Book') strengths.push(`capable 3PT shooter (${f1(i.fg3Pct)}% on ${f1(i.fg3aPg)} a game)`);
   if (i.fgPct >= 50 && i.fgaPg >= 4) strengths.push(`efficient finisher (${f1(i.fgPct)}% FG)`);
   if (i.rpg >= 8) strengths.push(`dominant rebounder (${f1(i.rpg)} RPG${rebRank === 1 ? ', team best' : ''})`);
   else if (i.rpg >= 6) strengths.push(`strong rebounder (${f1(i.rpg)} RPG)`);

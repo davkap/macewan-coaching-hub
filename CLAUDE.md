@@ -79,7 +79,7 @@ The build fills every card from stats using the staff's rules (`closeoutFor` / `
 in `build_scout_cards.js`):
 
 - Hand: R for everyone. C/O by 3PT%: under 20% Shaq, 20-32% Rose, 33-38% Book, over 38%
-  Klay if he takes 2+ threes a game (otherwise Book).
+  Klay. Book and Klay need 2+ threes a game; a good % on fewer attempts is Rose.
 - Book/Klay: DTRAN Locate, PNR and PIN/DHO Over/Switch. Everyone else: those left blank.
 - REBOUND: "Box out", or "MUST BOX OUT" at 6+ RPG.
 - The note (`writeNote`) is written from stats by rules, not by an AI service, and ends with
@@ -89,8 +89,10 @@ in `build_scout_cards.js`):
   `scripts/lib/usports-scraper.js`) for starts and the real "Last 5 Games" row. Without box
   scores it falls back to the top 5 in minutes.
 
-On a saved (coach-edited) version, the editor updates only tags/notes that still hold
-automatic text (remembered in a `data-auto` attribute), and re-sorts Starters/Bench only if
+On a saved (coach-edited) version, the editor updates each tag item (Hand, C/O, DTRAN, PNR,
+PIN/DHO, REBOUND) and the note only while it still holds the automatic value (remembered in
+`data-auto-fields` / `data-auto`), so every stats refresh re-applies the rules to items no
+coach has changed, and re-sorts Starters/Bench only if
 the saved order is the automatic one (or no coach has written any tags/notes on that team yet).
 Anything a coach typed, and any order a coach set on cards they wrote on, is kept.
 

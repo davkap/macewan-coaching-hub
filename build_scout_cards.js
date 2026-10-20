@@ -73,11 +73,17 @@ function generateScoutCardsHtml(teamItem) {
   function renderCard(p, isStarter) {
     const override = (teamItem.jsonKey === 'calgary-dinos' && CALGARY_OVERRIDES[p.name]) ? CALGARY_OVERRIDES[p.name] : null;
 
-    const num = override ? override.num : (p.number !== undefined && p.number !== '' && p.number !== null ? p.number : 'N/A');
+    // Number, position and height come from the live roster; the hand-entered
+    // Calgary overrides are only a fallback for those (their weight, tactical
+    // tags and notes are still used).
+    const liveNum = (p.number !== undefined && p.number !== '' && p.number !== null) ? p.number : '';
+    const num = liveNum || (override && override.num) || 'N/A';
     const name = p.name;
-    const pos = override ? override.pos : (p.pos || p.position || 'G');
-    const ht = override ? override.ht : (p.ht || p.height || `6'3"`);
-    const wt = override ? override.wt : (p.wt ? p.wt + ' lbs' : '190 lbs');
+    const pos = p.pos || p.position || (override && override.pos) || 'G';
+    // Show N/A when we don't actually know a player's height or weight
+    // (these used to fall back to a made-up 6'3" / 190 lbs).
+    const ht = String(p.ht || p.height || '').trim() || (override && override.ht) || 'N/A';
+    const wt = override ? override.wt : (p.wt ? p.wt + ' lbs' : 'N/A');
     
     const hand = override ? override.hand : (pos.includes('G') ? 'R' : 'R');
     const co = override ? override.co : (pos.includes('G') ? 'Trae' : 'Brown');
@@ -86,7 +92,7 @@ function generateScoutCardsHtml(teamItem) {
     const pinDho = override ? override.pinDho : 'Over/Switch';
     const rebound = override ? override.rebound : (pos.includes('F') || pos.includes('C') ? 'MUST BOX OUT' : 'Box out');
 
-    const notes = override ? override.notes : `${pos} (${ht}, ${p.hometown || 'Canada'}). Key member of Canada West rotation. [Scouting note editable via Edit Cards]`;
+    const notes = override ? override.notes : `${pos} (${ht !== 'N/A' ? ht + ', ' : ''}${p.hometown || 'Canada'}). Key member of Canada West rotation. [Scouting note editable via Edit Cards]`;
 
     const playerStatsList = teamData.playerStats || [];
     const statMatch = playerStatsList.find(s => s.name.toLowerCase() === p.name.toLowerCase() || p.name.toLowerCase().includes(s.name.toLowerCase()) || s.name.toLowerCase().includes(p.name.toLowerCase()));

@@ -63,23 +63,45 @@
     values.forEach((v, i) => { if (tds[i]) tds[i].textContent = v; });
   }
 
+  // Placeholders older versions of the cards used for unknown height/weight.
+  const PLACEHOLDER_HEIGHT = `6'3"`;
+  const PLACEHOLDER_WEIGHT = '190 lbs';
+
+  function headerParts(card) {
+    const h = card.querySelector('.player-header');
+    return h ? h.textContent.split('•').map(x => x.trim()) : [];
+  }
+
   function captureFreshStats() {
     const map = {};
     document.querySelectorAll('.card').forEach(card => {
       const name = cardPlayerName(card);
       const rows = card.querySelectorAll('.stats-table tbody tr');
       if (name && rows.length >= 2) {
-        map[name] = { last5: statCells(rows[0]), season: statCells(rows[1]) };
+        map[name] = { last5: statCells(rows[0]), season: statCells(rows[1]), header: headerParts(card) };
       }
     });
     return map;
+  }
+
+  // Swap old made-up height/weight placeholders in a saved card for the
+  // freshly built value (a real height, or N/A). Values a coach typed stay.
+  function applyFreshHeader(card, fresh) {
+    const parts = headerParts(card);
+    if (parts.length < 5 || !fresh.header || fresh.header.length < 5) return;
+    let changed = false;
+    if (parts[3] === PLACEHOLDER_HEIGHT && fresh.header[3] !== parts[3]) { parts[3] = fresh.header[3]; changed = true; }
+    if (parts[4] === PLACEHOLDER_WEIGHT && fresh.header[4] !== parts[4]) { parts[4] = fresh.header[4]; changed = true; }
+    if (changed) card.querySelector('.player-header').textContent = parts.join(' • ');
   }
 
   function applyFreshStats(container) {
     if (!freshStats) return;
     container.querySelectorAll('.card').forEach(card => {
       const fresh = freshStats[cardPlayerName(card)];
-      if (!fresh || fresh.season.every(v => v === '-' || v === '')) return;
+      if (!fresh) return;
+      applyFreshHeader(card, fresh);
+      if (fresh.season.every(v => v === '-' || v === '')) return;
       const rows = card.querySelectorAll('.stats-table tbody tr');
       if (rows.length < 2) return;
       const savedLast5 = statCells(rows[0]);

@@ -91,7 +91,8 @@ in `build_scout_cards.js`):
 
 On a saved (coach-edited) version, the editor updates only tags/notes that still hold
 automatic text (remembered in a `data-auto` attribute), and re-sorts Starters/Bench only if
-the saved order is the automatic one. Anything a coach typed or rearranged is kept.
+the saved order is the automatic one (or no coach has written any tags/notes on that team yet).
+Anything a coach typed, and any order a coach set on cards they wrote on, is kept.
 
 ## Shot Tracker → MacEwan Database
 

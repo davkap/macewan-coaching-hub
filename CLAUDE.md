@@ -75,6 +75,24 @@ to Netlify Blobs and shows it to everyone. On load it puts the freshly built "U 
 row back into the snapshot (and the "Last 5 Games" row, unless a coach typed it by hand).
 Don't bump `data-template-version` in `build_scout_cards.js`: that discards every saved edit.
 
+The build fills every card from stats using the staff's rules (`closeoutFor` / `renderCard`
+in `build_scout_cards.js`):
+
+- Hand: R for everyone. C/O by 3PT%: under 20% Shaq, 20-32% Rose, 33-38% Book, over 38%
+  Klay if he takes 2+ threes a game (otherwise Book).
+- Book/Klay: DTRAN Locate, PNR and PIN/DHO Over/Switch. Everyone else: those left blank.
+- REBOUND: "Box out", or "MUST BOX OUT" at 6+ RPG.
+- The note (`writeNote`) is written from stats by rules, not by an AI service, and ends with
+  "(Auto-written from stats)".
+- Starters = players who started more than half of the games whose box score marks starters.
+  The scraper reads each game's box score on usportshoops.ca (`addBoxScoreStats` in
+  `scripts/lib/usports-scraper.js`) for starts and the real "Last 5 Games" row. Without box
+  scores it falls back to the top 5 in minutes.
+
+On a saved (coach-edited) version, the editor updates only tags/notes that still hold
+automatic text (remembered in a `data-auto` attribute), and re-sorts Starters/Bench only if
+the saved order is the automatic one. Anything a coach typed or rearranged is kept.
+
 ## Shot Tracker → MacEwan Database
 
 The staff tracks games with `shot-tracker.html` (both ends) and `lineup-logger.html`. The old

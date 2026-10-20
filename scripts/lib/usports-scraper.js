@@ -251,7 +251,129 @@ async function scrapeTeam(usportsName, season = '2026-27') {
   }
 
   if (!html) return null;
-  return parseUSportsPage(html, usportsName, season);
+  const data = parseUSportsPage(html, usportsName, season);
+  if (data) data.boxScoreIds = extractBoxScoreIds(html);
+  return data;
+}
+
+/* ---------- Box scores: starters and last-5-games ----------------------
+   The team page links each completed game that has a box score ("Stats").
+   In a box score, starters have a "*" in the cell after their name.
+   We use them for games started (to sort Starters vs Bench on the scout
+   cards) and for real "Last 5 Games" averages. */
+
+function extractBoxScoreIds(html) {
+  const ids = [];
+  const re = /show-game-report\.php\?Gender=MBB&(?:amp;)?Season=([0-9-]+)&(?:amp;)?Gameid=([A-Za-z0-9]+)/g;
+  let m;
+  while ((m = re.exec(html))) {
+    const key = m[1] + '|' + m[2];
+    if (!ids.includes(key)) ids.push(key);   // page order = date order
+  }
+  return ids;
+}
+
+const splitMadeAtt = s => {
+  const m = String(s || '').match(/(\d+)\s*-\s*(\d+)/);
+  return m ? [parseInt(m[1], 10), parseInt(m[2], 10)] : [0, 0];
+};
+const num = s => parseInt(String(s || '').replace(/[^0-9-]/g, ''), 10) || 0;
+
+// Returns [{ team: 'MacEwan Griffins', players: [{ name, starter, mins, fg3m, ... }] }, ...]
+function parseBoxScore(html) {
+  const sections = [];
+  let cur = null;
+  const rows = String(html || '').split(/<tr[^>]*>/i).slice(1);
+  for (const row of rows) {
+    const head = row.match(/^\s*<td[^>]*colspan=["']?26["']?[^>]*>\s*<b>([^<]+)<\/b>/i);
+    if (head) {
+      cur = { team: stripTags(head[1]).replace(/\s+\d+\s*$/, '').trim(), players: [] };
+      sections.push(cur);
+      continue;
+    }
+    if (!cur) continue;
+    const raw = row.split(/(?=<t[dh][\s>])/i).filter(c => /^<t[dh]/i.test(c));
+    // The player's name is the first left-aligned cell (some box scores leave
+    // out the jersey-number column, so positions are counted from the name).
+    const n = raw.findIndex(c => /^<td[^>]*align=["']?left/i.test(c));
+    if (n < 0) continue;
+    const cells = raw.map(c => stripTags(c.replace(/^<t[dh][^>]*>/i, '').split(/<\/t[dh]>/i)[0]));
+    // name, starter mark, |, mins, |, 3pt, %, |, FG, %, |, FT, %, |, OR, DR, REB, |, PF, |, A, TO, BLK, STL, |, PTS
+    if (cells.length < n + 26) continue;
+    const name = cells[n];
+    if (!name || /^team-/i.test(name) || /totals$/i.test(name) || /^player$/i.test(name)) continue;
+    const at = k => cells[n + k];
+    const [fg3m, fg3a] = splitMadeAtt(at(5));
+    const [fgm, fga] = splitMadeAtt(at(8));
+    const [ftm, fta] = splitMadeAtt(at(11));
+    cur.players.push({
+      name, starter: at(1).trim() === '*', mins: num(at(3)),
+      fg3m, fg3a, fgm, fga, ftm, fta,
+      oreb: num(at(14)), dreb: num(at(15)), reb: num(at(16)), pf: num(at(18)),
+      a: num(at(20)), to: num(at(21)), blk: num(at(22)), stl: num(at(23)), pts: num(at(25))
+    });
+  }
+  return sections;
+}
+
+const boxScoreCache = new Map();
+function getBoxScore(key) {
+  if (!boxScoreCache.has(key)) {
+    const [season, id] = key.split('|');
+    boxScoreCache.set(key, fetchUrl(`https://usportshoops.ca/history/show-game-report.php?Gender=MBB&Season=${season}&Gameid=${id}`)
+      .then(parseBoxScore).catch(() => []));
+  }
+  return boxScoreCache.get(key);
+}
+
+const norm = s => String(s || '').toLowerCase().replace(/[^a-z]/g, '');
+
+// Adds gs (games started) and last5 averages to each player in data.playerStats,
+// and boxScoreGames (how many of the team's games have a box score).
+async function addBoxScoreStats(data) {
+  const keys = data.boxScoreIds || [];
+  const games = [];
+  for (let i = 0; i < keys.length; i += 4) {             // 4 at a time, gently
+    const batch = await Promise.all(keys.slice(i, i + 4).map(getBoxScore));
+    games.push(...batch);
+  }
+  const rosterNames = new Set((data.roster || []).map(p => norm(p.name)).concat((data.playerStats || []).map(p => norm(p.name))));
+  const lines = {};                                      // player -> [game lines, oldest first]
+  let counted = 0;
+  for (const sections of games) {
+    if (!sections.length) continue;
+    // Our team's section = the one whose player names match our roster best
+    const ours = sections.map(sec => ({ sec, hits: sec.players.filter(p => rosterNames.has(norm(p.name))).length }))
+      .sort((a, b) => b.hits - a.hits)[0];
+    if (!ours || !ours.hits) continue;
+    counted++;
+    // Not every box score marks its starters; only those count for starts.
+    const marked = ours.sec.players.some(p => p.starter);
+    if (marked) data.startersMarkedGames = (data.startersMarkedGames || 0) + 1;
+    for (const p of ours.sec.players) (lines[norm(p.name)] = lines[norm(p.name)] || []).push(Object.assign({ marked }, p));
+  }
+  data.boxScoreGames = counted;
+  data.startersMarkedGames = data.startersMarkedGames || 0;
+  for (const ps of data.playerStats || []) {
+    const mine = lines[norm(ps.name)] || [];
+    ps.gs = String(mine.filter(g => g.starter).length);
+    // games he played in where starters were recorded (the denominator for "started most games")
+    ps.gsGames = String(mine.filter(g => g.marked && g.mins > 0).length);
+    const last = mine.filter(g => g.mins > 0).slice(-5);
+    if (last.length) {
+      const n = last.length, sum = k => last.reduce((t, g) => t + g[k], 0);
+      const pct = (m, a) => (sum(a) ? (100 * sum(m) / sum(a)).toFixed(1) : '0.0');
+      ps.last5 = {
+        games: n,
+        ppg: (sum('pts') / n).toFixed(1), mpg: (sum('mins') / n).toFixed(1),
+        fgPct: pct('fgm', 'fga'), fg3Pct: pct('fg3m', 'fg3a'), ftPct: pct('ftm', 'fta'),
+        rpg: (sum('reb') / n).toFixed(1), apg: (sum('a') / n).toFixed(1), topg: (sum('to') / n).toFixed(1),
+        stlpg: (sum('stl') / n).toFixed(1), blkpg: (sum('blk') / n).toFixed(1)
+      };
+    }
+  }
+  delete data.boxScoreIds;
+  return data;
 }
 
 async function scrapeAllTeams(season = '2026-27') {
@@ -260,6 +382,12 @@ async function scrapeAllTeams(season = '2026-27') {
     console.log(`Scraping ${item.usportsName} (${item.slug})...`);
     const data = await scrapeTeam(item.usportsName, season);
     if (data) {
+      try {
+        await addBoxScoreStats(data);
+        console.log(`   ${data.boxScoreGames} box score(s) read for starters / last 5 games`);
+      } catch (e) {
+        console.warn(`   Box scores skipped for ${item.usportsName}: ${e.message}`);
+      }
       results[item.slug] = data;
     }
   }
@@ -271,6 +399,9 @@ module.exports = {
   fetchUrl,
   stripTags,
   parseUSportsPage,
+  parseBoxScore,
+  extractBoxScoreIds,
+  addBoxScoreStats,
   scrapeTeam,
   scrapeAllTeams
 };

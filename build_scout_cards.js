@@ -57,55 +57,184 @@ const CALGARY_OVERRIDES = {
   }
 };
 
+const esc = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// "5-16" -> [5, 16]
+function madeAtt(s) {
+  const m = String(s || '').match(/(\d+)\s*-\s*(\d+)/);
+  return m ? [parseInt(m[1], 10), parseInt(m[2], 10)] : [0, 0];
+}
+
+/* Closeout call from the player's season 3PT shooting (staff rules):
+     under 20%            -> Shaq
+     20% to under 33%     -> Rose
+     33% to 38%           -> Book
+     over 38%             -> Klay if he takes 2+ threes a game, otherwise Book
+   A player who hasn't played yet gets no call. */
+function closeoutFor(info) {
+  if (!info.st || !info.gp) return '';
+  const pct = info.fg3a ? (100 * info.fg3m / info.fg3a) : 0;
+  if (pct < 20) return 'Shaq';
+  if (pct < 33) return 'Rose';
+  if (pct <= 38) return 'Book';
+  return info.fg3aPg >= 2 ? 'Klay' : 'Book';
+}
+
+const f1 = n => (Math.round(n * 10) / 10).toFixed(1);
+const ordinal = n => n + (n % 10 === 1 && n % 100 !== 11 ? 'st' : n % 10 === 2 && n % 100 !== 12 ? 'nd' : n % 10 === 3 && n % 100 !== 13 ? 'rd' : 'th');
+
+/* Scouting note written automatically from the player's stats: his role
+   (starts), then his main strengths, then anything we can attack.
+   Ends with AUTO_NOTE_TAG so the site knows it may refresh it; a note a coach
+   writes in Edit Cards is never replaced. */
+const AUTO_NOTE_TAG = '(Auto-written from stats)';
+function writeNote(i, ctx) {
+  if (!i.st || !i.gp) {
+    return `No 2026-27 stats yet: hasn't played a game with stats this season. ${AUTO_NOTE_TAG}`;
+  }
+  const out = [];
+  const games = `${i.gp} game${i.gp === 1 ? '' : 's'}`;
+  if (ctx.startersBasis === 'starts' && i.gs !== null) {
+    const of = i.gsGames ? ` of ${i.gsGames} game${i.gsGames === 1 ? '' : 's'}` : '';
+    if (i.gsGames && i.gs * 2 > i.gsGames) out.push(`Starter: started ${i.gs}${of}, ${f1(i.mpg)} MPG.`);
+    else if (i.gs > 0) out.push(`Rotation player: started ${i.gs}${of}, ${f1(i.mpg)} MPG.`);
+    else out.push(`Comes off the bench: ${f1(i.mpg)} MPG over ${games}.`);
+  } else {
+    out.push(`${f1(i.mpg)} MPG over ${games}.`);
+  }
+
+  const strengths = [];
+  const ptsRank = ctx.rankOf(i, 'ppg'), rebRank = ctx.rankOf(i, 'rpg'), astRank = ctx.rankOf(i, 'apg');
+  if (i.ppg >= 15) strengths.push(`primary scorer at ${f1(i.ppg)} PPG${ptsRank === 1 ? ' (team leader)' : ''}`);
+  else if (i.ppg >= 10) strengths.push(`${ptsRank === 1 ? "the team's leading scorer" : `reliable scorer (${ordinal(ptsRank)} on the team)`} at ${f1(i.ppg)} PPG`);
+  else if (i.ppg >= 6 && ptsRank <= 3) strengths.push(`${ordinal(ptsRank)}-leading scorer (${f1(i.ppg)} PPG)`);
+  if (ctx.co === 'Klay') strengths.push(`knockdown 3PT shooter (${f1(i.fg3Pct)}% on ${f1(i.fg3aPg)} attempts a game)`);
+  else if (ctx.co === 'Book' && i.fg3aPg >= 1) strengths.push(`capable 3PT shooter (${f1(i.fg3Pct)}% on ${f1(i.fg3aPg)} a game)`);
+  if (i.fgPct >= 50 && i.fgaPg >= 4) strengths.push(`efficient finisher (${f1(i.fgPct)}% FG)`);
+  if (i.rpg >= 8) strengths.push(`dominant rebounder (${f1(i.rpg)} RPG${rebRank === 1 ? ', team best' : ''})`);
+  else if (i.rpg >= 6) strengths.push(`strong rebounder (${f1(i.rpg)} RPG)`);
+  if (i.orebPg >= 2) strengths.push(`crashes the offensive glass (${f1(i.orebPg)} OREB a game)`);
+  if (i.apg >= 4) strengths.push(`primary playmaker (${f1(i.apg)} APG${astRank === 1 ? ', team best' : ''})`);
+  else if (i.apg >= 2.5) strengths.push(`secondary playmaker (${f1(i.apg)} APG)`);
+  if (i.ftaPg >= 4) strengths.push(`gets to the line (${f1(i.ftaPg)} FTA a game, ${f1(i.ftPct)}%)`);
+  if (i.stlpg >= 1.5) strengths.push(`active hands (${f1(i.stlpg)} SPG)`);
+  if (i.blkpg >= 1) strengths.push(`rim protector (${f1(i.blkpg)} BPG)`);
+
+  if (strengths.length) {
+    const top = strengths.slice(0, 3);
+    const list = top.length > 1 ? top.slice(0, -1).join(', ') + ' and ' + top[top.length - 1] : top[0];
+    out.push(`Strengths: ${list}.`);
+  } else if (i.mpg < 10) {
+    out.push('Limited role so far.');
+  } else {
+    out.push(`Role player: ${f1(i.ppg)} PPG, ${f1(i.rpg)} RPG, ${f1(i.apg)} APG.`);
+  }
+
+  const attack = [];
+  if (i.topg >= 3) attack.push(`turnover-prone (${f1(i.topg)} TO a game): pressure him`);
+  if (i.ftaPg >= 2 && i.ftPct < 60) attack.push(`poor free-throw shooter (${f1(i.ftPct)}%)`);
+  if (ctx.co === 'Shaq' && i.fg3aPg >= 1) attack.push(`not a threat from 3 (${f1(i.fg3Pct)}%)`);
+  if (attack.length) out.push(`Attack: ${attack.join('; ')}.`);
+
+  if (i.gp < 3) out.push(`Small sample (${games}).`);
+  out.push(AUTO_NOTE_TAG);
+  return out.join(' ');
+}
+
 function generateScoutCardsHtml(teamItem) {
   const teamData = usportsData[teamItem.jsonKey] || { roster: [] };
   const roster = teamData.roster || [];
 
-  // Group starters (first 5) and bench/rotational
-  const starters = [];
-  const bench = [];
+  const playerStatsList = teamData.playerStats || [];
+  const findStats = p => playerStatsList.find(s => s.name.toLowerCase() === p.name.toLowerCase() || p.name.toLowerCase().includes(s.name.toLowerCase()) || s.name.toLowerCase().includes(p.name.toLowerCase()));
+  const teamGames = teamData.boxScoreGames || 0;
 
-  roster.forEach((p, idx) => {
-    if (idx < 5) starters.push(p);
-    else bench.push(p);
+  // Per-player numbers used by the card rules, the note and the sorting
+  const infos = roster.map((p, idx) => {
+    const st = findStats(p);
+    const gp = st ? (parseFloat(st.gp) || 0) : 0;
+    const per = v => (gp ? (parseFloat(v || 0) / gp) : 0);
+    const [fg3m, fg3a] = madeAtt(st && st.fg3);
+    const [ftm, fta] = madeAtt(st && st.ft);
+    const [fgm, fga] = madeAtt(st && st.fg);
+    const [oreb] = madeAtt(st && st.orebDreb);
+    return {
+      p, idx, st, gp,
+      gs: st && st.gs !== undefined ? parseInt(st.gs, 10) || 0 : null,
+      gsGames: st && st.gsGames !== undefined ? parseInt(st.gsGames, 10) || 0 : 0,
+      mpg: st ? parseFloat(st.mpg) || 0 : 0,
+      ppg: st ? parseFloat(st.ppg) || 0 : 0,
+      rpg: st ? parseFloat(st.rpg) || 0 : 0,
+      fgPct: st ? parseFloat(st.fgPct) || 0 : 0,
+      fg3Pct: st ? parseFloat(st.fg3Pct) || 0 : 0,
+      ftPct: st ? parseFloat(st.ftPct) || 0 : 0,
+      fg3aPg: per(fg3a), fg3m, fg3a, ftaPg: per(fta), fta, fgaPg: per(fga), fga, fgm,
+      orebPg: per(oreb), apg: per(st && st.a), topg: per(st && st.to), stlpg: per(st && st.stl), blkpg: per(st && st.blk)
+    };
   });
+
+  // Starters = players who started most of the team's games (from box scores).
+  // Without box scores yet: the 5 players with the most minutes per game.
+  const played = infos.filter(i => i.gp > 0);
+  let isStarterInfo;
+  let startersBasis;
+  // "Started most games" = started more than half of the games he played in
+  // where the box score marks the starters (not every box score does).
+  if (teamGames > 0 && infos.some(i => i.gs)) {
+    isStarterInfo = i => i.gs !== null && i.gsGames > 0 && i.gs * 2 > i.gsGames;
+    startersBasis = 'starts';
+  } else if (played.length) {
+    const top5 = new Set(played.slice().sort((a, b) => b.mpg - a.mpg).slice(0, 5));
+    isStarterInfo = i => top5.has(i);
+    startersBasis = 'minutes';
+  } else {
+    isStarterInfo = i => i.idx < 5;
+    startersBasis = 'roster';
+  }
+  const byRole = (a, b) => ((b.gs || 0) - (a.gs || 0)) || (b.mpg - a.mpg) || (a.idx - b.idx);
+  const starters = infos.filter(isStarterInfo).sort(byRole).map(i => i.p);
+  const bench = infos.filter(i => !isStarterInfo(i)).sort((a, b) => (b.mpg - a.mpg) || (a.idx - b.idx)).map(i => i.p);
+  const infoOf = p => infos.find(i => i.p === p);
+
+  // Team ranks (among players who have played) for the note
+  const rankOf = (info, key) => 1 + played.filter(o => o[key] > info[key]).length;
 
   function renderCard(p, isStarter) {
     const override = (teamItem.jsonKey === 'calgary-dinos' && CALGARY_OVERRIDES[p.name]) ? CALGARY_OVERRIDES[p.name] : null;
+    const info = infoOf(p);
+    const statMatch = info.st;
 
     // Number, position and height come from the live roster; the hand-entered
-    // Calgary overrides are only a fallback for those (their weight, tactical
-    // tags and notes are still used).
+    // Calgary overrides are only a fallback for those.
     const liveNum = (p.number !== undefined && p.number !== '' && p.number !== null) ? p.number : '';
     const num = liveNum || (override && override.num) || 'N/A';
     const name = p.name;
     const pos = p.pos || p.position || (override && override.pos) || 'G';
     // Show N/A when we don't actually know a player's height or weight
-    // (these used to fall back to a made-up 6'3" / 190 lbs).
     const ht = String(p.ht || p.height || '').trim() || (override && override.ht) || 'N/A';
     const wt = override ? override.wt : (p.wt ? p.wt + ' lbs' : 'N/A');
-    
-    const hand = override ? override.hand : (pos.includes('G') ? 'R' : 'R');
-    const co = override ? override.co : (pos.includes('G') ? 'Trae' : 'Brown');
-    const dtran = override ? override.dtran : 'Locate';
-    const pnr = override ? override.pnr : 'Over/Switch';
-    const pinDho = override ? override.pinDho : 'Over/Switch';
-    const rebound = override ? override.rebound : (pos.includes('F') || pos.includes('C') ? 'MUST BOX OUT' : 'Box out');
 
-    const notes = override ? override.notes : `${pos} (${ht !== 'N/A' ? ht + ', ' : ''}${p.hometown || 'Canada'}). Key member of Canada West rotation. [Scouting note editable via Edit Cards]`;
+    // ---- Staff rules (HC David Kapinga, Oct 2026) ----
+    const hand = (override && override.hand) || 'R';
+    const co = closeoutFor(info);
+    const shooter = co === 'Book' || co === 'Klay';
+    const dtran = shooter ? 'Locate' : '';
+    const pnr = shooter ? 'Over/Switch' : '';
+    const pinDho = shooter ? 'Over/Switch' : '';
+    const rebound = info.rpg >= 6 ? 'MUST BOX OUT' : 'Box out';
 
-    const playerStatsList = teamData.playerStats || [];
-    const statMatch = playerStatsList.find(s => s.name.toLowerCase() === p.name.toLowerCase() || p.name.toLowerCase().includes(s.name.toLowerCase()) || s.name.toLowerCase().includes(p.name.toLowerCase()));
+    let notes = writeNote(info, { teamGames, startersBasis, isStarter, rankOf, co });
+    if (override && override.notes) notes += '<br><br><strong>Coach note:</strong> ' + override.notes;
 
     let statsUSportsRow;
     let statsLast5Row;
+    const dash10 = ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'];
 
     // Live usportshoops stats win over the hand-entered override numbers
-    // (those were copied from a screenshot and never update). The override's
-    // numbers are only a fallback when the player has no live stats yet.
+    // (those were copied from a screenshot and never update).
     if (!statMatch && override && override.statsUSports) {
       statsUSportsRow = override.statsUSports;
-      statsLast5Row = override.statsLast5 || override.statsLast || ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'];
+      statsLast5Row = override.statsLast5 || override.statsLast || dash10;
     } else if (statMatch) {
       const gp = parseFloat(statMatch.gp || 1) || 1;
       const ppg = statMatch.ppg ? parseFloat(statMatch.ppg).toFixed(1) : '0.0';
@@ -120,10 +249,14 @@ function generateScoutCardsHtml(teamItem) {
       const blkpg = (parseFloat(statMatch.blk || 0) / gp).toFixed(1);
 
       statsUSportsRow = [ppg, mpg, fgPct, fg3Pct, ftPct, rpg, apg, topg, stlpg, blkpg];
-      statsLast5Row = [ppg, mpg, fgPct, fg3Pct, ftPct, rpg, apg, topg, stlpg, blkpg];
+      // Real last-5-games averages from box scores (falls back to the season line)
+      const l5 = statMatch.last5;
+      statsLast5Row = l5
+        ? [l5.ppg, l5.mpg, l5.fgPct + '%', l5.fg3Pct + '%', l5.ftPct + '%', l5.rpg, l5.apg, l5.topg, l5.stlpg, l5.blkpg]
+        : statsUSportsRow.slice();
     } else {
-      statsUSportsRow = ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'];
-      statsLast5Row = ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'];
+      statsUSportsRow = dash10;
+      statsLast5Row = dash10;
     }
 
     // "No photo" placeholder: a grey tile with the jersey number. Fully
@@ -227,6 +360,7 @@ function generateScoutCardsHtml(teamItem) {
       margin-left: auto;
       margin-right: auto;
     }
+    .section-basis { max-width: 1300px; margin: -6px auto 12px; font-size: 12px; color: #666; }
     .grid {
       max-width: 1300px;
       margin: 0 auto;
@@ -349,8 +483,9 @@ function generateScoutCardsHtml(teamItem) {
   <p>MacEwan Griffins Men's Basketball &middot; 2026-27 Canada West &middot; Tactical Prep Packet</p>
 </header>
 
-<div id="scout-cards-wrapper" data-template-version="2026-10-08-v4">
+<div id="scout-cards-wrapper" data-template-version="2026-10-08-v4" data-roster-order="${esc(roster.map(r => r.name).join('|'))}" data-starters="${esc(starters.map(r => r.name).join('|'))}" data-auto-layout="${esc('S:' + starters.map(r => r.name.toLowerCase()).join('|') + '||B:' + bench.map(r => r.name.toLowerCase()).join('|'))}">
 <div class="section-banner">Starters</div>
+<p class="section-basis">${startersBasis === 'starts' ? `Players who started most of their games (from ${teamData.startersMarkedGames || teamGames} box score${(teamData.startersMarkedGames || teamGames) === 1 ? '' : 's'} on usportshoops.ca that list starters).` : startersBasis === 'minutes' ? 'No box scores yet: the 5 players with the most minutes per game.' : 'No stats yet: listed in roster order.'}</p>
 <div class="grid">
   ${starters.map(p => renderCard(p, true)).join('\n')}
 </div>

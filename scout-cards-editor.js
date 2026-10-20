@@ -79,12 +79,92 @@
       const rows = card.querySelectorAll('.stats-table tbody tr');
       if (name && rows.length >= 2) {
         const img = card.querySelector('.photo-tile img');
+        const tags = card.querySelector('.tactical-tags');
+        const notes = card.querySelector('.scout-notes');
         map[name] = { last5: statCells(rows[0]), season: statCells(rows[1]), header: headerParts(card),
-          photo: img ? img.getAttribute('src') : '', fallback: img ? img.getAttribute('data-fallback') : '' };
+          photo: img ? img.getAttribute('src') : '', fallback: img ? img.getAttribute('data-fallback') : '',
+          tagsHtml: tags ? tags.innerHTML : '', notesHtml: notes ? notes.innerHTML : '' };
       }
     });
     return map;
   }
+
+  // ---- Automatic tags, notes and Starters/Bench split -----------------------
+  // The build fills in each card's tags (C/O, DTRAN, PNR, PIN/DHO, REBOUND) and
+  // a stats-based note, and puts players who started most games under
+  // "Starters". A saved version of the cards keeps anything a coach wrote:
+  // only fields still holding automatic text are updated. We remember the
+  // automatic text in a data-auto attribute, so a later edit by a coach (any
+  // change to the text) is recognised and kept.
+  const squash = s => String(s || '').replace(/\s+/g, ' ').trim();
+  const OLD_DEFAULT_TAGS = /^Hand: [RL], C\/O: (Trae|Brown), DTRAN: Locate PNR: Over\/Switch, PIN\/DHO: Over\/Switch REBOUND: (Box out|MUST BOX OUT)$/;
+  const isAutoNote = t => /\[Scouting note editable via Edit Cards\]/.test(t);
+
+  function applyAutoField(el, freshHtml, looksLikeOldDefault) {
+    if (!el || !freshHtml) return;
+    const text = squash(el.textContent);
+    const markedAuto = el.hasAttribute('data-auto') && el.getAttribute('data-auto') === text;
+    if (markedAuto || looksLikeOldDefault(text)) {
+      el.innerHTML = freshHtml;
+      el.setAttribute('data-auto', squash(el.textContent));
+    } else {
+      el.removeAttribute('data-auto');
+    }
+  }
+
+  function applyFreshTagsAndNotes(card, fresh) {
+    applyAutoField(card.querySelector('.tactical-tags'), fresh.tagsHtml, t => OLD_DEFAULT_TAGS.test(t));
+    applyAutoField(card.querySelector('.scout-notes'), fresh.notesHtml, isAutoNote);
+  }
+
+  // Mark the freshly built (unsaved) cards' fields as automatic, so a save
+  // made without touching them still counts as automatic next time.
+  function markFreshAuto() {
+    document.querySelectorAll('.card .tactical-tags, .card .scout-notes').forEach(el => {
+      el.setAttribute('data-auto', squash(el.textContent));
+    });
+  }
+
+  function layoutOf(container) {
+    const s = [], b = [];
+    container.querySelectorAll('.card').forEach(card => {
+      (card.classList.contains('starter') ? s : b).push(cardPlayerName(card));
+    });
+    return { s, b, key: 'S:' + s.join('|') + '||B:' + b.join('|') };
+  }
+
+  // The saved split is automatic if it is exactly what the build produced when
+  // it was saved, or the old rule (first 5 on the roster are starters).
+  function savedLayoutIsAuto(savedHtml, container) {
+    const lay = layoutOf(container);
+    const autoKey = (savedHtml.match(/data-auto-layout="([^"]*)"/) || [])[1];
+    const tmp = document.createElement('textarea');
+    if (autoKey) { tmp.innerHTML = autoKey; if (tmp.value === lay.key) return true; }
+    const rosterAttr = (savedHtml.match(/data-roster-order="([^"]*)"/) || [])[1] ||
+      (getCardsContainer().getAttribute('data-roster-order') || '');
+    tmp.innerHTML = rosterAttr;
+    const roster = tmp.value.split('|').map(n => n.trim().toLowerCase()).filter(Boolean);
+    if (!roster.length) return false;
+    const order = lay.s.concat(lay.b);
+    return lay.s.length === Math.min(5, roster.length) && order.join('|') === roster.join('|');
+  }
+
+  // Rebuild the fresh Starters/Bench layout, dropping each saved card into the
+  // slot of the same player (players new to the roster get their fresh card).
+  function resection(container, freshSkeleton) {
+    const saved = {};
+    container.querySelectorAll('.card').forEach(card => { saved[cardPlayerName(card)] = card; });
+    container.innerHTML = freshSkeleton;
+    container.querySelectorAll('.card').forEach(slot => {
+      const card = saved[cardPlayerName(slot)];
+      if (!card) return;
+      const isStarter = slot.classList.contains('starter');
+      card.classList.toggle('starter', isStarter);
+      card.classList.toggle('key', !isStarter);
+      slot.replaceWith(card);
+    });
+  }
+  let freshSkeleton = '';
 
   // A saved card's "no photo" placeholder may be the old broken markup. Use
   // the freshly built photo/placeholder unless a real photo was saved.
@@ -117,6 +197,7 @@
       if (!fresh) return;
       applyFreshHeader(card, fresh);
       applyFreshPhoto(card, fresh);
+      applyFreshTagsAndNotes(card, fresh);
       if (fresh.season.every(v => v === '-' || v === '')) return;
       const rows = card.querySelectorAll('.stats-table tbody tr');
       if (rows.length < 2) return;
@@ -132,6 +213,8 @@
   // Initialize on DOM loaded
   window.addEventListener('DOMContentLoaded', () => {
     freshStats = captureFreshStats();
+    markFreshAuto();
+    freshSkeleton = getCardsContainer().innerHTML;
     injectStyles();
 
     // Check if edited version exists in local storage
@@ -521,6 +604,7 @@
       } else {
         container.innerHTML = htmlContent;
       }
+      if (freshSkeleton && savedLayoutIsAuto(htmlContent, container)) resection(container, freshSkeleton);
       container.querySelectorAll('.card').forEach(card => {
         card.style.position = 'relative';
       });

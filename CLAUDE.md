@@ -153,7 +153,8 @@ Graded quizzes for players. Each quiz is built in the browser from random questi
   (Blobs store `quiz-bank`; an edit of a starter question is saved under the same id and wins, a
   deleted starter is saved as `{ id, deleted: true }`). Every question has tags (`offence`,
   `pnr`, `transition`…); a team slug tag (e.g. `calgary-dinos`) puts it in that team's scouting
-  quiz. "Concepts & topics" quizzes pick by tag from the bank plus automatic Concepts questions.
+  quiz. "Concepts & topics" quizzes pick by tag from the bank plus automatic Concepts questions
+  (`offence`/`defence` narrow the pick, other tags add together: defence + pnr = PNR defence).
   Staff can edit or hide any question while previewing a quiz; editing an automatic question
   saves a copy to the bank and hides the automatic one (hidden keys: `h_<key>` in `quiz-bank`).
 - Shared quiz code (loading cards/reports/concepts/bank, building questions) is in `quiz-data.js`,

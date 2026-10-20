@@ -379,7 +379,7 @@
       box.innerHTML = `<div class="chips">
         <button type="button" class="chip-btn ${!sel.length ? 'on' : ''}" data-t="">Everything<small>${pool.length}</small></button>
         ${tags.map(t => `<button type="button" class="chip-btn ${sel.indexOf(t) >= 0 ? 'on' : ''}" data-t="${esc(t)}">${esc(nice(t))}<small>${counts[t]}</small></button>`).join('')}
-      </div><p class="note">${sel.length ? `${n} questions match (any of the picked tags).` : 'All Concepts questions.'}</p>`;
+      </div><p class="note">${sel.length ? `${n} questions match. Offence / Defence narrow it down; other topics add together.` : 'All Concepts questions.'}</p>`;
       box.querySelectorAll('.chip-btn').forEach(b => b.onclick = () => {
         const t = b.dataset.t;
         sel = !t ? [] : sel.indexOf(t) >= 0 ? sel.filter(x => x !== t) : sel.concat(t);

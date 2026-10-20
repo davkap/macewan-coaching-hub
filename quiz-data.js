@@ -445,7 +445,15 @@
     return qs;
   }
 
-  const hasAnyTag = (q, tags) => !tags.length || (q.tags || []).some(t => tags.indexOf(t) >= 0);
+  // Offence / Defence narrow the pick; other tags add to it. So "defence + pnr"
+  // = PNR defence questions, and "pnr + dho" = questions on either.
+  const SIDES = ['offence', 'defence'];
+  const hasAnyTag = (q, tags) => {
+    const qt = q.tags || [];
+    const sides = tags.filter(t => SIDES.indexOf(t) >= 0);
+    const topics = tags.filter(t => SIDES.indexOf(t) < 0);
+    return (!sides.length || sides.some(t => qt.indexOf(t) >= 0)) && (!topics.length || topics.some(t => qt.indexOf(t) >= 0));
+  };
   const teamTagged = q => (q.tags || []).some(t => teamBySlug(t));
 
   async function buildScoutQuiz(slug, n) {

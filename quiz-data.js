@@ -280,7 +280,7 @@
   // The stats-based "role" sentence and auto tag are dropped from a note.
   function noteStrengths(c) {
     let note = c.notes.replace(/\(Auto-written from stats\)/g, '').replace(/^Coach note:\s*/i, '');
-    note = note.replace(/^(Starter|Rotation player|Comes off the bench|Bench)[^.]*\.\s*/i, '');
+    note = note.replace(/^(Starter|Rotation player|Comes off the bench|Bench)\b.*?MPG(?: over \d+ games?)?\.\s*/i, '');
     note = note.replace(/^[\d.]+ MPG over \d+ games?\.\s*/i, '');
     return squash(note);
   }

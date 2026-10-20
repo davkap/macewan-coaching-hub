@@ -324,7 +324,9 @@
           }
         }
       })
-      .catch(err => console.log('Cloud sync fetch note:', err));
+      .catch(err => console.log('Cloud sync fetch note:', err))
+      // Lets other pages (Griffin Quizzes) know the cards on screen are final.
+      .finally(() => { window.__scoutCardsReady = true; });
 
     // Create Toast Container
     const toast = document.createElement('div');

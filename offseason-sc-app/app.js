@@ -111,18 +111,31 @@
     return name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   }
 
+  // Who is using the app comes from the Coaching Hub login (auth-lock.js):
+  // a player who logged into the Hub is already logged in here, and coaches /
+  // admin see the general program. There is no separate S&C login.
+  function hubIsPlayer() {
+    return sessionStorage.getItem('griffin_hub_role') === 'player';
+  }
+
   function getActivePlayerSlug() {
+    if (!hubIsPlayer()) return null;
     return localStorage.getItem('hoops-offseason:current-player');
   }
 
   function getActiveProfile() {
     const slug = getActivePlayerSlug();
     if (!slug) return null;
-    try {
-      return JSON.parse(localStorage.getItem(`hoops-offseason:profile:${slug}`));
-    } catch {
-      return null;
+    let profile = null;
+    try { profile = JSON.parse(localStorage.getItem(`hoops-offseason:profile:${slug}`)); } catch (e) {}
+    if (!profile) {
+      const name = sessionStorage.getItem('hoops-hub:tracking-player-name') ||
+        getAllPlayers().find(n => toSlug(n) === slug) || slug;
+      profile = { name, goal: 'hypertrophy', injuries: { knee: false, shoulder: false, back: false, ankle: false }, cardioPref: 'court' };
+      localStorage.setItem(`hoops-offseason:profile:${slug}`, JSON.stringify(profile));
     }
+    profile.injuries = Object.assign({ knee: false, shoulder: false, back: false, ankle: false }, profile.injuries || {});
+    return profile;
   }
 
   function saveProfile(slug, profile) {
@@ -130,7 +143,9 @@
     
     // Server Sync
     const apiURL = typeof window.TRACKING_API_URL !== 'undefined' ? window.TRACKING_API_URL : '';
-    if (apiURL) {
+    // Only sync a profile that came from the server login (it carries the
+    // player's PIN), so a sync can never blank out a PIN on the server.
+    if (apiURL && profile.pin) {
       fetch(apiURL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
@@ -156,7 +171,7 @@
     if (profile) {
       profileTabBtn.textContent = `👤 ${profile.name.split(' ')[0]}`;
     } else {
-      profileTabBtn.textContent = `👤 Login`;
+      profileTabBtn.textContent = `👤 Profile`;
     }
   }
 
@@ -377,25 +392,10 @@
     const today = PROGRAM.week[idx];
     const profile = getActiveProfile();
 
-    // Prompt to log in on mobile/desktop if not logged in
     if (!profile) {
-      const loginPrompt = el(`<div class="card" style="border-color:var(--accent2); background:rgba(209,173,125,0.06); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px; padding:16px 20px;">
-        <div style="flex:1; min-width:200px;">
-          <h3 style="color:var(--accent2); margin:0; font-size:16px; display:flex; align-items:center; gap:6px;">🔒 Personalized Program</h3>
-          <p style="margin:4px 0 0; font-size:13px; color:var(--mute); line-height:1.4;">Log in to load your custom S&C plan and log goals/injuries.</p>
-        </div>
-        <button id="promptLoginBtn" class="btn-sc" style="flex:0 0 auto; padding:8px 16px; font-size:13px; width:100%; max-width:120px;">Log In</button>
-      </div>`);
-      view.appendChild(loginPrompt);
-      
-      loginPrompt.querySelector('#promptLoginBtn').addEventListener('click', () => {
-        // Switch tab to profile
-        [...tabs.querySelectorAll('button')].forEach(x => x.classList.remove('active'));
-        const profileBtn = document.getElementById('profileTabBtn');
-        profileBtn.classList.add('active');
-        viewProfile();
-        window.scrollTo(0,0);
-      });
+      view.appendChild(el(`<div class="card" style="border-color:var(--accent2); background:rgba(209,173,125,0.06); margin-bottom:12px; padding:14px 18px;">
+        <p style="margin:0; font-size:13px; color:var(--mute); line-height:1.4;">You're viewing the general program as staff. Players see their own version, adjusted for the goal and injuries on their Profile.</p>
+      </div>`));
     }
 
     const titleForBanner = today.title;
@@ -587,7 +587,7 @@
     view.appendChild(el(`<div class="card">
       <h3>How To Use</h3>
       <ol class="cues" style="padding-left:18px;line-height:1.7">
-        <li>Go to the <b>Login</b> tab to select your name and configure injuries, goals, or cardio preferences.</li>
+        <li>Open the <b>Profile</b> tab to pick your goal and mark any injuries. You're logged in already from the Coaching Hub.</li>
         <li>Open the <b>Today</b> tab — it shows the workout for the current day, customized for your limitations.</li>
         <li>Tap any exercise to see a demo video and form cues.</li>
         <li>Hit the <b>Mobility</b> tab every single day — even rest days.</li>
@@ -609,283 +609,13 @@
   function viewProfile() {
     view.innerHTML = '';
     const profile = getActiveProfile();
-
-    if (!profile) {
-      renderLoginPanel();
-    } else {
+    if (profile) {
       renderProfilePanel(profile);
-    }
-  }
-
-  function renderLoginPanel() {
-    const card = el(`
-      <div class="card">
-        <h3>👤 Player Login</h3>
-        <p class="lead">Select your name to load your S&C profile. Default PIN is 1234.</p>
-        
-        <form id="loginForm">
-          <div class="form-group">
-            <label for="playerSelect">Player Name</label>
-            <select id="playerSelect" class="form-control">
-              <option value="">-- Choose Roster Player --</option>
-              ${getAllPlayers().map(name => `<option value="${toSlug(name)}">${name}</option>`).join('')}
-            </select>
-          </div>
-          
-          <div class="form-group">
-            <label for="playerPin">PIN Code</label>
-            <input type="password" id="playerPin" class="form-control" placeholder="••••" maxlength="6" pattern="[0-9]*" inputmode="numeric">
-          </div>
-          
-          <button type="submit" class="btn-sc btn-block">Log In</button>
-        </form>
-        
-        <div style="margin-top: 20px; border-top: 1px dashed var(--line); padding-top: 14px; text-align: center;">
-          <a href="#" id="showRegisterBtn" style="font-size: 13px; font-weight: 600; text-decoration: underline; color: var(--accent);">New player? Add name to roster ➔</a>
-        </div>
-      </div>
-    `);
-
-    view.appendChild(card);
-
-    card.querySelector('#showRegisterBtn').addEventListener('click', (e) => {
-      e.preventDefault();
-      view.innerHTML = '';
-      renderRegisterPanel();
-    });
-
-    card.querySelector('#loginForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const slug = card.querySelector('#playerSelect').value;
-      const pin = card.querySelector('#playerPin').value;
-
-      if (!slug) {
-        alert("Please select your player profile.");
-        return;
-      }
-      if (!pin) {
-        alert("Please enter your PIN.");
-        return;
-      }
-
-      const submitBtn = card.querySelector('button[type="submit"]');
-      const origText = submitBtn.innerText;
-      submitBtn.innerText = "Verifying...";
-      submitBtn.disabled = true;
-
-      const apiURL = typeof window.TRACKING_API_URL !== 'undefined' ? window.TRACKING_API_URL : '';
-      if (apiURL) {
-        fetch(apiURL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify({
-            action: 'verifyPlayerPin',
-            slug: slug,
-            pin: pin
-          })
-        })
-        .then(res => res.json())
-        .then(resData => {
-          submitBtn.innerText = origText;
-          submitBtn.disabled = false;
-          if (resData.status === "success") {
-            const p = resData.profile;
-            const playerProfile = {
-              name: p.name,
-              pin: p.pin,
-              goal: p.goal || 'hypertrophy',
-              injuries: p.injuries || { knee: false, shoulder: false, back: false, ankle: false },
-              cardioPref: p.cardioPref || 'court'
-            };
-            localStorage.setItem(`hoops-offseason:profile:${slug}`, JSON.stringify(playerProfile));
-            localStorage.setItem('hoops-offseason:current-player', slug);
-            updateProfileBtnLabel();
-            viewProfile();
-            startTrackingSession(playerProfile.name);
-          } else {
-            alert(resData.message || "Incorrect PIN. Please try again.");
-          }
-        })
-        .catch(err => {
-          console.error("Server-side verification failed, falling back to local:", err);
-          submitBtn.innerText = origText;
-          submitBtn.disabled = false;
-          executeLocalLogin(slug, pin);
-        });
-      } else {
-        submitBtn.innerText = origText;
-        submitBtn.disabled = false;
-        executeLocalLogin(slug, pin);
-      }
-    });
-
-    function executeLocalLogin(slug, pin) {
-      const localKey = `hoops-offseason:profile:${slug}`;
-      let playerProfile = null;
-      try {
-        playerProfile = JSON.parse(localStorage.getItem(localKey));
-      } catch (err) {}
-
-      if (!playerProfile) {
-        const playerName = getAllPlayers().find(n => toSlug(n) === slug);
-        if (pin === "1234") {
-          playerProfile = {
-            name: playerName,
-            pin: "1234",
-            goal: "hypertrophy",
-            injuries: { knee: false, shoulder: false, back: false, ankle: false },
-            cardioPref: "court"
-          };
-          localStorage.setItem(localKey, JSON.stringify(playerProfile));
-        } else {
-          alert("Incorrect PIN. The default PIN for new profiles is 1234.");
-          return;
-        }
-      } else {
-        if (playerProfile.pin !== pin) {
-          alert("Incorrect PIN. Please try again.");
-          return;
-        }
-      }
-
-      localStorage.setItem('hoops-offseason:current-player', slug);
-      updateProfileBtnLabel();
-      viewProfile();
-      startTrackingSession(playerProfile.name);
-    }
-  }
-
-  function renderRegisterPanel() {
-    const card = el(`
-      <div class="card">
-        <h3>👤 Add Player to Roster</h3>
-        <p class="lead">Add your name to the S&C roster and set your login PIN.</p>
-        
-        <form id="registerForm">
-          <div class="form-group">
-            <label for="regName">Full Name</label>
-            <input type="text" id="regName" class="form-control" placeholder="e.g. John Doe" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="regPin">Choose PIN Code</label>
-            <input type="password" id="regPin" class="form-control" placeholder="••••" maxlength="6" pattern="[0-9]*" inputmode="numeric" required>
-          </div>
-          
-          <button type="submit" class="btn-sc btn-block">Add and Log In</button>
-        </form>
-        
-        <div style="margin-top: 20px; border-top: 1px dashed var(--line); padding-top: 14px; text-align: center;">
-          <a href="#" id="showLoginBtn" style="font-size: 13px; font-weight: 600; text-decoration: underline; color: var(--accent);">← Back to Player Login</a>
-        </div>
-      </div>
-    `);
-
-    view.appendChild(card);
-
-    card.querySelector('#showLoginBtn').addEventListener('click', (e) => {
-      e.preventDefault();
-      viewProfile();
-    });
-
-    card.querySelector('#registerForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = card.querySelector('#regName').value.trim();
-      const pin = card.querySelector('#regPin').value.trim();
-
-      if (!name) {
-        alert("Please enter your name.");
-        return;
-      }
-      if (!pin) {
-        alert("Please enter a PIN.");
-        return;
-      }
-
-      const slug = toSlug(name);
-      
-      const submitBtn = card.querySelector('button[type="submit"]');
-      const origText = submitBtn.innerText;
-      submitBtn.innerText = "Registering...";
-      submitBtn.disabled = true;
-
-      const playerProfile = {
-        name: name,
-        pin: pin,
-        goal: "hypertrophy",
-        injuries: { knee: false, shoulder: false, back: false, ankle: false },
-        cardioPref: "court"
-      };
-
-      const apiURL = typeof window.TRACKING_API_URL !== 'undefined' ? window.TRACKING_API_URL : '';
-      if (apiURL) {
-        fetch(apiURL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify({
-            action: 'saveRosterPlayer',
-            player: {
-              number: "0",
-              name: name,
-              position: "",
-              height: "",
-              year: "",
-              hometown: "",
-              slug: slug,
-              pin: pin,
-              goal: "hypertrophy",
-              injuries: { knee: false, shoulder: false, back: false, ankle: false },
-              cardioPref: "court"
-            }
-          })
-        })
-        .then(res => res.json())
-        .then(resData => {
-          submitBtn.innerText = origText;
-          submitBtn.disabled = false;
-          if (resData.status === "success") {
-            localStorage.setItem(`hoops-offseason:profile:${slug}`, JSON.stringify(playerProfile));
-            localStorage.setItem('hoops-offseason:current-player', slug);
-            updateProfileBtnLabel();
-            viewProfile();
-            startTrackingSession(playerProfile.name);
-          } else {
-            alert("Error registering player on server: " + resData.message);
-          }
-        })
-        .catch(err => {
-          console.error("Server registration failed, falling back to local:", err);
-          submitBtn.innerText = origText;
-          submitBtn.disabled = false;
-          executeLocalRegister(slug, name, pin, playerProfile);
-        });
-      } else {
-        submitBtn.innerText = origText;
-        submitBtn.disabled = false;
-        executeLocalRegister(slug, name, pin, playerProfile);
-      }
-    });
-
-    function executeLocalRegister(slug, name, pin, playerProfile) {
-      // Save name to custom list
-      let custom = [];
-      try {
-        custom = JSON.parse(localStorage.getItem('hoops-offseason:custom-players') || '[]');
-      } catch (err) {}
-      
-      if (!custom.includes(name) && !ROSTER_PLAYERS.includes(name)) {
-        custom.push(name);
-        localStorage.setItem('hoops-offseason:custom-players', JSON.stringify(custom));
-      }
-
-      // Save initial profile
-      localStorage.setItem(`hoops-offseason:profile:${slug}`, JSON.stringify(playerProfile));
-
-      // Log in
-      localStorage.setItem('hoops-offseason:current-player', slug);
-      updateProfileBtnLabel();
-      viewProfile();
-      startTrackingSession(playerProfile.name);
+    } else {
+      view.appendChild(el(`<div class="card">
+        <h3>👤 Staff view</h3>
+        <p class="lead">You're logged into the Coaching Hub as staff. Each player sets his own goal and injuries here when he logs into the Hub with his name and PIN.</p>
+      </div>`));
     }
   }
 
@@ -894,7 +624,7 @@
     const card = el(`
       <div class="card">
         <h3>👤 ${profile.name} <span class="tag">Active</span></h3>
-        <p class="lead">Modify your goals, log injuries to adapt exercises, or reset your login PIN.</p>
+        <p class="lead">Pick your training goal and mark any injuries. Your program adjusts automatically.</p>
         
         <form id="profileForm">
           <div class="form-group">
@@ -944,22 +674,8 @@
             </div>
           </div>
           
-          <div class="form-group" style="margin-top: 24px;">
-            <label for="cardioSelect">Cardio Preference</label>
-            <select id="cardioSelect" class="form-control">
-              <option value="court" ${profile.cardioPref === 'court' ? 'selected' : ''}>Court Running (Suicides, 17s)</option>
-              <option value="lowImpact" ${profile.cardioPref === 'lowImpact' ? 'selected' : ''}>Low Impact (Air Bike, Rower)</option>
-            </select>
-          </div>
-          
-          <div class="form-group" style="margin-top: 24px; border-top: 1px dashed var(--line); padding-top: 16px;">
-            <label for="newPin">Change PIN Code</label>
-            <input type="password" id="newPin" class="form-control" placeholder="••••" maxlength="6" value="${profile.pin}">
-          </div>
-          
           <div class="choice-row" style="margin-top: 24px;">
-            <button type="submit" class="btn-sc" style="flex: 2;">Save Profile</button>
-            <button type="button" id="logoutBtn" class="btn-sc btn-sc-secondary" style="flex: 1;">Log Out</button>
+            <button type="submit" class="btn-sc" style="flex: 1;">Save Profile</button>
           </div>
         </form>
       </div>
@@ -994,27 +710,13 @@
       });
     });
 
-    // Logout
-    card.querySelector('#logoutBtn').addEventListener('click', () => {
-      stopTrackingSession(true);
-      localStorage.removeItem('hoops-offseason:current-player');
-      updateProfileBtnLabel();
-      viewProfile();
-    });
-
     // Form submit save
     card.querySelector('#profileForm').addEventListener('submit', (e) => {
       e.preventDefault();
       
-      const pinCode = card.querySelector('#newPin').value.trim();
-      if (!pinCode) {
-        alert("PIN code cannot be empty.");
-        return;
-      }
-
+      // PIN and cardio preference aren't edited here any more; keep what's saved.
       const updatedProfile = {
-        name: profile.name,
-        pin: pinCode,
+        ...profile,
         goal: selectedGoal,
         injuries: {
           knee: card.querySelector('#inj-knee').checked,
@@ -1022,7 +724,6 @@
           back: card.querySelector('#inj-back').checked,
           ankle: card.querySelector('#inj-ankle').checked
         },
-        cardioPref: card.querySelector('#cardioSelect').value
       };
 
       saveProfile(activeSlug, updatedProfile);

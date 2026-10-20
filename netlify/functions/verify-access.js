@@ -8,6 +8,7 @@
 // Changing a password there takes effect after the next deploy.
 
 const crypto = require('crypto');
+const staffToken = require('./lib/staff-token');
 
 const HEADERS = {
   'Content-Type': 'application/json',
@@ -68,5 +69,6 @@ exports.handler = async function (event) {
     });
   }
 
-  return reply(200, { ok: true, role });
+  // A signed staff pass, used to open staff-only data such as quiz grades.
+  return reply(200, { ok: true, role, token: staffToken.issue(role) });
 };

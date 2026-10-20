@@ -129,6 +129,31 @@ If you change either side, keep these names in sync or the Database will count p
 - Before publishing a layout change, check it at phone (390px), tablet (820px) and laptop
   (1366px) widths.
 
+## Griffin Quizzes (`quiz.html`)
+
+Graded quizzes for players. Each quiz is built in the browser from random questions:
+- **Scouting report quiz (per opponent):** the scout cards as players see them, loaded from the real
+  `opponents/<slug>/scout-cards.html` in a hidden frame so coaches' saved edits count (the page sets
+  `window.__scoutCardsReady` when its saved version has loaded). Also the team scouting report
+  (Blobs key `scout_scout_<slug>`, falling back to `scouts/2026-27-scout.md`; `[FILL…]` / TBD parts
+  are skipped) and team stat leaders from `data/usports-rosters-stats.json`.
+- **Griffin Concepts quiz:** terms, mottos and beliefs from `griffin-concepts.html` (plus the saved
+  edit in Blobs key `griffin_basketball_concepts_v1`).
+
+Players' results go to `netlify/functions/quiz-results.js` (its own Blobs store, `quiz-results`).
+Only staff can list or delete them: `verify-access.js` now returns a signed staff pass
+(`netlify/functions/lib/staff-token.js`, 14 days, signed with a key derived from the two passwords),
+kept in `sessionStorage.griffin_staff_token` and sent as the `X-Staff-Token` header. Coaches who
+logged in before this existed are asked for their password once on the Grades tab. The team's
+assigned quiz is saved under Blobs key `quiz_assignment`.
+
+## S&C app login
+
+The S&C app (`offseason-sc-app/`) has no login of its own: a player logged into the Hub is logged
+in there (auth-lock.js sets `hoops-offseason:current-player`), and staff see the general program.
+The Profile tab only sets goal and injuries. The S&C program itself is paused for 2026-27 (new
+S&C coach): don't change it unless David asks.
+
 ## Content saved from the site
 
 Scout notes and other edits made in the site's editors are saved to Netlify Blobs through

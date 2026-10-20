@@ -38,6 +38,7 @@
       sessionStorage.removeItem('griffin_hub_player');
       sessionStorage.removeItem('griffin_hub_role');
       sessionStorage.removeItem('griffin_coaches_authorized');
+      sessionStorage.removeItem('griffin_staff_token');
       sessionStorage.removeItem('hoops-hub:tracking-session-id');
       sessionStorage.removeItem('hoops-hub:tracking-player-name');
       sessionStorage.removeItem('hoops-hub:tracking-accumulated-seconds');
@@ -341,6 +342,9 @@
             sessionStorage.setItem('griffin_hub_role', val);
             sessionStorage.setItem('griffin_hub_coach', 'true');
             sessionStorage.setItem('griffin_coaches_authorized', 'true');
+            // Signed staff pass for staff-only data (quiz grades).
+            if (resData.token) sessionStorage.setItem('griffin_staff_token', resData.token);
+            else sessionStorage.removeItem('griffin_staff_token');
             if (val === 'admin') {
               sessionStorage.setItem('griffin_hub_admin', 'true');
               sessionStorage.setItem('hoops-hub:tracking-player-name', 'Admin');
@@ -399,7 +403,7 @@
               localStorage.setItem('hoops-offseason:current-player', val);
               sessionStorage.setItem('griffin_hub_authorized', 'true');
               sessionStorage.setItem('griffin_hub_role', 'player');
-              sessionStorage.setItem('griffin_hub_player', 'true');
+              sessionStorage.setItem('griffin_hub_player', 'true'); sessionStorage.removeItem('griffin_staff_token');
               sessionStorage.removeItem('griffin_hub_admin');
               sessionStorage.removeItem('griffin_hub_coach');
               sessionStorage.removeItem('griffin_coaches_authorized');
@@ -450,7 +454,7 @@
           localStorage.setItem('hoops-offseason:current-player', val);
           sessionStorage.setItem('griffin_hub_authorized', 'true');
           sessionStorage.setItem('griffin_hub_role', 'player');
-          sessionStorage.setItem('griffin_hub_player', 'true');
+          sessionStorage.setItem('griffin_hub_player', 'true'); sessionStorage.removeItem('griffin_staff_token');
           sessionStorage.removeItem('griffin_hub_admin');
           sessionStorage.removeItem('griffin_hub_coach');
           sessionStorage.removeItem('griffin_coaches_authorized');
@@ -469,7 +473,7 @@
           localStorage.setItem('hoops-offseason:current-player', val);
           sessionStorage.setItem('griffin_hub_authorized', 'true');
           sessionStorage.setItem('griffin_hub_role', 'player');
-          sessionStorage.setItem('griffin_hub_player', 'true');
+          sessionStorage.setItem('griffin_hub_player', 'true'); sessionStorage.removeItem('griffin_staff_token');
           sessionStorage.removeItem('griffin_hub_admin');
           sessionStorage.removeItem('griffin_hub_coach');
           sessionStorage.removeItem('griffin_coaches_authorized');

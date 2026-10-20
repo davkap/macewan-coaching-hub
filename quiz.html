@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="auth-lock.js"></script>
+  <script src="offseason-sc-app/tracking-config.js"></script>
+  <script src="site-tracking.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/site-responsive.css">
+  <title>Griffin Quizzes | MacEwan Griffins Coaching Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --maroon: #98002e;
+      --maroon-light: #b30036;
+      --gold: #d1ad7d;
+      --gold-soft: rgba(209, 173, 125, 0.14);
+      --bg: #0f1219;
+      --card: #181d28;
+      --card-2: #1f2533;
+      --line: rgba(209, 173, 125, 0.22);
+      --text: #f3f4f6;
+      --mute: #9ca3af;
+      --good: #2ecc71;
+      --good-soft: rgba(46, 204, 113, 0.14);
+      --bad: #ff5e5e;
+      --bad-soft: rgba(255, 94, 94, 0.13);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--text); }
+    body { font-family: Inter, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 15px; line-height: 1.45; }
+    a { color: var(--gold); }
+    .wrap { max-width: 860px; margin: 0 auto; padding: 18px 16px 60px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+    .topbar a { text-decoration: none; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; min-height: 44px; }
+    .who { font-size: 13px; color: var(--mute); }
+    h1 { font-family: Montserrat, sans-serif; font-size: 26px; margin: 4px 0 4px; letter-spacing: -0.01em; }
+    h1 span { color: var(--gold); }
+    .sub { color: var(--mute); margin: 0 0 18px; }
+    h2 { font-family: Montserrat, sans-serif; font-size: 17px; margin: 0 0 10px; }
+    h3 { font-size: 15px; margin: 0 0 6px; }
+
+    .tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--line); margin-bottom: 18px; overflow-x: auto; }
+    .tabs button { background: none; border: none; color: var(--mute); font: 600 14px Inter, sans-serif; padding: 12px 14px; min-height: 44px; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
+    .tabs button.active { color: var(--text); border-bottom-color: var(--gold); }
+
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; margin-bottom: 14px; }
+    .assigned { border-color: var(--gold); background: linear-gradient(180deg, rgba(209,173,125,0.10), var(--card)); }
+    .assigned .label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); font-weight: 700; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+    .field { display: flex; flex-direction: column; gap: 6px; flex: 1 1 200px; min-width: 0; }
+    label.lbl { font-size: 12px; font-weight: 600; color: var(--mute); text-transform: uppercase; letter-spacing: 0.06em; }
+    select, input[type=password], input[type=text] { width: 100%; background: var(--card-2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 11px 12px; font: 16px Inter, sans-serif; min-height: 44px; }
+    .seg { display: flex; gap: 6px; flex-wrap: wrap; }
+    .seg button { flex: 1 1 auto; background: var(--card-2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font: 600 14px Inter, sans-serif; min-height: 44px; cursor: pointer; }
+    .seg button.on { background: var(--gold-soft); border-color: var(--gold); color: var(--gold); }
+    .btn { background: var(--maroon); color: #fff; border: none; border-radius: 8px; padding: 12px 18px; font: 700 15px Inter, sans-serif; min-height: 44px; cursor: pointer; }
+    .btn:hover { background: var(--maroon-light); }
+    .btn:disabled { opacity: 0.55; cursor: wait; }
+    .btn.ghost { background: transparent; border: 1px solid var(--line); color: var(--text); }
+    .btn.small { padding: 8px 12px; font-size: 13px; min-height: 36px; }
+    .note { font-size: 13px; color: var(--mute); margin: 8px 0 0; }
+    .err { color: var(--bad); font-size: 14px; margin-top: 10px; }
+
+    /* Quiz */
+    .progress { height: 6px; background: var(--card-2); border-radius: 3px; overflow: hidden; margin: 6px 0 16px; }
+    .progress div { height: 100%; background: var(--gold); width: 0; transition: width 0.25s; }
+    .qmeta { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--mute); }
+    .chip { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold); background: var(--gold-soft); border-radius: 999px; padding: 3px 10px; }
+    .qtext { font-size: 18px; font-weight: 600; margin: 12px 0 6px; overflow-wrap: anywhere; }
+    .quote { font-size: 15px; font-weight: 400; color: #d6d8dd; border-left: 3px solid var(--gold); padding: 6px 0 6px 12px; margin: 10px 0 4px; font-style: italic; overflow-wrap: anywhere; }
+    .opts { display: grid; gap: 10px; margin-top: 14px; }
+    .opt { text-align: left; background: var(--card-2); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 13px 14px; font: 500 15px Inter, sans-serif; cursor: pointer; min-height: 48px; overflow-wrap: anywhere; }
+    .opt:hover:not(:disabled) { border-color: var(--gold); }
+    .opt:disabled { cursor: default; }
+    .opt.right { border-color: var(--good); background: var(--good-soft); }
+    .opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+    .feedback { margin-top: 14px; font-weight: 600; }
+    .feedback.good { color: var(--good); }
+    .feedback.bad { color: var(--bad); }
+    .next { margin-top: 14px; width: 100%; }
+
+    .score-big { font-family: Montserrat, sans-serif; font-size: 44px; font-weight: 800; margin: 4px 0; }
+    .review li { margin-bottom: 10px; }
+    .review .ans { font-size: 13px; color: var(--mute); }
+    .review .ans b { color: var(--text); }
+    ul.review { padding-left: 18px; }
+
+    /* Grades */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 14px; }
+    .stat { background: var(--card-2); border-radius: 10px; padding: 12px; }
+    .stat .v { font-family: Montserrat, sans-serif; font-size: 22px; font-weight: 800; }
+    .stat .k { font-size: 12px; color: var(--mute); }
+    .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { text-align: left; padding: 9px 8px; border-bottom: 1px solid rgba(255,255,255,0.07); vertical-align: top; }
+    th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--mute); font-weight: 600; white-space: nowrap; }
+    tr.attempt { cursor: pointer; }
+    tr.attempt:hover td { background: rgba(255,255,255,0.03); }
+    .pct { display: inline-block; min-width: 52px; text-align: center; font-weight: 700; border-radius: 6px; padding: 2px 6px; }
+    .pct.hi { background: var(--good-soft); color: var(--good); }
+    .pct.mid { background: var(--gold-soft); color: var(--gold); }
+    .pct.lo { background: var(--bad-soft); color: var(--bad); }
+    .detail td { background: rgba(0,0,0,0.18); }
+    .detail ol { margin: 4px 0; padding-left: 20px; }
+    .detail li { margin-bottom: 6px; font-size: 13px; }
+    .ok { color: var(--good); font-weight: 700; }
+    .no { color: var(--bad); font-weight: 700; }
+    .muted { color: var(--mute); }
+    .loading { color: var(--mute); padding: 20px 0; }
+    .hidden { display: none !important; }
+
+    @media (max-width: 560px) {
+      h1 { font-size: 22px; }
+      .card { padding: 14px; }
+      .qtext { font-size: 17px; }
+      .hide-sm { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a href="index.html">🏠 Coaching Hub</a>
+    <span class="who" id="who"></span>
+  </div>
+  <h1>Griffin <span>Quizzes</span></h1>
+  <p class="sub">Random questions from our scout cards, team scouting reports and Griffin Concepts.</p>
+
+  <div class="tabs" id="tabs"></div>
+  <main id="view"></main>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------------------------------------------------------------- setup ---
+  const TEAMS = [
+    { slug: 'alberta-golden-bears', jsonKey: 'alberta-golden-bears', title: 'Alberta Golden Bears' },
+    { slug: 'brandon-bobcats', jsonKey: 'brandon-bobcats', title: 'Brandon Bobcats' },
+    { slug: 'calgary-dinos', jsonKey: 'calgary-dinos', title: 'Calgary Dinos' },
+    { slug: 'fraser-valley-cascades', jsonKey: 'fraser-valley-cascades', title: 'UFV Cascades' },
+    { slug: 'lethbridge-pronghorns', jsonKey: 'lethbridge-pronghorns', title: 'Lethbridge Pronghorns' },
+    { slug: 'manitoba-bisons', jsonKey: 'manitoba-bisons', title: 'Manitoba Bisons' },
+    { slug: 'mount-royal-cougars', jsonKey: 'mount-royal-cougars', title: 'Mount Royal Cougars' },
+    { slug: 'regina-cougars', jsonKey: 'regina-cougars', title: 'Regina Cougars' },
+    { slug: 'saskatchewan-huskies', jsonKey: 'saskatchewan-huskies', title: 'Saskatchewan Huskies' },
+    { slug: 'thompson-rivers-wolfpack', jsonKey: 'thompson-rivers-wolfpack', title: 'TRU WolfPack' },
+    { slug: 'trinity-western-spartans', jsonKey: 'trinity-western-spartans', title: 'Trinity Western Spartans' },
+    { slug: 'ubc-thunderbirds', jsonKey: 'ubc-thunderbirds', title: 'UBC Thunderbirds' },
+    { slug: 'ubco-heat', jsonKey: 'ubco-heat', title: 'UBCO Heat' },
+    { slug: 'unbc-timberwolves', jsonKey: 'unbc-timberwolves', title: 'UNBC Timberwolves' },
+    { slug: 'victoria-vikes', jsonKey: 'victoria-vikes', title: 'Victoria Vikes' },
+    { slug: 'winnipeg-wesmen', jsonKey: 'winnipeg-wesmen', title: 'Winnipeg Wesmen' }
+  ];
+  const teamBySlug = slug => TEAMS.find(t => t.slug === slug);
+  const CONCEPT_SETS = { both: 'Offence & Defence', offense: 'Offence', defense: 'Defence' };
+  const ASSIGN_KEY = 'quiz_assignment';
+  const PENDING_KEY = 'griffin-quiz:pending';
+  const HISTORY_KEY = 'griffin-quiz:history';
+
+  const isStaff = typeof window.isCoachOrAdmin === 'function' ? window.isCoachOrAdmin() : false;
+  const isAdmin = typeof window.isAdminOnly === 'function' ? window.isAdminOnly() : false;
+  const toSlug = s => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const me = (() => {
+    if (isStaff) return { name: isAdmin ? 'Admin' : 'Coach', slug: '' };
+    let name = '';
+    try { name = sessionStorage.getItem('hoops-hub:tracking-player-name') || ''; } catch (e) {}
+    let slug = '';
+    try { slug = localStorage.getItem('hoops-offseason:current-player') || ''; } catch (e) {}
+    if (!name && slug) name = slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    return { name: name || 'Player', slug: slug || toSlug(name) };
+  })();
+
+  const $ = (sel, root) => (root || document).querySelector(sel);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const squash = s => String(s || '').replace(/\s+/g, ' ').trim();
+  const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const norm = s => squash(s).toLowerCase();
+  const view = $('#view');
+
+  // -------------------------------------------------------- data loading ---
+  const cache = {};
+  function once(key, fn) { return cache[key] || (cache[key] = fn().catch(e => { delete cache[key]; throw e; })); }
+
+  async function getContent(key) {
+    try {
+      const r = await fetch('/.netlify/functions/get-content?key=' + encodeURIComponent(key));
+      const d = await r.json();
+      return d && d.success && d.content ? d.content : '';
+    } catch (e) { return ''; }
+  }
+
+  // Scout cards are read from the real scout card page (in a hidden frame), so
+  // the quiz uses exactly what players see, including coaches' saved edits.
+  function loadScoutCards(slug) {
+    return once('cards:' + slug, () => new Promise((resolve, reject) => {
+      const f = document.createElement('iframe');
+      f.setAttribute('aria-hidden', 'true');
+      f.tabIndex = -1;
+      f.style.cssText = 'position:absolute;left:-5000px;top:0;width:1200px;height:900px;visibility:hidden;border:0';
+      const t0 = Date.now();
+      let finished = false;
+      const done = (cards, err) => { if (finished) return; finished = true; f.remove(); err ? reject(err) : resolve(cards); };
+      f.onload = () => {
+        const poll = () => {
+          let w = null, d = null;
+          try { w = f.contentWindow; d = f.contentDocument; } catch (e) {}
+          if (!d) return done(null, new Error('Could not open the scout cards.'));
+          if (w.__scoutCardsReady || Date.now() - t0 > 9000) {
+            try { done(parseCards(d)); } catch (e) { done(null, e); }
+          } else setTimeout(poll, 150);
+        };
+        poll();
+      };
+      setTimeout(() => done(null, new Error('The scout cards took too long to load.')), 20000);
+      f.src = '/opponents/' + slug + '/scout-cards.html';
+      document.body.appendChild(f);
+    }));
+  }
+
+  function parseTags(text) {
+    const t = squash(text);
+    const re = /(Hand|C\/O|DTRAN|PIN\/DHO|PNR|REBOUND):/g;
+    const hits = [];
+    let m;
+    while ((m = re.exec(t))) hits.push({ label: m[1], start: m.index, end: re.lastIndex });
+    const out = {};
+    hits.forEach((h, i) => {
+      out[h.label] = t.slice(h.end, i + 1 < hits.length ? hits[i + 1].start : t.length).replace(/,\s*$/, '').trim();
+    });
+    return out;
+  }
+
+  function parseCards(doc) {
+    return Array.from(doc.querySelectorAll('.card')).map(card => {
+      const head = (card.querySelector('.player-header') || {}).textContent || '';
+      const parts = head.split('•').map(s => s.trim());
+      const rows = card.querySelectorAll('.stats-table tbody tr');
+      const cells = tr => tr ? Array.from(tr.querySelectorAll('td')).slice(1).map(td => td.textContent.trim()) : [];
+      return {
+        num: (parts[0] || '').replace(/^#/, '').trim(),
+        name: parts[1] || '',
+        pos: parts[2] || '',
+        starter: card.classList.contains('starter'),
+        tags: parseTags((card.querySelector('.tactical-tags') || {}).textContent || ''),
+        notes: squash((card.querySelector('.scout-notes') || {}).innerText || (card.querySelector('.scout-notes') || {}).textContent || ''),
+        season: cells(rows[1])
+      };
+    }).filter(c => c.name);
+  }
+
+  function loadStats() {
+    return once('stats', async () => {
+      const r = await fetch('/data/usports-rosters-stats.json', { cache: 'no-cache' });
+      return r.json();
+    });
+  }
+
+  // Team scouting report: a coach's saved edit wins over the built file.
+  function loadReport(slug, withEdits) {
+    return once('report:' + slug + ':' + !!withEdits, async () => {
+      let md = withEdits ? await getContent('scout_scout_' + slug) : '';
+      if (!md) {
+        try {
+          const r = await fetch('/opponents/' + slug + '/scouts/2026-27-scout.md');
+          md = r.ok ? await r.text() : '';
+        } catch (e) { md = ''; }
+      }
+      return parseReport(md);
+    });
+  }
+
+  function cleanValue(v) {
+    let s = String(v || '')
+      .replace(/\*\*/g, '')
+      .replace(/\[[^\]]*\]/g, '')
+      .replace(/\((?:[^)]*(?:inferred|verify|carried over)[^)]*)\)/gi, '');
+    // "Top scorer: X - defender: TBD - game plan: TBD": drop the TBD parts.
+    s = s.split(/\s+-\s+/).filter(p => !/\bTBD\b/i.test(p)).join(' - ');
+    s = squash(s)
+      .replace(/^OREB% \/ DREB%\s*/i, '')          // template text left in some reports
+      .replace(/\s+([.,;:])/g, '$1')
+      .replace(/^\((.*)\)\.?$/, '$1')
+      .replace(/^[-.;:,\s]+|[-;:,\s]+$/g, '');
+    if (s.length < 12) return '';
+    if ((s.match(/\//g) || []).length >= 3 && s.length < 50) return '';   // template option lists
+    return s;
+  }
+
+  function parseReport(md) {
+    const out = { labels: {}, plan: [], keys: [] };
+    if (!md) return out;
+    const sections = md.split(/\n(?=## )/);
+    for (const sec of sections) {
+      const title = (sec.match(/^##\s*(?:\d+\.\s*)?(.+)/) || [])[1] || '';
+      const lines = sec.split('\n');
+      if (/^(Offense|Defense|How we defend their O|Special situations)/i.test(title)) {
+        for (const line of lines) {
+          const m = line.match(/^\s*-\s*\*\*([^*]+?):?\*\*:?\s*(.*)$/);
+          if (!m) continue;
+          const value = cleanValue(m[2]);
+          if (value) out.labels[m[1].replace(/:$/, '').trim()] = { section: title.trim(), value };
+        }
+      } else if (/^(How we attack their D|Keys to victory)/i.test(title)) {
+        const list = /^How/i.test(title) ? out.plan : out.keys;
+        for (const line of lines) {
+          const m = line.match(/^\s*(?:\d+\.|-)\s+(.*)$/);
+          if (!m) continue;
+          const bold = m[1].match(/^\*\*(.+?)\*\*/);
+          const text = cleanValue(bold ? bold[1] : m[1].split(/(?<=\.)\s/)[0]);
+          if (text) list.push(text.replace(/\.$/, ''));
+        }
+      }
+    }
+    return out;
+  }
+
+  function loadConcepts() {
+    return once('concepts', async () => {
+      const r = await fetch('/griffin-concepts.html');
+      const html = await r.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const saved = await getContent('griffin_basketball_concepts_v1');
+      const box = doc.getElementById('playbook-data-container');
+      if (saved && box) box.innerHTML = saved;
+      const read = (tabId, side) => Array.from(doc.querySelectorAll('#' + tabId + ' .concept-card')).map(c => ({
+        side,
+        title: squash((c.querySelector('.concept-title h2') || {}).textContent),
+        slogan: squash((c.querySelector('.concept-meta') || {}).textContent).replace(/^["“”']+|["“”']+$/g, ''),
+        beliefs: Array.from(c.querySelectorAll('.playbook-item .editable')).map(e => squash(e.textContent)).filter(Boolean),
+        terms: Array.from(c.querySelectorAll('.term-box')).map(t => ({
+          name: squash((t.querySelector('.term-name') || {}).textContent),
+          desc: squash((t.querySelector('.term-desc') || {}).textContent)
+        })).filter(t => t.name && t.desc)
+      })).filter(c => c.title);
+      return { offense: read('offense-tab', 'Offence'), defense: read('defense-tab', 'Defence') };
+    });
+  }
+
+  // ---------------------------------------------------- question building ---
+  function makeQ(kind, source, q, correct, pool, extra) {
+    const c = squash(correct);
+    if (!c) return null;
+    const seen = new Set([norm(c)]);
+    const distract = [];
+    for (const d of shuffle(pool)) {
+      const v = squash(d);
+      if (!v || seen.has(norm(v))) continue;
+      // Skip look-alikes ("Standard low-tag." vs "Standard low-tag. Roller is…").
+      const nv = norm(v), nc = norm(c);
+      if (nv.length >= 8 && nc.length >= 8 && (nv.startsWith(nc) || nc.startsWith(nv))) continue;
+      seen.add(norm(v));
+      distract.push(v);
+      if (distract.length === 3) break;
+    }
+    if (distract.length < 2) return null;
+    return Object.assign({ kind, source, q, answer: c, options: shuffle([c].concat(distract)) }, extra || {});
+  }
+
+  // Take N questions, cycling through question kinds so a quiz mixes topics.
+  function pickMix(pool, n) {
+    const byKind = {};
+    pool.filter(Boolean).forEach(q => { (byKind[q.kind] = byKind[q.kind] || []).push(q); });
+    const kinds = shuffle(Object.keys(byKind));
+    kinds.forEach(k => { byKind[k] = shuffle(byKind[k]); });
+    const out = [];
+    const usedQ = new Set();
+    while (out.length < n && kinds.some(k => byKind[k].length)) {
+      for (const k of kinds) {
+        const q = byKind[k].shift();
+        if (!q) continue;
+        const key = q.q + '|' + (q.quote || '');
+        if (usedQ.has(key)) continue;
+        usedQ.add(key);
+        out.push(q);
+        if (out.length === n) break;
+      }
+    }
+    return shuffle(out);
+  }
+
+  const numTag = c => /^\d+$/.test(c.num) ? '#' + c.num + ' ' : '';
+  const pLabel = c => numTag(c) + c.name + (c.pos && c.pos !== 'N/A' ? ' (' + c.pos + ')' : '');
+  const shortName = c => numTag(c) + c.name;
+
+  function cardQuestions(team, cards) {
+    const qs = [];
+    const T = team.title;
+    const src = 'Scout card';
+    const vals = key => cards.map(c => c.tags[key]).filter(Boolean);
+    const COS = ['Shaq', 'Rose', 'Book', 'Klay'];
+    const COVER = ['Over/Switch', 'Under', 'Over', 'Switch', 'Ice'];
+
+    for (const c of cards) {
+      const t = c.tags;
+      if (t['C/O']) qs.push(makeQ('co', src, `What is our closeout (C/O) call on ${pLabel(c)}?`, t['C/O'], COS.concat(vals('C/O'))));
+      if (t.PNR) qs.push(makeQ('pnr', src, `How do we guard ${pLabel(c)} in ball screens (PNR)?`, t.PNR, vals('PNR').concat(vals('PIN/DHO'), COVER)));
+      if (t['PIN/DHO']) qs.push(makeQ('pin', src, `What is our PIN-down / DHO coverage on ${pLabel(c)}?`, t['PIN/DHO'], vals('PIN/DHO').concat(vals('PNR'), COVER)));
+      if (c.num && /^\d+$/.test(c.num)) {
+        qs.push(makeQ('num', src, `What number does ${c.name} wear for ${T}?`, '#' + c.num,
+          cards.filter(o => o !== c && /^\d+$/.test(o.num)).map(o => '#' + o.num)));
+      }
+      // Scouting note: who is this? (names hidden; the auto "role" line is dropped)
+      let note = c.notes.replace(/\(Auto-written from stats\)/g, '').replace(/^Coach note:\s*/i, '');
+      note = note.replace(/^(Starter|Rotation player|Comes off the bench|Bench)[^.]*\.\s*/i, '');
+      note = note.replace(/^[\d.]+ MPG over \d+ games?\.\s*/i, '');
+      const names = c.name.split(/\s+/).filter(w => w.length > 2);
+      names.forEach(w => { note = note.replace(new RegExp('\\b' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi'), '___'); });
+      note = squash(note);
+      if (note.length >= 40 && !/limited role so far|no 2026-27 stats yet/i.test(note)) {
+        const others = cards.filter(o => o !== c);
+        const samePos = others.filter(o => o.pos && o.pos === c.pos);
+        qs.push(makeQ('note', src, `Which ${T} player matches this scouting note?`, shortName(c),
+          (samePos.length >= 3 ? samePos : others).map(shortName), { quote: note.length > 420 ? note.slice(0, 417) + '…' : note }));
+      }
+    }
+    const pickOne = (kind, yes, no, q) => {
+      yes.forEach(c => qs.push(makeQ(kind, src, q, shortName(c), no.map(shortName))));
+    };
+    const has = (c, key, re) => re.test(c.tags[key] || '');
+    pickOne('locate', cards.filter(c => has(c, 'DTRAN', /locate/i)), cards.filter(c => !c.tags.DTRAN), `In transition defence, which ${T} player do we have to LOCATE?`);
+    pickOne('box', cards.filter(c => has(c, 'REBOUND', /must/i)), cards.filter(c => c.tags.REBOUND && !has(c, 'REBOUND', /must/i)), `Which ${T} player is a MUST BOX OUT?`);
+    pickOne('klay', cards.filter(c => has(c, 'C/O', /^klay$/i)), cards.filter(c => has(c, 'C/O', /^(shaq|rose)$/i)), `Which ${T} player is a "Klay" (knockdown shooter: no airspace)?`);
+    pickOne('shaq', cards.filter(c => has(c, 'C/O', /^shaq$/i)), cards.filter(c => has(c, 'C/O', /^(book|klay)$/i)), `Which ${T} player is a "Shaq" closeout (not a 3-point threat)?`);
+    pickOne('lefty', cards.filter(c => has(c, 'Hand', /^l/i)), cards.filter(c => has(c, 'Hand', /^r/i)), `Which ${T} player is LEFT-handed?`);
+    const starters = cards.filter(c => c.starter);
+    if (starters.length && starters.length < cards.length) {
+      pickOne('starter', starters, cards.filter(c => !c.starter), `Which of these players is in ${T}'s STARTING group?`);
+    }
+    return qs;
+  }
+
+  function statQuestions(team, stats) {
+    const td = stats && stats[team.jsonKey];
+    const ps = (td && td.playerStats) || [];
+    const n = v => parseFloat(v) || 0;
+    const rot = ps.filter(p => n(p.gp) >= 2 && n(p.mpg) >= 8);
+    if (rot.length < 4) return [];
+    const T = team.title;
+    const qs = [];
+    const leader = (kind, key, q, pool) => {
+      const sorted = pool.slice().sort((a, b) => b._v - a._v);
+      if (sorted.length < 3 || sorted[0]._v <= (sorted[1] ? sorted[1]._v : 0)) return;
+      qs.push(makeQ(kind, 'Team stats', q, sorted[0].name, sorted.slice(1).map(p => p.name), { explain: `${sorted[0].name}: ${key}` }));
+    };
+    const withV = (f, label) => rot.map(p => Object.assign({}, p, { _v: f(p) })).map(p => Object.assign(p, { _label: label(p) }));
+    const ppg = withV(p => n(p.ppg), p => p.ppg + ' PPG');
+    leader('stat-ppg', ppg.sort((a, b) => b._v - a._v)[0]._label, `Who is ${T}'s leading scorer?`, ppg);
+    const rpg = withV(p => n(p.rpg), p => p.rpg + ' RPG');
+    leader('stat-rpg', rpg.sort((a, b) => b._v - a._v)[0]._label, `Who is ${T}'s leading rebounder?`, rpg);
+    const apg = withV(p => n(p.a) / Math.max(1, n(p.gp)), p => (n(p.a) / Math.max(1, n(p.gp))).toFixed(1) + ' APG');
+    leader('stat-apg', apg.sort((a, b) => b._v - a._v)[0]._label, `Who leads ${T} in assists?`, apg);
+    const threes = rot.map(p => {
+      const m = String(p.fg3 || '').match(/(\d+)\s*-\s*(\d+)/);
+      const made = m ? +m[1] : 0, att = m ? +m[2] : 0;
+      return Object.assign({}, p, { _v: att ? made / att : 0, _apg: att / Math.max(1, n(p.gp)) });
+    });
+    const shooters = threes.filter(p => p._apg >= 2);
+    if (shooters.length >= 1) {
+      const best = shooters.sort((a, b) => b._v - a._v)[0];
+      const worse = threes.filter(p => p !== best && p._v < best._v - 0.05);
+      qs.push(makeQ('stat-3', 'Team stats', `Who is ${T}'s best 3-point shooter (2+ threes a game)?`, best.name, worse.map(p => p.name),
+        { explain: `${best.name}: ${(best._v * 100).toFixed(1)}% on ${best._apg.toFixed(1)} a game` }));
+    }
+    return qs;
+  }
+
+  async function reportQuestions(team) {
+    const mine = await loadReport(team.slug, true);
+    const others = await Promise.all(TEAMS.filter(t => t.slug !== team.slug).map(t => loadReport(t.slug, false)));
+    const T = team.title;
+    const src = 'Team scouting report';
+    const qs = [];
+    for (const [label, info] of Object.entries(mine.labels)) {
+      let pool = others.map(o => o.labels[label] && o.labels[label].value).filter(Boolean);
+      if (pool.length < 3) pool = pool.concat(...others.map(o => Object.values(o.labels).filter(x => x.section === info.section).map(x => x.value)));
+      pool = pool.filter(v => norm(v) !== norm(info.value));
+      const q = makeQ('rep-' + label, src, `${T} (${info.section}): what does our report say for "${label}"?`, info.value, pool);
+      if (q) qs.push(q);
+    }
+    const otherPlan = [].concat(...others.map(o => o.plan));
+    const otherKeys = [].concat(...others.map(o => o.keys));
+    mine.plan.forEach(p => qs.push(makeQ('rep-plan', src, `Which of these is part of our plan to attack ${T}'s defence?`, p, otherPlan.filter(x => !mine.plan.some(m => norm(m) === norm(x))))));
+    mine.keys.forEach(k => qs.push(makeQ('rep-keys', src, `Which of these is one of our keys to victory vs ${T}?`, k, otherKeys.filter(x => !mine.keys.some(m => norm(m) === norm(x))))));
+    return qs.filter(Boolean);
+  }
+
+  async function buildScoutQuiz(slug, n) {
+    const team = teamBySlug(slug);
+    const [cards, stats, rep] = await Promise.all([loadScoutCards(slug), loadStats().catch(() => null), reportQuestions(team).catch(() => [])]);
+    const cardQs = cardQuestions(team, cards).filter(Boolean);
+    const statQs = statQuestions(team, stats).filter(Boolean);
+    // About 60% scout cards, 25% scouting report, 15% team stats.
+    const nRep = Math.min(rep.length, Math.round(n * 0.25));
+    const nStat = Math.min(statQs.length, Math.round(n * 0.15));
+    let picked = pickMix(rep, nRep).concat(pickMix(statQs, nStat));
+    picked = picked.concat(pickMix(cardQs, n - picked.length));
+    if (picked.length < n) {
+      const used = new Set(picked);
+      picked = picked.concat(pickMix(rep.concat(statQs).filter(q => !used.has(q)), n - picked.length));
+    }
+    return { title: `${team.title} scouting report`, quizType: 'scout', quizKey: slug, questions: shuffle(picked) };
+  }
+
+  async function buildConceptQuiz(set, n) {
+    const data = await loadConcepts();
+    const groups = set === 'both' ? ['offense', 'defense'] : [set];
+    const qs = [];
+    for (const g of groups) {
+      const concepts = data[g];
+      const allTerms = [].concat(...concepts.map(c => c.terms.map(t => Object.assign({ concept: c.title }, t))));
+      const titles = concepts.map(c => c.title);
+      for (const c of concepts) {
+        const src = `Griffin Concepts: ${c.title}`;
+        const near = c.terms.map(t => t.desc);
+        for (const t of c.terms) {
+          const sameCard = near.filter(d => d !== t.desc);
+          const pool = sameCard.length >= 3 ? sameCard : sameCard.concat(allTerms.filter(x => x.concept !== c.title).map(x => x.desc));
+          qs.push(makeQ('term-' + c.title, src, `${c.title}: what does "${t.name}" mean?`, t.desc, pool));
+          const namePool = c.terms.length >= 4 ? c.terms.map(x => x.name) : c.terms.map(x => x.name).concat(allTerms.map(x => x.name));
+          qs.push(makeQ('name-' + c.title, src, `${c.title}: which term is this?`, t.name, namePool.filter(x => norm(x) !== norm(t.name)), { quote: t.desc }));
+        }
+        if (c.slogan && c.slogan.length > 6) {
+          qs.push(makeQ('slogan', `Griffin Concepts (${concepts[0].side})`, `Which concept's motto is this?`, c.title, titles, { quote: c.slogan }));
+        }
+        for (const b of c.beliefs) {
+          if (concepts.filter(o => o.beliefs.some(x => norm(x) === norm(b))).length > 1) continue;
+          qs.push(makeQ('belief', `Griffin Concepts (${concepts[0].side})`, `This belief belongs to which concept?`, c.title, titles, { quote: b }));
+        }
+      }
+    }
+    return { title: `Griffin Concepts: ${CONCEPT_SETS[set]}`, quizType: 'concepts', quizKey: 'concepts-' + set, questions: pickMix(qs, n) };
+  }
+
+  // ------------------------------------------------------------ results ---
+  const readJSON = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } };
+  const writeJSON = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+
+  async function submitResult(result) {
+    const r = await fetch('/.netlify/functions/quiz-results', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'submit', result })
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || !d.success) throw new Error(d.message || 'Could not save.');
+    return d;
+  }
+
+  // A result that couldn't be sent (no signal in the gym) is kept on this
+  // phone and sent the next time the quiz page opens.
+  async function flushPending() {
+    const pending = readJSON(PENDING_KEY, []);
+    if (!pending.length) return;
+    const left = [];
+    for (const p of pending) {
+      try { await submitResult(p); } catch (e) { left.push(p); }
+    }
+    writeJSON(PENDING_KEY, left);
+  }
+
+  // --------------------------------------------------------------- views ---
+  let assignment = null;
+  async function loadAssignment() {
+    const raw = await getContent(ASSIGN_KEY);
+    try { assignment = raw ? JSON.parse(raw) : null; } catch (e) { assignment = null; }
+    return assignment;
+  }
+  const assignmentTitle = a => !a ? '' : a.type === 'concepts'
+    ? `Griffin Concepts: ${CONCEPT_SETS[a.set] || 'Offence & Defence'}`
+    : `${(teamBySlug(a.team) || {}).title || a.team} scouting report`;
+
+  const TABS = isStaff
+    ? [['grades', 'Grades'], ['assign', 'Set team quiz'], ['take', 'Try a quiz']]
+    : [['take', 'Take a quiz'], ['mine', 'My results']];
+
+  function renderTabs(active) {
+    $('#tabs').innerHTML = TABS.map(([id, label]) => `<button data-tab="${id}" class="${id === active ? 'active' : ''}">${label}</button>`).join('');
+    $('#tabs').querySelectorAll('button').forEach(b => b.onclick = () => go(b.dataset.tab));
+  }
+
+  let quizRunning = false;
+  function go(tab) {
+    if (quizRunning && !confirm('Leave this quiz? Your answers so far will be lost.')) return;
+    quizRunning = false;
+    renderTabs(tab);
+    ({ take: viewTake, mine: viewMine, grades: viewGrades, assign: viewAssign })[tab]();
+    window.scrollTo(0, 0);
+  }
+
+  function teamOptions(selected) {
+    return TEAMS.map(t => `<option value="${t.slug}" ${t.slug === selected ? 'selected' : ''}>${esc(t.title)}</option>`).join('');
+  }
+
+  function viewTake() {
+    const a = assignment;
+    view.innerHTML = `
+      ${a ? `<div class="card assigned">
+        <div class="label">Assigned by the coaches</div>
+        <h2 style="margin:6px 0 4px">${esc(assignmentTitle(a))}</h2>
+        ${a.note ? `<p class="note" style="margin:0 0 10px">${esc(a.note)}</p>` : ''}
+        <button class="btn" id="startAssigned">Start (${a.length || 10} questions)</button>
+      </div>` : ''}
+      <div class="card">
+        <h2>${a ? 'Or pick your own quiz' : 'Pick a quiz'}</h2>
+        <div class="seg" id="typeSeg" style="margin-bottom:14px">
+          <button data-v="scout" class="on">🏀 Scouting report</button>
+          <button data-v="concepts">📖 Griffin Concepts</button>
+        </div>
+        <div class="row">
+          <div class="field" id="teamField">
+            <label class="lbl" for="teamSel">Opponent</label>
+            <select id="teamSel">${teamOptions(a && a.type === 'scout' ? a.team : '')}</select>
+          </div>
+          <div class="field hidden" id="setField">
+            <label class="lbl" for="setSel">Concepts</label>
+            <select id="setSel">${Object.entries(CONCEPT_SETS).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select>
+          </div>
+          <div class="field" style="flex:0 1 140px">
+            <label class="lbl" for="lenSel">Questions</label>
+            <select id="lenSel"><option>10</option><option>15</option><option>20</option></select>
+          </div>
+        </div>
+        <button class="btn" id="startOwn" style="margin-top:16px;width:100%">Start quiz</button>
+        <p class="note">${isStaff ? 'Staff preview: your answers are not saved as a grade.' : 'Your score is sent to the coaches when you finish.'} Questions are picked at random every time.</p>
+      </div>`;
+    let type = 'scout';
+    view.querySelectorAll('#typeSeg button').forEach(b => b.onclick = () => {
+      type = b.dataset.v;
+      view.querySelectorAll('#typeSeg button').forEach(x => x.classList.toggle('on', x === b));
+      $('#teamField').classList.toggle('hidden', type !== 'scout');
+      $('#setField').classList.toggle('hidden', type !== 'concepts');
+    });
+    $('#startOwn').onclick = () => start({ type, team: $('#teamSel').value, set: $('#setSel').value, length: +$('#lenSel').value });
+    if (a) $('#startAssigned').onclick = () => start(a);
+  }
+
+  async function start(cfg) {
+    view.innerHTML = `<div class="card loading">Building your quiz from the latest ${cfg.type === 'concepts' ? 'Griffin Concepts' : 'scout cards and scouting report'}…</div>`;
+    try {
+      const n = Math.max(5, Math.min(30, cfg.length || 10));
+      const quiz = cfg.type === 'concepts' ? await buildConceptQuiz(cfg.set || 'both', n) : await buildScoutQuiz(cfg.team, n);
+      if (quiz.questions.length < 3) throw new Error('There isn\'t enough on these cards / pages yet to build a quiz. Try another one.');
+      runQuiz(quiz);
+    } catch (e) {
+      view.innerHTML = `<div class="card"><p class="err">${esc(e.message || 'Something went wrong building the quiz.')}</p><button class="btn ghost" id="back">Back</button></div>`;
+      $('#back').onclick = () => go('take');
+    }
+  }
+
+  function runQuiz(quiz) {
+    quizRunning = true;
+    const answers = [];
+    const startedAt = new Date().toISOString();
+    let i = 0;
+    const show = () => {
+      const q = quiz.questions[i];
+      view.innerHTML = `
+        <div class="card">
+          <div class="qmeta"><span>${esc(quiz.title)}</span><span>${i + 1} / ${quiz.questions.length}</span></div>
+          <div class="progress"><div style="width:${(i / quiz.questions.length) * 100}%"></div></div>
+          <span class="chip">${esc(q.source)}</span>
+          <div class="qtext">${esc(q.q)}</div>
+          ${q.quote ? `<div class="quote">“${esc(q.quote)}”</div>` : ''}
+          <div class="opts">${q.options.map((o, k) => `<button class="opt" data-k="${k}">${esc(o)}</button>`).join('')}</div>
+          <div id="fb"></div>
+        </div>`;
+      view.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+        const chosen = q.options[+b.dataset.k];
+        const ok = chosen === q.answer;
+        answers.push({ q: q.q + (q.quote ? ` “${q.quote}”` : ''), source: q.source, chosen, correct: q.answer, ok });
+        view.querySelectorAll('.opt').forEach(x => {
+          x.disabled = true;
+          const v = q.options[+x.dataset.k];
+          if (v === q.answer) x.classList.add('right');
+          else if (x === b) x.classList.add('wrong');
+        });
+        const last = i === quiz.questions.length - 1;
+        $('#fb').innerHTML = `<div class="feedback ${ok ? 'good' : 'bad'}">${ok ? '✓ Correct' : '✗ Not quite. Answer: ' + esc(q.answer)}${q.explain ? `<span class="muted" style="font-weight:400"> (${esc(q.explain)})</span>` : ''}</div>
+          <button class="btn next" id="next">${last ? 'See my score' : 'Next question ➔'}</button>`;
+        $('#next').onclick = () => { if (last) finish(); else { i++; show(); window.scrollTo(0, 0); } };
+        $('#next').focus({ preventScroll: true });
+      });
+    };
+    const finish = async () => {
+      quizRunning = false;
+      const score = answers.filter(a => a.ok).length;
+      const total = answers.length;
+      const pct = Math.round((100 * score) / total);
+      const result = { player: me.name, playerSlug: me.slug, quizType: quiz.quizType, quizKey: quiz.quizKey, quizTitle: quiz.title, score, total, startedAt, questions: answers };
+      const missed = answers.filter(a => !a.ok);
+      view.innerHTML = `
+        <div class="card" style="text-align:center">
+          <div class="muted">${esc(quiz.title)}</div>
+          <div class="score-big">${score} / ${total}</div>
+          <span class="pct ${pct >= 80 ? 'hi' : pct >= 60 ? 'mid' : 'lo'}">${pct}%</span>
+          <p class="note" id="saveState">${isStaff ? 'Staff preview: not saved.' : 'Saving your result…'}</p>
+          <div class="row" style="justify-content:center;margin-top:12px">
+            <button class="btn" id="again">Take it again (new questions)</button>
+            <button class="btn ghost" id="other">Pick another quiz</button>
+          </div>
+        </div>
+        ${missed.length ? `<div class="card"><h2>Review what you missed</h2><ul class="review">${missed.map(a => `<li>${esc(a.q)}<div class="ans">You said: ${esc(a.chosen)} · Answer: <b>${esc(a.correct)}</b></div></li>`).join('')}</ul></div>` : '<div class="card"><h2>Perfect score 🔥</h2><p class="muted">You know this one cold.</p></div>'}`;
+      const cfg = quiz.quizType === 'concepts' ? { type: 'concepts', set: quiz.quizKey.replace('concepts-', ''), length: total } : { type: 'scout', team: quiz.quizKey, length: total };
+      $('#again').onclick = () => start(cfg);
+      $('#other').onclick = () => go('take');
+      if (isStaff) return;
+      const hist = readJSON(HISTORY_KEY, []);
+      hist.unshift({ quizTitle: quiz.title, score, total, at: new Date().toISOString(), player: me.slug });
+      writeJSON(HISTORY_KEY, hist.slice(0, 50));
+      try {
+        await submitResult(result);
+        $('#saveState').textContent = '✓ Saved. Your coaches can see this result.';
+      } catch (e) {
+        const pending = readJSON(PENDING_KEY, []);
+        pending.push(result);
+        writeJSON(PENDING_KEY, pending);
+        $('#saveState').textContent = 'No connection right now: your result is saved on this phone and will be sent next time you open Griffin Quizzes.';
+      }
+    };
+    show();
+  }
+
+  function viewMine() {
+    const hist = readJSON(HISTORY_KEY, []).filter(h => !h.player || h.player === me.slug);
+    view.innerHTML = `<div class="card"><h2>My results on this device</h2>
+      ${hist.length ? `<div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Quiz</th><th>Score</th></tr></thead><tbody>
+      ${hist.map(h => { const p = Math.round(100 * h.score / h.total); return `<tr><td>${esc(fmtDate(h.at))}</td><td>${esc(h.quizTitle)}</td><td><span class="pct ${p >= 80 ? 'hi' : p >= 60 ? 'mid' : 'lo'}">${h.score}/${h.total}</span></td></tr>`; }).join('')}
+      </tbody></table></div>` : '<p class="muted">No quizzes yet. Take one from the "Take a quiz" tab.</p>'}
+      <p class="note">Coaches see every result you finish, from any device.</p></div>`;
+  }
+
+  const fmtDate = iso => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }); };
+  const pctClass = p => p >= 80 ? 'hi' : p >= 60 ? 'mid' : 'lo';
+
+  // ----------------------------------------------------- staff: grades ---
+  function staffToken() { try { return sessionStorage.getItem('griffin_staff_token') || ''; } catch (e) { return ''; } }
+
+  function askStaffPassword(message) {
+    const role = isAdmin ? 'admin' : 'coach';
+    view.innerHTML = `<div class="card"><h2>Confirm it's you</h2>
+      <p class="muted">${esc(message || 'Grades are for staff only. Enter your ' + (role === 'admin' ? 'admin' : 'coach') + ' password once to open them (you stay signed in until you close this tab).')}</p>
+      <form id="pwForm" class="row" style="margin-top:10px">
+        <div class="field"><input type="password" id="pw" autocomplete="current-password" placeholder="${role === 'admin' ? 'Admin' : 'Coach'} password" required></div>
+        <button class="btn" type="submit">Open grades</button>
+      </form><div class="err" id="pwErr"></div></div>`;
+    $('#pwForm').onsubmit = async e => {
+      e.preventDefault();
+      const btn = $('#pwForm button'); btn.disabled = true;
+      try {
+        const r = await fetch('/.netlify/functions/verify-access', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role, password: $('#pw').value }) });
+        const d = await r.json().catch(() => ({}));
+        if (d.ok && d.token) { sessionStorage.setItem('griffin_staff_token', d.token); viewGrades(); }
+        else { $('#pwErr').textContent = d.message || 'That password did not work.'; btn.disabled = false; }
+      } catch (err) { $('#pwErr').textContent = 'Could not reach the server.'; btn.disabled = false; }
+    };
+  }
+
+  let allResults = [];
+  async function viewGrades() {
+    if (!staffToken()) return askStaffPassword();
+    view.innerHTML = '<div class="card loading">Loading grades…</div>';
+    try {
+      const r = await fetch('/.netlify/functions/quiz-results', { headers: { 'X-Staff-Token': staffToken() } });
+      if (r.status === 401) { sessionStorage.removeItem('griffin_staff_token'); return askStaffPassword('Your staff sign-in expired. Enter your password again to open grades.'); }
+      const d = await r.json();
+      allResults = d.results || [];
+    } catch (e) {
+      view.innerHTML = '<div class="card"><p class="err">Could not load grades. Check your connection and try again.</p></div>';
+      return;
+    }
+    const quizzes = [...new Set(allResults.map(r => r.quizTitle))].sort();
+    const players = [...new Set(allResults.map(r => r.player))].sort();
+    view.innerHTML = `
+      <div class="card">
+        <div class="row">
+          <div class="field"><label class="lbl" for="fQuiz">Quiz</label><select id="fQuiz"><option value="">All quizzes</option>${quizzes.map(q => `<option>${esc(q)}</option>`).join('')}</select></div>
+          <div class="field"><label class="lbl" for="fPlayer">Player</label><select id="fPlayer"><option value="">All players</option>${players.map(p => `<option>${esc(p)}</option>`).join('')}</select></div>
+        </div>
+      </div>
+      <div id="gradesBody"></div>`;
+    $('#fQuiz').onchange = $('#fPlayer').onchange = drawGrades;
+    drawGrades();
+  }
+
+  function drawGrades() {
+    const fq = $('#fQuiz').value, fp = $('#fPlayer').value;
+    const rows = allResults.filter(r => (!fq || r.quizTitle === fq) && (!fp || r.player === fp));
+    const body = $('#gradesBody');
+    if (!rows.length) { body.innerHTML = '<div class="card"><p class="muted">No results yet. Once players finish a quiz, their grades show up here.</p></div>'; return; }
+    const avg = list => Math.round(list.reduce((s, r) => s + 100 * r.score / r.total, 0) / list.length);
+    // Per player: best and latest on the selected quiz (or overall average).
+    const byPlayer = {};
+    rows.forEach(r => (byPlayer[r.player] = byPlayer[r.player] || []).push(r));
+    const summary = Object.entries(byPlayer).map(([p, list]) => ({
+      p, n: list.length, avg: avg(list),
+      best: Math.max(...list.map(r => Math.round(100 * r.score / r.total))),
+      latest: list[0]
+    })).sort((a, b) => b.avg - a.avg);
+    body.innerHTML = `
+      <div class="stats">
+        <div class="stat"><div class="v">${rows.length}</div><div class="k">quizzes taken</div></div>
+        <div class="stat"><div class="v">${summary.length}</div><div class="k">players</div></div>
+        <div class="stat"><div class="v">${avg(rows)}%</div><div class="k">average score</div></div>
+      </div>
+      <div class="card"><h2>By player</h2><div class="tbl-wrap"><table>
+        <thead><tr><th>Player</th><th>Taken</th><th>Average</th><th>Best</th><th class="hide-sm">Latest</th></tr></thead><tbody>
+        ${summary.map(s => { const lp = Math.round(100 * s.latest.score / s.latest.total); return `<tr><td>${esc(s.p)}</td><td>${s.n}</td><td><span class="pct ${pctClass(s.avg)}">${s.avg}%</span></td><td>${s.best}%</td><td class="hide-sm">${lp}% · ${esc(fmtDate(s.latest.finishedAt))}</td></tr>`; }).join('')}
+        </tbody></table></div></div>
+      <div class="card"><h2>Every attempt</h2><p class="note" style="margin:-4px 0 10px">Tap a row to see each question and answer.</p><div class="tbl-wrap"><table>
+        <thead><tr><th>When</th><th>Player</th><th>Quiz</th><th>Score</th><th></th></tr></thead><tbody id="attempts">
+        ${rows.map((r, i) => { const p = Math.round(100 * r.score / r.total); return `<tr class="attempt" data-i="${i}"><td>${esc(fmtDate(r.finishedAt))}</td><td>${esc(r.player)}</td><td>${esc(r.quizTitle)}</td><td><span class="pct ${pctClass(p)}">${r.score}/${r.total}</span></td><td>▾</td></tr>`; }).join('')}
+        </tbody></table></div></div>`;
+    body.querySelectorAll('tr.attempt').forEach(tr => tr.onclick = () => {
+      const next = tr.nextElementSibling;
+      if (next && next.classList.contains('detail')) { next.remove(); return; }
+      const r = rows[+tr.dataset.i];
+      const d = document.createElement('tr');
+      d.className = 'detail';
+      d.innerHTML = `<td colspan="5"><ol>${(r.questions || []).map(q => `<li><span class="${q.ok ? 'ok' : 'no'}">${q.ok ? '✓' : '✗'}</span> ${esc(q.q)}<br><span class="muted">${q.ok ? 'Answered: ' + esc(q.chosen) : 'Said: ' + esc(q.chosen) + ' · Answer: ' + esc(q.correct)}</span></li>`).join('')}</ol>
+        <button class="btn ghost small" data-del="${esc(r.id)}">Delete this attempt</button></td>`;
+      tr.after(d);
+      d.querySelector('[data-del]').onclick = async ev => {
+        ev.stopPropagation();
+        if (!confirm(`Delete ${r.player}'s attempt at "${r.quizTitle}"? This can't be undone.`)) return;
+        const res = await fetch('/.netlify/functions/quiz-results', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Staff-Token': staffToken() }, body: JSON.stringify({ action: 'delete', id: r.id }) });
+        if (res.ok) { allResults = allResults.filter(x => x.id !== r.id); drawGrades(); } else alert('Could not delete. Try signing in again.');
+      };
+    });
+  }
+
+  // ------------------------------------------------ staff: assign a quiz ---
+  function viewAssign() {
+    const a = assignment || { type: 'scout', team: '', set: 'both', length: 10, note: '' };
+    view.innerHTML = `<div class="card">
+      <h2>Set the team quiz</h2>
+      <p class="muted" style="margin-top:0">Players see this quiz at the top of their quiz page. They can still take any other quiz.</p>
+      ${assignment ? `<p class="note" style="margin:0 0 12px">Currently assigned: <b style="color:var(--text)">${esc(assignmentTitle(assignment))}</b></p>` : ''}
+      <div class="seg" id="aType" style="margin-bottom:14px">
+        <button data-v="scout" class="${a.type !== 'concepts' ? 'on' : ''}">🏀 Scouting report</button>
+        <button data-v="concepts" class="${a.type === 'concepts' ? 'on' : ''}">📖 Griffin Concepts</button>
+      </div>
+      <div class="row">
+        <div class="field ${a.type === 'concepts' ? 'hidden' : ''}" id="aTeamF"><label class="lbl" for="aTeam">Opponent</label><select id="aTeam">${teamOptions(a.team)}</select></div>
+        <div class="field ${a.type === 'concepts' ? '' : 'hidden'}" id="aSetF"><label class="lbl" for="aSet">Concepts</label><select id="aSet">${Object.entries(CONCEPT_SETS).map(([k, v]) => `<option value="${k}" ${k === a.set ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
+        <div class="field" style="flex:0 1 140px"><label class="lbl" for="aLen">Questions</label><select id="aLen">${[10, 15, 20].map(n => `<option ${n === +a.length ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
+      </div>
+      <div class="field" style="margin-top:12px"><label class="lbl" for="aNote">Message to players (optional)</label><input type="text" id="aNote" maxlength="160" value="${esc(a.note || '')}" placeholder="e.g. Due before Thursday's walkthrough"></div>
+      <div class="row" style="margin-top:16px">
+        <button class="btn" id="aSave">Assign to the team</button>
+        ${assignment ? '<button class="btn ghost" id="aClear">Remove assignment</button>' : ''}
+      </div>
+      <p class="note" id="aState"></p>
+    </div>`;
+    let type = a.type === 'concepts' ? 'concepts' : 'scout';
+    view.querySelectorAll('#aType button').forEach(b => b.onclick = () => {
+      type = b.dataset.v;
+      view.querySelectorAll('#aType button').forEach(x => x.classList.toggle('on', x === b));
+      $('#aTeamF').classList.toggle('hidden', type !== 'scout');
+      $('#aSetF').classList.toggle('hidden', type !== 'concepts');
+    });
+    const save = async value => {
+      $('#aState').textContent = 'Saving…';
+      try {
+        const r = await fetch('/.netlify/functions/save-content', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: ASSIGN_KEY, content: value ? JSON.stringify(value) : '' }) });
+        if (!r.ok) throw new Error();
+        assignment = value;
+        viewAssign();
+        $('#aState').textContent = value ? '✓ Assigned. Players will see it next time they open Griffin Quizzes.' : '✓ Assignment removed.';
+      } catch (e) { $('#aState').textContent = 'Could not save. Check your connection.'; }
+    };
+    $('#aSave').onclick = () => save({ type, team: $('#aTeam').value, set: $('#aSet').value, length: +$('#aLen').value, note: $('#aNote').value.trim(), setAt: new Date().toISOString() });
+    if ($('#aClear')) $('#aClear').onclick = () => save(null);
+  }
+
+  // ----------------------------------------------------------------- go ---
+  $('#who').textContent = isStaff ? `Signed in as ${me.name} (staff)` : `Signed in as ${me.name}`;
+  window.addEventListener('beforeunload', e => { if (quizRunning) { e.preventDefault(); e.returnValue = ''; } });
+  flushPending();
+  loadAssignment().finally(() => go(isStaff ? 'grades' : 'take'));
+})();
+</script>
+</body>
+</html>

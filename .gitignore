@@ -1,0 +1,15 @@
+# Dependencies (reinstalled by Netlify on every build)
+node_modules/
+
+# Local Netlify CLI state
+.netlify/
+
+# macOS / editor junk
+.DS_Store
+
+# Local archives and backups (git history replaces these)
+site.zip
+backups/
+
+# Local environment secrets
+.env

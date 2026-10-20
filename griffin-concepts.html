@@ -1,0 +1,2338 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="auth-lock.js"></script>
+  <script src="offseason-sc-app/tracking-config.js"></script>
+  <script src="site-tracking.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MacEwan Griffins | Griffin Basketball Concepts</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --maroon: #98002e;
+      --maroon-dark: #70001f;
+      --maroon-light: rgba(152, 0, 46, 0.06);
+      --gold: #d1ad7d;
+      --gold-dark: #b8915c;
+      --gold-light: rgba(209, 173, 125, 0.15);
+      --black: #111111;
+      --dark-gray: #1e293b;
+      --slate-gray: #64748b;
+      --bg-gray: #f8fafc;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --radius: 10px;
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.08);
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background-color: var(--bg-gray);
+      color: var(--dark-gray);
+      line-height: 1.5;
+      padding-bottom: 60px;
+    }
+
+    /* Layout */
+    .layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Navigation */
+    nav.side {
+      position: sticky;
+      top: 0;
+      align-self: start;
+      height: 100vh;
+      overflow: auto;
+      background: #000;
+      color: #fff;
+      padding: 20px 16px;
+      font-size: .92em;
+      border-right: 3px solid var(--maroon);
+      z-index: 100;
+    }
+
+    nav.side h2 {
+      font-size: .85em;
+      margin: 18px 0 10px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--gold);
+    }
+
+    nav.side h2:first-child {
+      margin-top: 0;
+    }
+
+    nav.side ul {
+      list-style: none;
+    }
+
+    nav.side li {
+      margin: 4px 0;
+    }
+
+    nav.side li a {
+      display: block;
+      padding: 8px 12px;
+      color: #E6E7E9;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    nav.side li a:hover {
+      background: rgba(209, 173, 125, 0.15);
+      color: #fff;
+    }
+
+    nav.side .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    nav.side .brand img {
+      width: 36px;
+      height: 36px;
+      background: white;
+      border-radius: 4px;
+      padding: 2px;
+    }
+
+    nav.side .brand h1 {
+      font-size: 15px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      color: white;
+      line-height: 1.2;
+    }
+
+    nav.side .brand h1 small {
+      display: block;
+      font-size: 11px;
+      color: var(--gold);
+      font-weight: 500;
+    }
+
+    .close-drawer {
+      display: none;
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    /* Main Content */
+    main {
+      padding: 30px 40px;
+      max-width: 1300px;
+    }
+
+    /* Header Styling */
+    header.hero-header {
+      background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon) 100%);
+      color: white;
+      padding: 28px 32px;
+      border-radius: var(--radius);
+      border-bottom: 5px solid var(--gold);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    header.hero-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -20%;
+      width: 140%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(209, 173, 125, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .header-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .team-badge {
+      background-color: var(--gold);
+      color: var(--maroon-dark);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.15rem;
+      padding: 4px 14px;
+      border-radius: 4px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    header.hero-header h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 2rem;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    header.hero-header h1 span {
+      color: var(--gold);
+    }
+
+    header.hero-header p {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.85);
+      max-width: 750px;
+      font-weight: 300;
+    }
+
+    /* Role Banner */
+    .role-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--gold);
+      padding: 12px 20px;
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .role-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--maroon);
+      text-transform: uppercase;
+    }
+
+    /* Search & Controls Panel */
+    .controls-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 25px;
+    }
+
+    .top-controls-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .tabs {
+      display: flex;
+      background: white;
+      padding: 4px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+    }
+
+    .tab-btn {
+      border: none;
+      background: transparent;
+      padding: 10px 20px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 6px;
+      color: var(--slate-gray);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab-btn:hover {
+      color: var(--maroon);
+    }
+
+    .tab-btn.active {
+      background-color: var(--maroon);
+      color: white;
+    }
+
+    .tab-btn.quiz-btn.active {
+      background-color: var(--gold-dark);
+      color: white;
+    }
+
+    .right-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* Control Buttons */
+    .btn-action {
+      background-color: white;
+      border: 1px solid var(--border-color);
+      color: var(--dark-gray);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      padding: 10px 18px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    .btn-action:hover {
+      background-color: #f1f5f9;
+    }
+
+    .btn-edit {
+      border-color: var(--gold-dark);
+      color: var(--gold-dark);
+    }
+
+    .btn-edit.active {
+      background-color: var(--gold-dark);
+      color: white;
+    }
+
+    .btn-print {
+      background-color: var(--maroon);
+      color: white;
+      border-color: var(--maroon);
+    }
+
+    .btn-print:hover {
+      background-color: var(--maroon-dark);
+    }
+
+    .btn-reset {
+      border-color: #fda4af;
+      color: #e11d48;
+    }
+
+    .btn-reset:hover {
+      background-color: #fff1f2;
+    }
+
+    /* Search Bar Box */
+    .search-box-container {
+      background: white;
+      padding: 14px 20px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .search-input-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-input-wrapper svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--slate-gray);
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 16px 12px 42px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .search-input:focus {
+      border-color: var(--maroon);
+      box-shadow: 0 0 0 3px rgba(152, 0, 46, 0.1);
+    }
+
+    .filter-pills {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: thin;
+    }
+
+    .pill {
+      background: #f1f5f9;
+      color: var(--slate-gray);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      transition: var(--transition);
+    }
+
+    .pill:hover {
+      background: #e2e8f0;
+      color: var(--dark-gray);
+    }
+
+    .pill.active {
+      background: var(--maroon-light);
+      color: var(--maroon);
+      border-color: var(--maroon);
+      font-weight: 700;
+    }
+
+    /* Editable Outline States */
+    .editable {
+      transition: outline 0.1s ease;
+    }
+
+    body.editing-mode .editable {
+      outline: 1.5px dashed var(--gold);
+      background-color: rgba(209, 173, 125, 0.08);
+      border-radius: 4px;
+      cursor: text;
+    }
+
+    body.editing-mode .editable:hover {
+      outline: 1.5px solid var(--gold-dark);
+      background-color: rgba(209, 173, 125, 0.15);
+    }
+
+    body.editing-mode .editable:focus {
+      outline: 2px solid var(--maroon) !important;
+      background-color: white !important;
+    }
+
+    /* Edit UI Elements */
+    .edit-only-ui {
+      display: none !important;
+    }
+
+    body.editing-mode .edit-only-ui {
+      display: flex !important;
+    }
+
+    /* Add Card Container */
+    .add-card-container {
+      margin-top: 15px;
+      margin-bottom: 40px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .add-card-btn {
+      width: 100%;
+      max-width: 450px;
+      padding: 14px;
+      border: 2px dashed var(--gold);
+      border-radius: var(--radius);
+      background-color: var(--gold-light);
+      color: var(--maroon-dark);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+    }
+
+    .add-card-btn:hover {
+      background-color: var(--gold);
+      color: white;
+      border-style: solid;
+    }
+
+    /* Buttons inside cards */
+    .add-item-btn, .add-term-btn {
+      margin-top: 12px;
+      padding: 6px 14px;
+      border: 1px dashed var(--gold-dark);
+      border-radius: 6px;
+      background-color: white;
+      color: var(--gold-dark);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+      align-self: flex-start;
+    }
+
+    .add-item-btn:hover, .add-term-btn:hover {
+      background-color: var(--gold-light);
+      color: var(--maroon);
+      border-style: solid;
+    }
+
+    .playbook-item {
+      position: relative;
+      padding-right: 32px !important;
+    }
+
+    .delete-item-btn, .delete-term-btn {
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      line-height: 1;
+      padding: 2px 6px;
+      opacity: 0.6;
+    }
+
+    .delete-item-btn:hover, .delete-term-btn:hover {
+      color: #ef4444;
+      opacity: 1;
+    }
+
+    .card-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn-card-action {
+      background-color: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: white;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: var(--transition);
+      text-transform: uppercase;
+    }
+
+    .btn-card-action:hover {
+      background-color: white;
+      color: var(--dark-gray);
+    }
+
+    .delete-card-btn {
+      background-color: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+
+    .delete-card-btn:hover {
+      background-color: #ef4444;
+      color: white;
+    }
+
+    /* Core Formula Display */
+    .formula-banner {
+      margin-bottom: 24px;
+    }
+
+    .formula-card {
+      background: linear-gradient(to right, white, var(--maroon-light));
+      border-left: 5px solid var(--maroon);
+      padding: 18px 24px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .formula-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--maroon);
+      font-weight: 700;
+    }
+
+    .formula-equation {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.9rem;
+      letter-spacing: 1px;
+      color: var(--dark-gray);
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .formula-equation span.step {
+      background: white;
+      padding: 2px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .formula-equation span.step.success {
+      background-color: var(--maroon-light);
+      border-color: var(--maroon);
+      color: var(--maroon);
+    }
+
+    .formula-equation span.arrow {
+      color: var(--gold-dark);
+    }
+
+    /* Tab Content Layout */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Concept Card block styling */
+    .concept-card {
+      background-color: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+      margin-bottom: 30px;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .concept-card.hidden {
+      display: none !important;
+    }
+
+    .concept-header {
+      background-color: var(--dark-gray);
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-bottom: 3px solid var(--gold);
+    }
+
+    .concept-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .concept-title h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 1.3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .concept-title .tagline {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      background-color: rgba(255,255,255,0.12);
+      padding: 3px 10px;
+      border-radius: 20px;
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .concept-meta {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      color: rgba(255,255,255,0.75);
+    }
+
+    .concept-body {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 900px) {
+      .concept-body {
+        grid-template-columns: 340px 1fr;
+      }
+    }
+
+    .concept-body.full-terms {
+      grid-template-columns: 1fr !important;
+    }
+    .concept-body.full-terms .playbook-pane {
+      display: none !important;
+    }
+
+    /* Playbook Column */
+    .playbook-pane {
+      background: linear-gradient(180deg, var(--maroon-light) 0%, rgba(255,255,255,0) 100%);
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media (min-width: 900px) {
+      .playbook-pane {
+        border-bottom: none;
+        border-right: 1px solid var(--border-color);
+      }
+    }
+
+    .playbook-pane h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--maroon);
+      margin-bottom: 12px;
+      font-weight: 800;
+      border-bottom: 2px solid var(--gold);
+      padding-bottom: 4px;
+    }
+
+    .playbook-list {
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .playbook-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--dark-gray);
+      background: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      border: 1px solid rgba(152,0,46,0.08);
+      transition: var(--transition);
+    }
+
+    .playbook-item:hover {
+      transform: translateX(3px);
+      border-color: var(--gold);
+    }
+
+    .playbook-item span.bullet {
+      color: var(--gold-dark);
+      font-size: 1.05rem;
+      line-height: 1;
+    }
+
+    /* Terms Column */
+    .terms-pane {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .terms-pane h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--slate-gray);
+      margin-bottom: 12px;
+      font-weight: 800;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 4px;
+    }
+
+    .terms-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 600px) {
+      .terms-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .term-box {
+      background-color: var(--bg-gray);
+      border-radius: 8px;
+      padding: 12px 14px;
+      border: 1px solid var(--border-color);
+      position: relative;
+      transition: var(--transition);
+    }
+
+    .term-box.hidden {
+      display: none !important;
+    }
+
+    .term-box:hover {
+      border-color: var(--gold-dark);
+      background-color: white;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+    }
+
+    .term-name {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--maroon);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .term-desc {
+      font-size: 0.85rem;
+      color: #334155;
+      font-weight: 400;
+    }
+
+    /* Resource Attachment Badge & Modal */
+    .term-resources {
+      margin-top: 8px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .resource-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background: var(--gold-light);
+      color: var(--maroon-dark);
+      text-decoration: none;
+      border: 1px solid var(--gold);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .resource-badge:hover {
+      background: var(--gold);
+      color: white;
+    }
+
+    /* Quiz Tab Styling */
+    .quiz-card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+      padding: 30px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--gold);
+      padding-bottom: 12px;
+    }
+
+    .quiz-score-badge {
+      background: var(--maroon);
+      color: white;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      padding: 4px 14px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+    }
+
+    .quiz-question-box {
+      background: var(--bg-gray);
+      border-left: 5px solid var(--maroon);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
+
+    .quiz-question-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: var(--slate-gray);
+      margin-bottom: 6px;
+    }
+
+    .quiz-question-text {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--dark-gray);
+    }
+
+    .quiz-options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .quiz-option-btn {
+      background: white;
+      border: 1.5px solid var(--border-color);
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--dark-gray);
+      text-align: left;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .quiz-option-btn:hover {
+      border-color: var(--maroon);
+      background: var(--maroon-light);
+    }
+
+    .quiz-option-btn.correct {
+      background: #dcfce7 !important;
+      border-color: #22c55e !important;
+      color: #15803d !important;
+    }
+
+    .quiz-option-btn.incorrect {
+      background: #fee2e2 !important;
+      border-color: #ef4444 !important;
+      color: #b91c1c !important;
+    }
+
+    .quiz-next-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--maroon);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .quiz-next-btn:hover {
+      background: var(--maroon-dark);
+    }
+
+    /* Notification Toast */
+    #save-toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--dark-gray);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 9999;
+      border-left: 4px solid var(--gold);
+    }
+
+    #save-toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Mobile Header */
+    #mobile-header {
+      display: none;
+      background: #000;
+      color: #fff;
+      padding: 10px 16px;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 2px solid var(--maroon);
+    }
+
+    .menu-toggle {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .drawer-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1005;
+      backdrop-filter: blur(2px);
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      #mobile-header {
+        display: flex;
+      }
+      nav.side {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 280px;
+        height: 100vh;
+        z-index: 1010;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+        border-bottom: none;
+        border-right: 3px solid var(--maroon);
+      }
+      .side-open nav.side {
+        left: 0;
+      }
+      .side-open .drawer-backdrop {
+        display: block;
+      }
+      .close-drawer {
+        display: block;
+      }
+      main {
+        padding: 20px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mobile Topbar -->
+  <div id="mobile-header">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <img src="macewan-logo.png" alt="MacEwan" style="width:32px; height:32px; background:#fff; border-radius:4px; padding:2px;">
+      <span style="font-weight:700; font-size:0.9em; letter-spacing:0.3px; color:#fff;">Griffins Hoops</span>
+    </div>
+    <button class="menu-toggle" onclick="toggleDrawer(true)">☰</button>
+  </div>
+  
+  <div class="drawer-backdrop" id="backdrop" onclick="toggleDrawer(false)"></div>
+
+  <div class="layout">
+    <!-- Sidebar Navigation -->
+    <nav class="side">
+      <button class="close-drawer" onclick="toggleDrawer(false)">×</button>
+      <div class="brand">
+        <img src="macewan-logo.png" alt="MacEwan">
+        <h1>Griffins Hoops<small>Coaching Hub</small></h1>
+      </div>
+      
+      <h2>Quick nav</h2>
+      <ul>
+        <li><a href="index.html">🏠 Dashboard</a></li>
+        <li><a href="canadawest-scout-2026-27.html" style="background:rgba(152,0,46,0.1);color:#98002e;font-weight:700;border-left:3px solid #98002e;padding-left:7px">CW Scouting Hub ➔</a></li>
+        <li><a href="drills.html" style="background:rgba(209,173,125,0.1);color:#d1ad7d;font-weight:700;border-left:3px solid #d1ad7d;padding-left:7px">Animated Drill Bank ➔</a></li>
+        <li><a href="griffin-concepts.html" style="background:rgba(152,0,46,0.2);color:#fff;font-weight:700;border-left:3px solid var(--gold);padding-left:7px">Griffin Concepts ➔</a></li>
+        <li><a href="practice-plans/index.html">Practice Plans</a></li>
+        <li><a href="playbook.html" style="background:rgba(209,173,125,0.15);color:#d1ad7d;font-weight:700;border-left:3px solid #d1ad7d;padding-left:7px">Playbook Links ➔</a></li>
+        <li><a href="offseason-sc-app/index.html">S&amp;C app</a></li>
+        <li id="rosterManagerNav" style="display:none;"><a href="players.html" style="background:rgba(209,173,125,0.15);color:#d1ad7d;font-weight:700;border-left:3px solid #d1ad7d;padding-left:7px">Roster Manager ➔</a></li>
+        <li><a href="#" onclick="logoutHub(); return false;" style="color:#ff5e5e; font-weight:600; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">🔒 Log Out</a></li>
+      </ul>
+    </nav>
+
+    <!-- Main Workspace -->
+    <main>
+
+      <!-- Hero Header -->
+      <header class="hero-header">
+        <div class="header-container">
+          <div class="team-badge editable" id="badge-text">MacEwan Griffins Men's Basketball</div>
+          <h1 id="header-title" class="editable">Griffin Basketball <span>Concepts &amp; Terminology</span></h1>
+          <p id="header-subtitle" class="editable">Interactive tactical playbook manual summarizing offensive flow, defensive rotations, closeouts, PNR reads, and special situations.</p>
+        </div>
+      </header>
+
+      <!-- Role Status Banner -->
+      <div class="role-banner" id="roleBanner">
+        <div class="role-tag" id="roleTagText">
+          <span>🏀 Coaching Manual &amp; Player Study Guide</span>
+        </div>
+        <div style="font-size: 0.82rem; color: var(--slate-gray);" id="roleSubText">
+          Interactive terminology database &amp; study quiz.
+        </div>
+      </div>
+
+      <!-- Controls Panel & Search Bar -->
+      <div class="controls-panel no-print">
+        <div class="top-controls-row">
+          <div class="tabs">
+            <button class="tab-btn active" id="btn-offense-tab" onclick="switchTab('offense')">
+              ⚡ Offense
+            </button>
+            <button class="tab-btn" id="btn-defense-tab" onclick="switchTab('defense')">
+              🛡️ Defense
+            </button>
+            <button class="tab-btn quiz-btn" id="btn-quiz-tab" onclick="switchTab('quiz')">
+              🏆 Interactive Quiz
+            </button>
+          </div>
+          
+          <div class="right-controls">
+            <button class="btn-action btn-edit" id="btn-toggle-edit" onclick="toggleEditMode()" style="display:none;">
+              ✏️ <span>Edit Mode</span>
+            </button>
+            <button class="btn-action btn-reset" id="btn-reset-default" onclick="resetToDefaults()" style="display: none;">
+              🔄 Reset to Defaults
+            </button>
+            <button class="btn-action btn-print" onclick="window.print()">
+              🖨️ Print / PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- Sticky Search Box Container -->
+        <div class="search-box-container" id="searchBoxContainer">
+          <div class="search-input-wrapper">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="conceptSearchInput" class="search-input" placeholder="Search any terminology, trigger, closeout, or defensive rotation..." onkeyup="filterTerminology()">
+          </div>
+          <div class="filter-pills">
+            <span class="pill active" onclick="setCategoryFilter('all', this)">All Concepts</span>
+            <span class="pill" onclick="setCategoryFilter('pnr', this)">PNR &amp; DHO Reads</span>
+            <span class="pill" onclick="setCategoryFilter('closeout', this)">Closeouts &amp; Drives</span>
+            <span class="pill" onclick="setCategoryFilter('shell', this)">Shell &amp; Rotations</span>
+            <span class="pill" onclick="setCategoryFilter('post', this)">Post Game</span>
+            <span class="pill" onclick="setCategoryFilter('special', this)">Special Situations</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Editable Data Container -->
+      <div id="playbook-data-container">
+        
+        <!-- OFFENSIVE CONCEPTS TAB -->
+        <div id="offense-tab" class="tab-content active">
+          
+          <!-- Offensive Formula Banner -->
+          <div class="formula-banner">
+            <div class="formula-card">
+              <div class="formula-title">Offensive Mission Formula</div>
+              <div class="formula-equation">
+                <span class="step editable">Neutral</span>
+                <span class="arrow">➔</span>
+                <span class="step editable">Trigger / Action <small style="color:var(--gold-dark)">(Spark)</small></span>
+                <span class="arrow">➔</span>
+                <span class="step editable">Small Advantage <small style="color:var(--slate-gray)">(Fuel)</small> / Big Advantage <small style="color:var(--maroon)">(Flame)</small></span>
+                <span class="arrow">➔</span>
+                <span class="step success editable">Shot Quality ≥ 1 PPP</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Container -->
+          <div class="container">
+
+            <!-- RACE / EARLY OFFENSE -->
+            <div class="concept-card" data-category="offense closeout">
+              <div class="concept-header">
+                <div class="concept-title">
+                  <h2 class="editable">Race</h2>
+                  <span class="tagline editable">Early Offense</span>
+                </div>
+                <div class="concept-meta editable">"No Layups, 3s or Fouls in first 6 seconds"</div>
+                <div class="card-controls edit-only-ui no-print">
+                  <button class="btn-card-action layout-toggle-btn" title="Toggle layout columns">Layout</button>
+                  <button class="btn-card-action delete-card-btn" title="Delete concept card">&times; Delete</button>
+                </div>
+              </div>
+              <div class="concept-body">
+                <div class="playbook-pane">
+                  <h3 class="editable">Beliefs / Playbook</h3>
+                  <ul class="playbook-list">
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Pace 21 ➔ Cross 1/2 by 21</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Spots ➔ 5 Out or 4 Out</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Early Paint ➔ Drive or Rim Run</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Blender ➔ Force Rotation</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Drag (Fist) = Transition PNR</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">77 = Double Drag</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                  </ul>
+                  <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
+                </div>
+                <div class="terms-pane">
+                  <h3 class="editable">Early Offense Terms</h3>
+                  <div class="terms-grid">
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Pace 21</div>
+                      <div class="term-desc editable">Get the ball transported across half court by 21 seconds on the shot clock—either through breakout dribble or throw ahead.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Spots</div>
+                      <div class="term-desc editable">All players sprint to the 5 spots (Deep Corners, Wings, &amp; Post) in 5 seconds or less. Post is either Big Ahead into Dunker or Big Above as a Trailer.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Dunker</div>
+                      <div class="term-desc editable">Short corner. "Heels on the baseline", outside the hash mark, wide and flat. Spaced opposite the ball handler.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Throw Ahead</div>
+                      <div class="term-desc editable">Look to advance the ball with the pass. Create early numbers advantages before the defense can set up.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Deep Outlet</div>
+                      <div class="term-desc editable">Guard gets butt to the sideline at Free Throw Line Extended. First sneak a peek down court to see numbers before receiving pass.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Closest Man Inbounds</div>
+                      <div class="term-desc editable">If the 5 man inbounds, he trails and we are 5 Out (Big Above). If anyone else inbounds, the 5 rim runs (Big Ahead) and we set 4 Out spacing.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Drag</div>
+                      <div class="term-desc editable">Trailing post player sets a transition pick &amp; roll for the ball handler to use immediately after a defensive miss.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">77</div>
+                      <div class="term-desc editable">Double Drag. A staggered ball screen in transition where O5 sets the second screen.</div>
+                    </div>
+                  </div>
+                  <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- CORE / SECONDARY BREAKS -->
+            <div class="concept-card" data-category="offense pnr">
+              <div class="concept-header">
+                <div class="concept-title">
+                  <h2 class="editable">Core</h2>
+                  <span class="tagline editable">Secondary Breaks</span>
+                </div>
+                <div class="concept-meta editable">"Triggers if we are neutralized"</div>
+                <div class="card-controls edit-only-ui no-print">
+                  <button class="btn-card-action layout-toggle-btn" title="Toggle layout columns">Layout</button>
+                  <button class="btn-card-action delete-card-btn" title="Delete concept card">&times; Delete</button>
+                </div>
+              </div>
+              <div class="concept-body">
+                <div class="playbook-pane">
+                  <h3 class="editable">Point Guard Calls</h3>
+                  <ul class="playbook-list">
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Horns Side = 5 Out Pistol</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">"4" = 4 Out DHO into Step Up</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">"1" = 5 Out Single Pin</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">"2" = Stagger</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">"0" = 5 Out Split (O5 Handling)</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">"4 Down" = Block Mover</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">"Motion" / Finger Twirl = Continuous PNR</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                  </ul>
+                  <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
+                </div>
+                <div class="terms-pane">
+                  <h3 class="editable">Offense Core Terms</h3>
+                  <div class="terms-grid">
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Neutralized</div>
+                      <div class="term-desc editable">If defense has all 5 back, loaded to the ball, and on-ball defender is square with no foot angle advantage. Flow into a Trigger immediately.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Trigger</div>
+                      <div class="term-desc editable">Screening action (one of Core 5 calls) incorporating O5 to get a ballhandler downhill, forcing defense into rotation.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Big Ahead</div>
+                      <div class="term-desc editable">When O5 rim runs ahead of the ball. If he doesn't receive it early, he spaces to opposite dunker and we run the "4" series (4 Out spacing).</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Big Above</div>
+                      <div class="term-desc editable">When O5 is above the 3-point line (trailing). We initiate any of our 5-Out Triggers called early by the ball handler.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Early Call</div>
+                      <div class="term-desc editable">Point Guard identifies if we are in 4 Out or 5 Out spacing, assesses if neutralized, and makes a call for a Core Trigger.</div>
+                    </div>
+                  </div>
+                  <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- DRIVE AND KICK -->
+            <div class="concept-card" data-category="offense closeout">
+              <div class="concept-header">
+                <div class="concept-title">
+                  <h2 class="editable">Drive &amp; Kick</h2>
+                  <span class="tagline editable">Paint Attacks</span>
+                </div>
+                <div class="concept-meta editable">.5 Scramble Multiple Attacks</div>
+                <div class="card-controls edit-only-ui no-print">
+                  <button class="btn-card-action layout-toggle-btn" title="Toggle layout columns">Layout</button>
+                  <button class="btn-card-action delete-card-btn" title="Delete concept card">&times; Delete</button>
+                </div>
+              </div>
+              <div class="concept-body">
+                <div class="playbook-pane">
+                  <h3 class="editable">Attack Phases</h3>
+                  <ul class="playbook-list">
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">1st Side = Trigger</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">2nd Side = 2-Man Game</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">3rd Side = Flash or Snap</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                  </ul>
+                  <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
+                </div>
+                <div class="terms-pane">
+                  <h3 class="editable">Drive &amp; Kick Terms</h3>
+                  <div class="terms-grid">
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Break the Paint</div>
+                      <div class="term-desc editable">Any time we enter the paint with a drive or pass. Must seek to engage two defenders to open up team options.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Scramble</div>
+                      <div class="term-desc editable">Forcing the defense into full rotation by pulling their LOW MAN up to help at the rim, causing double teams.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">E2 (Engage 2)</div>
+                      <div class="term-desc editable">Stands for Engage 2. When this happens, you must look to pass quickly to the open teammate.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Drive Kick Swing</div>
+                      <div class="term-desc editable">Drive the paint, kick out, and make a quick swing pass to punish defensive rotation (making the "Extra Pass").</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Kick Out Get Out</div>
+                      <div class="term-desc editable">If you drive into the paint and kick the ball out, you must sprint and exit cut faster than you entered. Restores spacing for next attack.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">.5 (Half-Second)</div>
+                      <div class="term-desc editable">Once defense is scrambling, decide to shoot, drive, or pass in 0.5 seconds. Do not let the ball stick or hold.</div>
+                    </div>
+                  </div>
+                  <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- PICK & ROLL READS -->
+            <div class="concept-card" data-category="offense pnr">
+              <div class="concept-header">
+                <div class="concept-title">
+                  <h2 class="editable">Pick &amp; Roll Reads</h2>
+                  <span class="tagline editable">Tactical Reads</span>
+                </div>
+                <div class="concept-meta editable">"Make Defenders Trail" | "Force The Over" | "Break The Paint"</div>
+                <div class="card-controls edit-only-ui no-print">
+                  <button class="btn-card-action layout-toggle-btn" title="Toggle layout columns">Layout</button>
+                  <button class="btn-card-action delete-card-btn" title="Delete concept card">&times; Delete</button>
+                </div>
+              </div>
+              <div class="concept-body">
+                <div class="playbook-pane">
+                  <h3 class="editable">Handler Reads</h3>
+                  <ul class="playbook-list">
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Score ➔ No one engages handler</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Search ➔ E2 engages: look for Roll or Pop</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Skip ➔ Collapsing tags: pass to open shooter</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                  </ul>
+                  <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
+                </div>
+                <div class="terms-pane">
+                  <h3 class="editable">PNR Techniques &amp; Attack Reads</h3>
+                  <div class="terms-grid">
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Screening Basics</div>
+                      <div class="term-desc editable"><strong>Sprint to Screen:</strong> "Arrive Alone" to get separation.<br><strong>Screen Lower 1/3:</strong> Screen lower body to "Force the Over".<br><strong>Touch &amp; Go:</strong> Slip screen immediately as defender hips turn.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Drop/Over Attack</div>
+                      <div class="term-desc editable"><strong>Hostage:</strong> Seal defender on back.<br><strong>Hang:</strong> Float dribble to freeze drop big.<br><strong>Gortat:</strong> Hostage O1 on back, seal X5 at rim.<br><strong>Engage Big:</strong> Pull X5 to open roll pocket.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Drop/Under Attack</div>
+                      <div class="term-desc editable"><strong>Twist:</strong> Re-screen if defense goes under.<br><strong>Race the Under:</strong> Beat under defender to paint.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Ice Attack</div>
+                      <div class="term-desc editable"><strong>Slip Roll:</strong> Dive screener to rim on Ice.<br><strong>Twist Screen:</strong> Flip into step up screen.<br><strong>Get Game:</strong> Pop big, handback going over top.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Switch Attack</div>
+                      <div class="term-desc editable"><strong>Race Switch:</strong> Drive soft switch downhill.<br><strong>Cutback (Drive Wake):</strong> Attack switch foot angle.<br><strong>Boomerang:</strong> Pass on switch, back up, catch and drive wake.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Matchup Calls</div>
+                      <div class="term-desc editable"><strong>Mouse in House:</strong> Small guarding big.<br><strong>Moose on Loose:</strong> Big guarding guard on perimeter.</div>
+                    </div>
+                  </div>
+                  <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- POST FEED & CUTTERS -->
+            <div class="concept-card" data-category="offense post">
+              <div class="concept-header">
+                <div class="concept-title">
+                  <h2 class="editable">Post Feed &amp; Cutters</h2>
+                  <span class="tagline editable">Inside-Out Game</span>
+                </div>
+                <div class="concept-meta editable">"Catch-Chin-Check"</div>
+                <div class="card-controls edit-only-ui no-print">
+                  <button class="btn-card-action layout-toggle-btn" title="Toggle layout columns">Layout</button>
+                  <button class="btn-card-action delete-card-btn" title="Delete concept card">&times; Delete</button>
+                </div>
+              </div>
+              <div class="concept-body">
+                <div class="playbook-pane">
+                  <h3 class="editable">Post Actions</h3>
+                  <ul class="playbook-list">
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Catch-Chin-Check ➔ 2 Feet, 2 Hands, check shoulder</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Score-Search-Skip ➔ Score, find cutter, skip opposite</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Blast ➔ Uphill DHO to slip roll/pop</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                  </ul>
+                  <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
+                </div>
+                <div class="terms-pane">
+                  <h3 class="editable">Post Game Terms</h3>
+                  <div class="terms-grid">
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Speed Cut</div>
+                      <div class="term-desc editable">Post feeder cuts baseline side of post player, sprints to basket, and out to opposite corner.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Catch-Chin-Check</div>
+                      <div class="term-desc editable">Catch on two feet with two hands, chin the ball to protect it, and check over inside shoulder for cutters.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Score-Search-Skip</div>
+                      <div class="term-desc editable">Look to score first, search for cutting guards second, skip opposite for 3 if defense collapses.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Blast</div>
+                      <div class="term-desc editable">If post has no advantage, DHO uphill to perimeter teammate and slip roll/pop.</div>
+                    </div>
+                  </div>
+                  <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Add Card Button (Offense) -->
+            <div class="add-card-container edit-only-ui no-print">
+              <button class="add-card-btn">+ Add New Offensive Concept Card</button>
+            </div>
+
+          </div>
+        </div>
+        
+        <!-- DEFENSIVE CONCEPTS TAB -->
+        <div id="defense-tab" class="tab-content">
+          
+          <!-- Defensive Formula Banner -->
+          <div class="formula-banner">
+            <div class="formula-card" style="background: linear-gradient(to right, white, rgba(209, 173, 125, 0.08)); border-left-color: var(--gold-dark);">
+              <div class="formula-title" style="color: var(--gold-dark);">Defensive Mission Formula</div>
+              <div class="formula-equation">
+                <span class="step editable">Ball Pressure</span>
+                <span class="arrow">➔</span>
+                <span class="step editable">Shrink &amp; Stunt <small style="color:var(--maroon)">(No Paint)</small></span>
+                <span class="arrow">➔</span>
+                <span class="step editable">Multiple Efforts <small style="color:var(--slate-gray)">(Rotate)</small></span>
+                <span class="arrow">➔</span>
+                <span class="step success editable" style="background-color: var(--gold-light); border-color: var(--gold-dark); color: var(--maroon-dark);">Force Tough 2s - One &amp; Done</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Container -->
+          <div class="container">
+
+            <!-- D-TRANS -->
+            <div class="concept-card" data-category="defense shell">
+              <div class="concept-header">
+                <div class="concept-title">
+                  <h2 class="editable">D-Trans</h2>
+                  <span class="tagline editable">Transition Defense</span>
+                </div>
+                <div class="concept-meta editable">"NO KEY, FREE, 3s IN FIRST 6 SECONDS"</div>
+                <div class="card-controls edit-only-ui no-print">
+                  <button class="btn-card-action layout-toggle-btn" title="Toggle layout columns">Layout</button>
+                  <button class="btn-card-action delete-card-btn" title="Delete concept card">&times; Delete</button>
+                </div>
+              </div>
+              <div class="concept-body">
+                <div class="playbook-pane">
+                  <h3 class="editable">Beliefs / Playbook</h3>
+                  <ul class="playbook-list">
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">TAG ➔ REBOUNDING SPOTS</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">SPRINT ➔ BALL LEVEL</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">RIM ➔ WIN AT RIM WITH VERTICALITY</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">BALL ➔ LATEST PICKUP = 4 PT LINE</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                  </ul>
+                  <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
+                </div>
+                <div class="terms-pane">
+                  <h3 class="editable">Transition Terms</h3>
+                  <div class="terms-grid">
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">2 BACK</div>
+                      <div class="term-desc editable">2 guards get back (through elbows if in corner) during shot attempts to stop leak outs and head men.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">2 BASKET</div>
+                      <div class="term-desc editable">2 Bigs go rebound shot. If no Oreb then must sprint back while locating matchup.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">SCRAM</div>
+                      <div class="term-desc editable">Pulling player out from mismatch in transition.</div>
+                    </div>
+                  </div>
+                  <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- KYP CLOSEOUTS -->
+            <div class="concept-card" data-category="defense closeout">
+              <div class="concept-header">
+                <div class="concept-title">
+                  <h2 class="editable">KYP Closeouts</h2>
+                  <span class="tagline editable">Closeouts</span>
+                </div>
+                <div class="concept-meta editable">"KNOW YOUR PERSONNEL"</div>
+                <div class="card-controls edit-only-ui no-print">
+                  <button class="btn-card-action layout-toggle-btn" title="Toggle layout columns">Layout</button>
+                  <button class="btn-card-action delete-card-btn" title="Delete concept card">&times; Delete</button>
+                </div>
+              </div>
+              <div class="concept-body">
+                <div class="playbook-pane">
+                  <h3 class="editable">Beliefs / Playbook</h3>
+                  <ul class="playbook-list">
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Stick Hand</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">No Strong Hand</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">No Paint</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                  </ul>
+                  <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
+                </div>
+                <div class="terms-pane">
+                  <h3 class="editable">Closeout Personnel</h3>
+                  <div class="terms-grid">
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">GRIF (Blake Griffin) - SQUARE</div>
+                      <div class="term-desc editable">Shooter &amp; Driver, close out arm length away.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">KAT - BODY</div>
+                      <div class="term-desc editable">Shooter - Close out to the body of designated shooters.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">KLAY - FLYBY</div>
+                      <div class="term-desc editable">Run at shooting shoulder with shooting hand (Right on Right) - Rear View Contest.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">SHAQ</div>
+                      <div class="term-desc editable">Driver - Absorb the drive.</div>
+                    </div>
+                  </div>
+                  <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- SHELL DEFENSE -->
+            <div class="concept-card" data-category="defense shell">
+              <div class="concept-header">
+                <div class="concept-title">
+                  <h2 class="editable">Shell Defense</h2>
+                  <span class="tagline editable">Team Defensive Spacing</span>
+                </div>
+                <div class="concept-meta editable">"FORCE TOUGH 2s - ONE &amp; DONE"</div>
+                <div class="card-controls edit-only-ui no-print">
+                  <button class="btn-card-action layout-toggle-btn" title="Toggle layout columns">Layout</button>
+                  <button class="btn-card-action delete-card-btn" title="Delete concept card">&times; Delete</button>
+                </div>
+              </div>
+              <div class="concept-body">
+                <div class="playbook-pane">
+                  <h3 class="editable">Beliefs / Playbook</h3>
+                  <ul class="playbook-list">
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">ORGANIZED HELP</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">SHRINK &amp; STUNT</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">MULTIPLE EFFORTS</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                  </ul>
+                  <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
+                </div>
+                <div class="terms-pane">
+                  <h3 class="editable">Shell Team Terms</h3>
+                  <div class="terms-grid">
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">BALL</div>
+                      <div class="term-desc editable">Must point and declare ball on every catch.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">STRONG</div>
+                      <div class="term-desc editable">Defender guarding player next to ball. Responsible for shrinking and stunting.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">RIM</div>
+                      <div class="term-desc editable">Defender responsible for RIM HELP on attacks. Learn how to stunt for help.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">NAIL</div>
+                      <div class="term-desc editable">Top weak side defender. Sinks on baseline or slot drive, has 1st pass out.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">B.E.N</div>
+                      <div class="term-desc editable">Our shrink spots: Blocks, Elbows, and Nail. Shrink floor when not guarding ball.</div>
+                    </div>
+                  </div>
+                  <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- PICK AND ROLL DEFENSE -->
+            <div class="concept-card" data-category="defense pnr">
+              <div class="concept-header">
+                <div class="concept-title">
+                  <h2 class="editable">Pick and Roll Defense</h2>
+                  <span class="tagline editable">PNR Coverages</span>
+                </div>
+                <div class="concept-meta editable">"THE 5 Ts: TALK, TOUCH, TRACE, TAKE, TAG"</div>
+                <div class="card-controls edit-only-ui no-print">
+                  <button class="btn-card-action layout-toggle-btn" title="Toggle layout columns">Layout</button>
+                  <button class="btn-card-action delete-card-btn" title="Delete concept card">&times; Delete</button>
+                </div>
+              </div>
+              <div class="concept-body">
+                <div class="playbook-pane">
+                  <h3 class="editable">The 5 Ts Framework</h3>
+                  <ul class="playbook-list">
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">TALK: Big calls early (3x). "DROP", "ICE", "RED".</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">TOUCH: Guard impacts ball; Big up to touch.</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">TRACE: Big takes low pocket pass; Guard high.</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                  </ul>
+                  <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
+                </div>
+                <div class="terms-pane">
+                  <h3 class="editable">PNR Coverages &amp; Tactics</h3>
+                  <div class="terms-grid">
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">DROP (Zone Drop)</div>
+                      <div class="term-desc editable">Big zones and drops toward basket. Plays centerfield between ball and rim.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">ICE</div>
+                      <div class="term-desc editable">On outer 1/3 of floor. Guard prevents ball from going middle. Big drops.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">HOT (Blitz)</div>
+                      <div class="term-desc editable">Hard double team on ball until dribble is picked up or retreat dribble.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">RED (Switch)</div>
+                      <div class="term-desc editable">Contact switch on screen. Screener's man calls RED early.</div>
+                    </div>
+                  </div>
+                  <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- POST DEFENSE -->
+            <div class="concept-card" data-category="defense post">
+              <div class="concept-header">
+                <div class="concept-title">
+                  <h2 class="editable">Post Defense</h2>
+                  <span class="tagline editable">Low Post</span>
+                </div>
+                <div class="concept-meta editable">"DO YOUR WORK EARLY"</div>
+                <div class="card-controls edit-only-ui no-print">
+                  <button class="btn-card-action layout-toggle-btn" title="Toggle layout columns">Layout</button>
+                  <button class="btn-card-action delete-card-btn" title="Delete concept card">&times; Delete</button>
+                </div>
+              </div>
+              <div class="concept-body">
+                <div class="playbook-pane">
+                  <h3 class="editable">Beliefs / Playbook</h3>
+                  <ul class="playbook-list">
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">PREVENT THE CATCH</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">NO MIDDLE</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                  </ul>
+                  <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
+                </div>
+                <div class="terms-pane">
+                  <h3 class="editable">Post Positioning &amp; Help</h3>
+                  <div class="terms-grid">
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">GOLD (Base Post)</div>
+                      <div class="term-desc editable">3/4 Top Denial. Slide behind on the pass. Wall off the shot and show hands.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">NO MIDDLE</div>
+                      <div class="term-desc editable">Sit on inside shoulder to take away middle post moves. Feet pointed to sideline.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">DIG HELP</div>
+                      <div class="term-desc editable">Shrink on post catch - Dig with closest perimeter defender on the dribble bounce.</div>
+                    </div>
+                  </div>
+                  <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- SPECIAL SITUATIONS -->
+            <div class="concept-card" data-category="defense special">
+              <div class="concept-header">
+                <div class="concept-title">
+                  <h2 class="editable">Special Situations</h2>
+                  <span class="tagline editable">End of Game &amp; Out of Bounds</span>
+                </div>
+                <div class="concept-meta editable">"ASSIGNMENT EXCELLENCE"</div>
+                <div class="card-controls edit-only-ui no-print">
+                  <button class="btn-card-action layout-toggle-btn" title="Toggle layout columns">Layout</button>
+                  <button class="btn-card-action delete-card-btn" title="Delete concept card">&times; Delete</button>
+                </div>
+              </div>
+              <div class="concept-body">
+                <div class="playbook-pane">
+                  <h3 class="editable">Beliefs / Playbook</h3>
+                  <ul class="playbook-list">
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">ASSIGNMENT EXCELLENCE</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                  </ul>
+                  <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
+                </div>
+                <div class="terms-pane">
+                  <h3 class="editable">Situational Rules</h3>
+                  <div class="terms-grid">
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">EOG UP 2</div>
+                      <div class="term-desc editable">"STAY BEFORE - SWITCH AFTER". No switches before inbound. Switch everything after ball is inbounded.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">EOG UP 3</div>
+                      <div class="term-desc editable">"SWITCH BEFORE AND AFTER". Switch all screens before inbound and after. Chop when possible to prevent 3s.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">CHOP (Intentional Foul)</div>
+                      <div class="term-desc editable">Foul when up by 3 points, or at end of quarter when we have a foul to give.</div>
+                    </div>
+                  </div>
+                  <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Add Card Button (Defense) -->
+            <div class="add-card-container edit-only-ui no-print">
+              <button class="add-card-btn">+ Add New Defensive Concept Card</button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- INTERACTIVE QUIZ TAB -->
+        <div id="quiz-tab" class="tab-content">
+          <div class="quiz-card">
+            <div class="quiz-header">
+              <div>
+                <h2 style="font-family:'Montserrat',sans-serif; font-size:1.3rem; text-transform:uppercase;">Terminology Quiz</h2>
+                <p style="font-size:0.85rem; color:var(--slate-gray);">Test your knowledge on Griffin Basketball concepts &amp; tactical rules</p>
+              </div>
+              <div class="quiz-score-badge" id="quizScoreBadge">
+                Score: 0 / 0
+              </div>
+            </div>
+
+            <div class="quiz-question-box">
+              <div class="quiz-question-title" id="quizCategoryTag">Category: Pick &amp; Roll Reads</div>
+              <div class="quiz-question-text" id="quizQuestionText">Loading quiz question...</div>
+            </div>
+
+            <div class="quiz-options-grid" id="quizOptionsGrid">
+              <!-- Options populated dynamically -->
+            </div>
+
+            <button class="quiz-next-btn" id="btnNextQuizQuestion" onclick="generateQuizQuestion()">Next Question ➔</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Notification Toast -->
+      <div id="save-toast">
+        <svg width="18" height="18" fill="none" stroke="var(--gold)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Edits saved automatically!
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    let isEditing = false;
+    let originalHTML = "";
+    let activeCategoryFilter = 'all';
+
+    // Quiz State
+    let quizTotal = 0;
+    let quizCorrect = 0;
+    let currentQuizTerm = null;
+    let currentQuizCorrectOption = "";
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Check role authorization
+      checkRolePermissions();
+
+      // Store original default HTML to allow resets
+      originalHTML = document.getElementById('playbook-data-container').innerHTML;
+
+      // Load saved content if it exists
+      loadSavedContent();
+      
+      // Auto-save when clicking outside of editable items
+      document.addEventListener('focusout', (e) => {
+        if (isEditing && e.target.classList.contains('editable')) {
+          saveContent();
+        }
+      });
+
+      // Delegation for click actions
+      document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('add-item-btn')) {
+          const list = e.target.previousElementSibling;
+          if (list && list.classList.contains('playbook-list')) {
+            const li = document.createElement('li');
+            li.className = 'playbook-item';
+            li.innerHTML = `<span class="bullet">★</span> <div class="editable" contenteditable="${isEditing}">New Playbook Instruction</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button>`;
+            list.appendChild(li);
+            saveContent();
+            showToast("Added new bullet point.");
+          }
+        }
+        else if (e.target.classList.contains('add-term-btn')) {
+          const grid = e.target.previousElementSibling;
+          if (grid && grid.classList.contains('terms-grid')) {
+            const termBox = document.createElement('div');
+            termBox.className = 'term-box';
+            termBox.innerHTML = `<button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button><div class="term-name editable" contenteditable="${isEditing}">NEW TERM</div><div class="term-desc editable" contenteditable="${isEditing}">Definition of the new basketball term.</div>`;
+            grid.appendChild(termBox);
+            saveContent();
+            showToast("Added new vocabulary term.");
+          }
+        }
+        else if (e.target.classList.contains('delete-item-btn')) {
+          const item = e.target.closest('.playbook-item');
+          if (item) {
+            item.remove();
+            saveContent();
+            showToast("Deleted item.");
+          }
+        }
+        else if (e.target.classList.contains('delete-term-btn')) {
+          const box = e.target.closest('.term-box');
+          if (box) {
+            box.remove();
+            saveContent();
+            showToast("Deleted term.");
+          }
+        }
+        else if (e.target.classList.contains('delete-card-btn')) {
+          const card = e.target.closest('.concept-card');
+          if (card) {
+            if (confirm("Delete this entire concept card?")) {
+              card.remove();
+              saveContent();
+              showToast("Deleted concept card.");
+            }
+          }
+        }
+        else if (e.target.classList.contains('layout-toggle-btn')) {
+          const card = e.target.closest('.concept-card');
+          if (card) {
+            const body = card.querySelector('.concept-body');
+            if (body) {
+              body.classList.toggle('full-terms');
+              saveContent();
+              showToast("Toggled card layout.");
+            }
+          }
+        }
+        else if (e.target.classList.contains('add-card-btn')) {
+          const activeTab = document.querySelector('.tab-content.active .container');
+          if (activeTab) {
+            const addContainer = activeTab.querySelector('.add-card-container');
+            const card = document.createElement('div');
+            card.className = 'concept-card';
+            card.innerHTML = `
+              <div class="concept-header">
+                <div class="concept-title">
+                  <h2 class="editable" contenteditable="${isEditing}">New Concept Title</h2>
+                  <span class="tagline editable" contenteditable="${isEditing}">Category</span>
+                </div>
+                <div class="concept-meta editable" contenteditable="${isEditing}">"Short motto"</div>
+                <div class="card-controls edit-only-ui no-print">
+                  <button class="btn-card-action layout-toggle-btn" title="Toggle layout">Layout</button>
+                  <button class="btn-card-action delete-card-btn" title="Delete card">&times; Delete</button>
+                </div>
+              </div>
+              <div class="concept-body">
+                <div class="playbook-pane">
+                  <h3 class="editable" contenteditable="${isEditing}">Beliefs / Playbook</h3>
+                  <ul class="playbook-list">
+                    <li class="playbook-item">
+                      <span class="bullet">★</span>
+                      <div class="editable" contenteditable="${isEditing}">New rule</div>
+                      <button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button>
+                    </li>
+                  </ul>
+                  <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
+                </div>
+                <div class="terms-pane">
+                  <h3 class="editable" contenteditable="${isEditing}">Vocabulary Terms</h3>
+                  <div class="terms-grid">
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable" contenteditable="${isEditing}">TERM NAME</div>
+                      <div class="term-desc editable" contenteditable="${isEditing}">Definition details.</div>
+                    </div>
+                  </div>
+                  <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
+                </div>
+              </div>
+            `;
+            activeTab.insertBefore(card, addContainer);
+            saveContent();
+            showToast("Added new concept card.");
+          }
+        }
+      });
+    });
+
+    function checkRolePermissions() {
+      const isAdmin = (typeof window.isAdminOnly === 'function') ? window.isAdminOnly() : (sessionStorage.getItem('griffin_hub_admin') === 'true');
+      const isCoach = (typeof window.isCoachOrAdmin === 'function') ? window.isCoachOrAdmin() : isAdmin;
+      const editBtn = document.getElementById('btn-toggle-edit');
+      const roleBanner = document.getElementById('roleBanner');
+      const roleTagText = document.getElementById('roleTagText');
+      const roleSubText = document.getElementById('roleSubText');
+      const rNav = document.getElementById('rosterManagerNav');
+
+      if (rNav) {
+        rNav.style.display = isCoach ? 'inline-block' : 'none';
+      }
+
+      if (isAdmin) {
+        if (editBtn) editBtn.style.display = 'inline-flex';
+        if (roleTagText) roleTagText.innerHTML = '👑 Admin Edit Mode Enabled';
+        if (roleSubText) roleSubText.innerText = 'Click Edit Mode to modify terms, add cards, and customize coaching definitions.';
+      } else {
+        if (editBtn) editBtn.style.display = 'none';
+        if (roleTagText) roleTagText.innerHTML = isCoach ? '📋 Coach View — Read-Only Tactical Manual' : '🔒 Player View — Tactical Study Manual';
+        if (roleSubText) roleSubText.innerText = 'Explore terminology, search concepts, and test your knowledge in the Quiz.';
+        
+        // Force disable edit mode if user is not admin
+        if (typeof isEditing !== 'undefined' && isEditing) {
+          isEditing = false;
+          document.body.classList.remove('editing-mode');
+        }
+      }
+    }
+
+    function toggleDrawer(open) {
+      if (open) document.body.classList.add('side-open');
+      else document.body.classList.remove('side-open');
+    }
+
+    function switchTab(tabName) {
+      const buttons = document.querySelectorAll('.tab-btn');
+      buttons.forEach(btn => {
+        if (btn.id === 'btn-' + tabName + '-tab') btn.classList.add('active');
+        else btn.classList.remove('active');
+      });
+
+      const contents = document.querySelectorAll('.tab-content');
+      contents.forEach(content => {
+        if (content.id === tabName + '-tab') content.classList.add('active');
+        else content.classList.remove('active');
+      });
+
+      const searchContainer = document.getElementById('searchBoxContainer');
+      if (tabName === 'quiz') {
+        if (searchContainer) searchContainer.style.display = 'none';
+        generateQuizQuestion();
+      } else {
+        if (searchContainer) searchContainer.style.display = 'flex';
+      }
+    }
+
+    function filterTerminology() {
+      const query = document.getElementById('conceptSearchInput').value.toLowerCase().trim();
+      const termBoxes = document.querySelectorAll('.term-box');
+
+      termBoxes.forEach(box => {
+        const text = box.innerText.toLowerCase();
+        const matchesQuery = !query || text.includes(query);
+        
+        let matchesCategory = true;
+        if (activeCategoryFilter !== 'all') {
+          const card = box.closest('.concept-card');
+          if (card) {
+            const cardCat = (card.getAttribute('data-category') || '').toLowerCase();
+            matchesCategory = cardCat.includes(activeCategoryFilter);
+          }
+        }
+
+        if (matchesQuery && matchesCategory) {
+          box.classList.remove('hidden');
+        } else {
+          box.classList.add('hidden');
+        }
+      });
+
+      // Show/Hide Concept Cards if all child terms are hidden
+      const cards = document.querySelectorAll('.concept-card');
+      cards.forEach(card => {
+        const visibleTerms = card.querySelectorAll('.term-box:not(.hidden)');
+        const cardTitle = card.querySelector('.concept-title')?.innerText.toLowerCase() || '';
+        if (visibleTerms.length > 0 || (query && cardTitle.includes(query))) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    }
+
+    function setCategoryFilter(cat, pillEl) {
+      activeCategoryFilter = cat;
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      if (pillEl) pillEl.classList.add('active');
+      filterTerminology();
+    }
+
+    /* QUIZ SYSTEM */
+    function getAllVocabularyTerms() {
+      const terms = [];
+      document.querySelectorAll('.term-box').forEach(box => {
+        const nameEl = box.querySelector('.term-name');
+        const descEl = box.querySelector('.term-desc');
+        const cardTitleEl = box.closest('.concept-card')?.querySelector('h2');
+
+        if (nameEl && descEl) {
+          const name = nameEl.innerText.trim();
+          const desc = descEl.innerText.trim();
+          const category = cardTitleEl ? cardTitleEl.innerText.trim() : "Concepts";
+
+          if (name && desc) {
+            terms.push({ name, desc, category });
+          }
+        }
+      });
+      return terms;
+    }
+
+    function generateQuizQuestion() {
+      const terms = getAllVocabularyTerms();
+      if (terms.length < 4) {
+        document.getElementById('quizQuestionText').innerText = "Not enough terminology items to generate quiz.";
+        return;
+      }
+
+      // Pick random target term
+      const randomIndex = Math.floor(Math.random() * terms.length);
+      currentQuizTerm = terms[randomIndex];
+
+      document.getElementById('quizCategoryTag').innerText = `Category: ${currentQuizTerm.category}`;
+      document.getElementById('quizQuestionText').innerText = `What is the definition of "${currentQuizTerm.name}"?`;
+      currentQuizCorrectOption = currentQuizTerm.desc;
+
+      // Pick 3 random distractor options
+      const distractors = terms.filter(t => t.name !== currentQuizTerm.name);
+      shuffleArray(distractors);
+
+      const options = [currentQuizTerm.desc, distractors[0].desc, distractors[1].desc, distractors[2].desc];
+      shuffleArray(options);
+
+      const grid = document.getElementById('quizOptionsGrid');
+      grid.innerHTML = "";
+
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option-btn';
+        btn.innerText = opt;
+        btn.onclick = () => selectQuizAnswer(btn, opt);
+        grid.appendChild(btn);
+      });
+    }
+
+    function selectQuizAnswer(btnEl, selectedText) {
+      const options = document.querySelectorAll('.quiz-option-btn');
+      options.forEach(opt => opt.disabled = true);
+
+      quizTotal++;
+      if (selectedText === currentQuizCorrectOption) {
+        quizCorrect++;
+        btnEl.classList.add('correct');
+        btnEl.innerHTML += ' <span>✓ Correct</span>';
+      } else {
+        btnEl.classList.add('incorrect');
+        btnEl.innerHTML += ' <span>✗ Incorrect</span>';
+        options.forEach(opt => {
+          if (opt.innerText.trim() === currentQuizCorrectOption) {
+            opt.classList.add('correct');
+          }
+        });
+      }
+
+      document.getElementById('quizScoreBadge').innerText = `Score: ${quizCorrect} / ${quizTotal} (${Math.round((quizCorrect / quizTotal) * 100)}%)`;
+    }
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function toggleEditMode() {
+      const isAdmin = (typeof window.isAdminOnly === 'function') ? window.isAdminOnly() : (sessionStorage.getItem('griffin_hub_admin') === 'true');
+      if (!isAdmin) {
+        showToast("Access Denied: Only Administrators can edit Griffin Basketball Concepts.");
+        isEditing = false;
+        document.body.classList.remove('editing-mode');
+        return;
+      }
+
+      isEditing = !isEditing;
+      const body = document.body;
+      const editBtn = document.getElementById('btn-toggle-edit');
+      const resetBtn = document.getElementById('btn-reset-default');
+      const editables = document.querySelectorAll('.editable');
+
+      if (isEditing) {
+        body.classList.add('editing-mode');
+        if (editBtn) {
+          editBtn.classList.add('active');
+          editBtn.querySelector('span').textContent = "Lock Layout";
+        }
+        if (resetBtn) resetBtn.style.display = "flex";
+        
+        editables.forEach(el => el.setAttribute('contenteditable', 'true'));
+        showToast("Edit mode active. Click any text to edit.");
+      } else {
+        body.classList.remove('editing-mode');
+        if (editBtn) {
+          editBtn.classList.remove('active');
+          editBtn.querySelector('span').textContent = "Edit Mode";
+        }
+        if (resetBtn) resetBtn.style.display = "none";
+        
+        editables.forEach(el => el.setAttribute('contenteditable', 'false'));
+        saveContent();
+        showToast("Layout locked. Edits saved.");
+      }
+    }
+
+    function syncConceptsToCloud(content) {
+      fetch('/.netlify/functions/save-content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: 'griffin_basketball_concepts_v1', content: content })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.success) {
+          showToast("Edits saved & synced live to all players and coaches!");
+        }
+      })
+      .catch(err => console.error("Cloud sync error:", err));
+    }
+
+    function saveContent() {
+      const containerHTML = document.getElementById('playbook-data-container').innerHTML;
+      localStorage.setItem('griffin_basketball_concepts_v1', containerHTML);
+      syncConceptsToCloud(containerHTML);
+    }
+
+    function loadSavedContent() {
+      const savedHTML = localStorage.getItem('griffin_basketball_concepts_v1');
+      if (savedHTML) {
+        document.getElementById('playbook-data-container').innerHTML = savedHTML;
+      }
+
+      fetch('/.netlify/functions/get-content?key=griffin_basketball_concepts_v1')
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.success && data.content) {
+            document.getElementById('playbook-data-container').innerHTML = data.content;
+            localStorage.setItem('griffin_basketball_concepts_v1', data.content);
+            const editables = document.querySelectorAll('.editable');
+            editables.forEach(el => el.setAttribute('contenteditable', 'false'));
+          }
+        })
+        .catch(err => console.log('Cloud sync fetch notice:', err));
+      
+      const editables = document.querySelectorAll('.editable');
+      editables.forEach(el => el.setAttribute('contenteditable', 'false'));
+    }
+
+    function resetToDefaults() {
+      const isAdmin = (typeof window.isAdminOnly === 'function') ? window.isAdminOnly() : (sessionStorage.getItem('griffin_hub_admin') === 'true');
+      if (!isAdmin) {
+        showToast("Access Denied: Only Administrators can reset concepts.");
+        return;
+      }
+
+      if (confirm("Revert all terminology and cards to the original coaching manual defaults? Custom edits will be cleared.")) {
+        localStorage.removeItem('griffin_basketball_concepts_v1');
+        document.getElementById('playbook-data-container').innerHTML = originalHTML;
+        syncConceptsToCloud('');
+        
+        const editables = document.querySelectorAll('.editable');
+        editables.forEach(el => el.setAttribute('contenteditable', isEditing ? 'true' : 'false'));
+        
+        showToast("Reverted to original manual defaults.");
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('save-toast');
+      toast.innerHTML = `<svg width="18" height="18" fill="none" stroke="var(--gold)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> ${message}`;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

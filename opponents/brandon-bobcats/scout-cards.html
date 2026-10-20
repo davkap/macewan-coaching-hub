@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="../../auth-lock.js"></script>
+  <meta charset="utf-8">
+  <title>Brandon Bobcats: Player Scout Cards | MacEwan Griffins</title>
+  <style>
+    :root {
+      --mac-maroon: #98002e;
+      --mac-tan: #d1ad7d;
+      --mac-black: #111;
+      --accent-red: #cc0000;
+      --bg: #f4f4f4;
+      --card-bg: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: #111;
+      margin: 0;
+      padding: 20px;
+    }
+    header.title {
+      max-width: 1300px;
+      margin: 0 auto 20px;
+      padding-bottom: 12px;
+      border-bottom: 3px solid var(--mac-maroon);
+    }
+    header.title h1 {
+      margin: 0 0 4px;
+      font-size: 26px;
+      color: var(--mac-maroon);
+    }
+    header.title p {
+      margin: 0;
+      color: #555;
+      font-size: 13px;
+    }
+    .section-banner {
+      background: #000000;
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 800;
+      text-align: center;
+      padding: 6px 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 24px 0 16px 0;
+      border-radius: 4px;
+      max-width: 1300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .grid {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(580px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 14px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+      display: flex;
+      gap: 16px;
+      position: relative;
+      page-break-inside: avoid;
+    }
+    .card.starter {
+      border-left: 6px solid var(--mac-maroon);
+    }
+    .photo-tile {
+      flex: 0 0 120px;
+      height: 140px;
+      background: #e0e0e0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .photo-tile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .card-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .player-header {
+      font-size: 16px;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 3px;
+    }
+    .header-divider {
+      height: 2px;
+      background: var(--accent-red);
+      width: 100%;
+      margin-bottom: 8px;
+    }
+    .tactical-tags {
+      font-size: 12.5px;
+      line-height: 1.4;
+      color: #111;
+      margin-bottom: 8px;
+    }
+    .tactical-tags strong {
+      font-weight: 700;
+    }
+    .scout-notes {
+      font-size: 12.5px;
+      line-height: 1.4;
+      color: #111;
+      margin-bottom: 12px;
+      flex: 1;
+    }
+    .stats-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.5px;
+      margin-top: auto;
+    }
+    .stats-table th {
+      border-bottom: 1.5px solid var(--accent-red);
+      padding: 3px 4px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 10.5px;
+      color: #111;
+    }
+    .stats-table td {
+      padding: 3px 4px;
+      text-align: center;
+      font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+      color: #222;
+    }
+    .stats-table td:first-child, .stats-table th:first-child {
+      text-align: left;
+      font-family: inherit;
+      font-weight: 600;
+      width: 80px;
+    }
+    @media (max-width: 650px) {
+      .grid { grid-template-columns: 1fr; }
+      .card { flex-direction: column; }
+      .photo-tile { width: 100%; height: 180px; }
+    }
+    @media print {
+      .no-print { display: none !important; }
+      body { padding: 0; background: white; }
+      .grid { gap: 10px; grid-template-columns: repeat(2, 1fr); }
+      .card { break-inside: avoid; border: 1px solid #888; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="title">
+  <div style="margin-bottom: 12px; font-size: 13px;" class="no-print">
+    <a href="../../index.html" style="color: var(--mac-maroon); font-weight: 700; text-decoration: none; margin-right: 15px;">🏠 Coaching Hub</a>
+    <a href="../../canadawest-scout-2026-27.html" style="color: #555; font-weight: 700; text-decoration: none;">🏀 Scouting Hub</a>
+  </div>
+  <h1>Brandon Bobcats: Player Scout Cards</h1>
+  <p>MacEwan Griffins Men's Basketball &middot; 2026-27 Canada West &middot; Tactical Prep Packet</p>
+</header>
+
+<div id="scout-cards-wrapper" data-template-version="2026-10-08-v4">
+<div class="section-banner">Starters</div>
+<div class="grid">
+  
+    <div class="card starter">
+      <div class="photo-tile">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-18.JPG?width=80&quality=90" alt="Isaac Brown" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#0</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#0 • Isaac Brown • Guard • 6-2 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (6-2, Vancouver, BC). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>0.0</td><td>8.0</td><td>0.0%</td><td>0.0%</td><td>0.0%</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.5</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>0.0</td><td>8.0</td><td>0.0%</td><td>0.0%</td><td>0.0%</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.5</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card starter">
+      <div class="photo-tile">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-14.JPG?width=80&quality=90" alt="Youri Cange" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#2</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#2 • Youri Cange • Guard • 6-3 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (6-3, Mascouche, QC). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>5.3</td><td>21.7</td><td>38.9%</td><td>0.0%</td><td>50.0%</td><td>4.0</td><td>1.3</td><td>0.7</td><td>1.0</td><td>0.3</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>5.3</td><td>21.7</td><td>38.9%</td><td>0.0%</td><td>50.0%</td><td>4.0</td><td>1.3</td><td>0.7</td><td>1.0</td><td>0.3</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card starter">
+      <div class="photo-tile">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-3.JPG?width=80&quality=90" alt="Malik Brown" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#3</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#3 • Malik Brown • Guard • 6-1 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (6-1, Portland, OR). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>7.3</td><td>23.3</td><td>37.5%</td><td>20.0%</td><td>100.0%</td><td>3.7</td><td>6.3</td><td>1.3</td><td>0.7</td><td>0.3</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>7.3</td><td>23.3</td><td>37.5%</td><td>20.0%</td><td>100.0%</td><td>3.7</td><td>6.3</td><td>1.3</td><td>0.7</td><td>0.3</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card starter">
+      <div class="photo-tile">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-10.JPG?width=80&quality=90" alt="Liam McArthur" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#4</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#4 • Liam McArthur • Forward • 6-6 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Brown, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> MUST BOX OUT
+        </div>
+        <div class="scout-notes">
+          Forward (6-6, Swan River, MB). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>1.5</td><td>4.5</td><td>50.0%</td><td>50.0%</td><td>0.0%</td><td>1.0</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>1.5</td><td>4.5</td><td>50.0%</td><td>50.0%</td><td>0.0%</td><td>1.0</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card starter">
+      <div class="photo-tile">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-20.JPG?width=80&quality=90" alt="Pablo Carvajal" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#5</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#5 • Pablo Carvajal • Guard • 6-2 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (6-2, Montreal, QC). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>0.0</td><td>6.0</td><td>0.0%</td><td>0.0%</td><td>0.0%</td><td>1.0</td><td>1.0</td><td>0.0</td><td>0.0</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>0.0</td><td>6.0</td><td>0.0%</td><td>0.0%</td><td>0.0%</td><td>1.0</td><td>1.0</td><td>0.0</td><td>0.0</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+
+
+<div class="section-banner">Rotational &amp; Bench</div>
+<div class="grid">
+  
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-17.JPG?width=80&quality=90" alt="Arjun Hehar" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#6</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#6 • Arjun Hehar • Guard • 6-6 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (6-6, Surrey, BC). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>21.3</td><td>25.7</td><td>50.0%</td><td>40.0%</td><td>76.9%</td><td>5.3</td><td>1.0</td><td>1.0</td><td>0.7</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>21.3</td><td>25.7</td><td>50.0%</td><td>40.0%</td><td>76.9%</td><td>5.3</td><td>1.0</td><td>1.0</td><td>0.7</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-12.JPG?width=80&quality=90" alt="Jerry Ige" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#8</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#8 • Jerry Ige • Guard • 6-2 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (6-2, Winnipeg, MB). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-1.JPG?width=80&quality=90" alt="Max Winters" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#10</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#10 • Max Winters • Forward • 6-8 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Brown, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> MUST BOX OUT
+        </div>
+        <div class="scout-notes">
+          Forward (6-8, Brandon, MB). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>5.7</td><td>17.0</td><td>46.7%</td><td>27.3%</td><td>0.0%</td><td>5.3</td><td>0.0</td><td>1.0</td><td>0.7</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>5.7</td><td>17.0</td><td>46.7%</td><td>27.3%</td><td>0.0%</td><td>5.3</td><td>0.0</td><td>1.0</td><td>0.7</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-16.JPG?width=80&quality=90" alt="Munroop Gill" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#13</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#13 • Munroop Gill • Guard • 5-11 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (5-11, Surrey, BC). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>17.5</td><td>22.0</td><td>57.1%</td><td>25.0%</td><td>66.7%</td><td>3.0</td><td>4.0</td><td>4.0</td><td>1.5</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>17.5</td><td>22.0</td><td>57.1%</td><td>25.0%</td><td>66.7%</td><td>3.0</td><td>4.0</td><td>4.0</td><td>1.5</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>" alt="Yussef Jawad" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#N/A • Yussef Jawad • Guard • 6-3 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (6-3, Canada). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>5.3</td><td>23.3</td><td>37.5%</td><td>30.0%</td><td>50.0%</td><td>6.7</td><td>1.0</td><td>1.3</td><td>1.0</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>5.3</td><td>23.3</td><td>37.5%</td><td>30.0%</td><td>50.0%</td><td>6.7</td><td>1.0</td><td>1.3</td><td>1.0</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-19.JPG?width=80&quality=90" alt="Kevin Lupetu" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#N/A • Kevin Lupetu • Guard • 6-2 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (6-2, Longueuil, QC). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>5.0</td><td>23.3</td><td>33.3%</td><td>25.0%</td><td>0.0%</td><td>2.0</td><td>1.7</td><td>2.0</td><td>1.3</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>5.0</td><td>23.3</td><td>33.3%</td><td>25.0%</td><td>0.0%</td><td>2.0</td><td>1.7</td><td>2.0</td><td>1.3</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-2.JPG?width=80&quality=90" alt="Noah Manikoglu" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#N/A • Noah Manikoglu • Guard • 6-3 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (6-3, Beaconsfield, QC). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>3.0</td><td>10.0</td><td>25.0%</td><td>27.3%</td><td>0.0%</td><td>0.3</td><td>0.0</td><td>1.0</td><td>0.0</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>3.0</td><td>10.0</td><td>25.0%</td><td>27.3%</td><td>0.0%</td><td>0.3</td><td>0.0</td><td>1.0</td><td>0.0</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-13.JPG?width=80&quality=90" alt="Sam Rempel" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#N/A • Sam Rempel • Forward • 6-6 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Brown, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> MUST BOX OUT
+        </div>
+        <div class="scout-notes">
+          Forward (6-6, Rivers, MB). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>0.0</td><td>2.0</td><td>0.0%</td><td>0.0%</td><td>0.0%</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>0.0</td><td>2.0</td><td>0.0%</td><td>0.0%</td><td>0.0%</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-15.JPG?width=80&quality=90" alt="Dzidula Sowadan" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#N/A • Dzidula Sowadan • Guard • 6-2 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (6-2, Canada). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>2.0</td><td>13.0</td><td>50.0%</td><td>0.0%</td><td>0.0%</td><td>2.0</td><td>1.0</td><td>2.0</td><td>0.0</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>2.0</td><td>13.0</td><td>50.0%</td><td>0.0%</td><td>0.0%</td><td>2.0</td><td>1.0</td><td>2.0</td><td>0.0</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-9.JPG?width=80&quality=90" alt="Orie Zehavi" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#N/A • Orie Zehavi • Forward • 6-5 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Brown, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> MUST BOX OUT
+        </div>
+        <div class="scout-notes">
+          Forward (6-5, Shoham, Israel). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>15.7</td><td>26.0</td><td>42.9%</td><td>40.0%</td><td>75.0%</td><td>6.0</td><td>1.7</td><td>1.3</td><td>0.0</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>15.7</td><td>26.0</td><td>42.9%</td><td>40.0%</td><td>75.0%</td><td>6.0</td><td>1.7</td><td>1.3</td><td>0.0</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+
+</div>
+
+<footer style="max-width:1300px;margin:24px auto 0;font-size:11px;color:#666;border-top:1px solid #ddd;padding-top:8px;">
+  Sources: Canada West official rosters, USportsHoops database &middot; Built for MacEwan Coaching Staff &middot; Editable via Edit Cards button.
+</footer>
+
+<script src="../../scout-cards-editor.js"></script>
+</body>
+</html>

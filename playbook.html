@@ -1,0 +1,906 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="auth-lock.js"></script>
+  <script src="offseason-sc-app/tracking-config.js"></script>
+  <script src="site-tracking.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MacEwan Griffins | Playbook Links</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --maroon: #98002e;
+      --gold: #d1ad7d;
+      --black: #111111;
+      --dark-gray: #1a1a1a;
+      --light-gray: #f4f5f7;
+      --border-color: #e1e3e6;
+      --text-color: #1c1c1c;
+      --radius: 8px;
+    }
+    
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text-color);
+      background: var(--light-gray);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+    
+    /* Layout */
+    .layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: 100vh;
+    }
+    
+    /* Sidebar Navigation */
+    nav.side {
+      position: sticky;
+      top: 0;
+      align-self: start;
+      height: 100vh;
+      overflow: auto;
+      background: #000;
+      color: #fff;
+      padding: 20px 16px;
+      font-size: .92em;
+      border-right: 3px solid var(--maroon);
+    }
+    
+    nav.side h2 {
+      font-size: .9em;
+      margin: 18px 0 10px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--gold);
+    }
+    
+    nav.side h2:first-child {
+      margin-top: 0;
+    }
+    
+    nav.side ul {
+      list-style: none;
+    }
+    
+    nav.side li {
+      margin: 4px 0;
+    }
+    
+    nav.side li a {
+      display: block;
+      padding: 8px 12px;
+      color: #E6E7E9;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    
+    nav.side li a:hover {
+      background: rgba(209, 173, 125, 0.15);
+      color: #fff;
+    }
+    
+    nav.side .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    
+    nav.side .brand img {
+      width: 36px;
+      height: 36px;
+      background: white;
+      border-radius: 4px;
+      padding: 2px;
+    }
+    
+    nav.side .brand h1 {
+      font-size: 15px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      color: white;
+      line-height: 1.2;
+    }
+    
+    nav.side .brand h1 small {
+      display: block;
+      color: var(--gold);
+      font-weight: normal;
+      font-size: 11px;
+    }
+    
+    /* Main Content Area */
+    main {
+      padding: 30px 40px;
+      max-width: 1200px;
+    }
+    
+    /* Header Cover */
+    .header-cover {
+      background: linear-gradient(135deg, var(--maroon) 0%, #760020 100%);
+      color: white;
+      padding: 32px;
+      border-radius: var(--radius);
+      margin-bottom: 30px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      position: relative;
+      overflow: hidden;
+      border-left: 5px solid var(--gold);
+    }
+    
+    .header-cover h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 2em;
+      margin-bottom: 6px;
+    }
+    
+    .header-cover p {
+      opacity: 0.9;
+      font-size: 0.95em;
+    }
+    
+    /* Admin Banner Bar */
+    .admin-bar {
+      display: none; /* Shown dynamically via JS */
+      background: #000;
+      color: #fff;
+      padding: 14px 24px;
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      border: 1px solid var(--gold);
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .admin-bar h4 {
+      color: var(--gold);
+      text-transform: uppercase;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      letter-spacing: 1px;
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--maroon);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s ease;
+    }
+    
+    .btn:hover {
+      background: #b30036;
+    }
+    
+    .btn-accent {
+      background: var(--gold);
+      color: var(--black);
+    }
+    
+    .btn-accent:hover {
+      background: #dfbe91;
+    }
+    
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 11px;
+      border-radius: 3px;
+    }
+    
+    /* Categories Grid */
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+      margin-top: 10px;
+    }
+    
+    .category-card {
+      background: white;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .category-header {
+      background: #fafbfc;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 3px solid var(--maroon);
+    }
+    
+    .category-header h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--black);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .links-list {
+      list-style: none;
+      padding: 10px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-grow: 1;
+    }
+    
+    .link-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: #fdfdfd;
+      border: 1px solid #f0f1f3;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+    }
+    
+    .link-item:hover {
+      border-color: var(--gold);
+      background: #fffdf9;
+    }
+    
+    .link-anchor {
+      color: var(--maroon);
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-grow: 1;
+    }
+    
+    .link-anchor:hover {
+      text-decoration: underline;
+    }
+    
+    .link-actions {
+      display: none; /* Shown dynamically if admin */
+      gap: 6px;
+      align-items: center;
+    }
+    
+    .action-icon {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px;
+      border-radius: 4px;
+      transition: background 0.15s;
+    }
+    
+    .action-icon:hover {
+      background: #eee;
+    }
+    
+    .action-icon.edit {
+      color: #3498db;
+    }
+    
+    .action-icon.delete {
+      color: #e74c3c;
+    }
+    
+    /* Loading States */
+    .loader-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 0;
+      gap: 12px;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(152, 0, 46, 0.1);
+      border-top-color: var(--maroon);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      background: white;
+      border-radius: var(--radius);
+      border: 1px dashed var(--border-color);
+      color: #777;
+    }
+    
+    /* Admin Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    .modal-card {
+      background: #ffffff;
+      border-radius: var(--radius);
+      width: 90%;
+      max-width: 460px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      border-top: 5px solid var(--maroon);
+      transform: translateY(-20px);
+      transition: transform 0.25s ease;
+    }
+    
+    .modal-overlay.active .modal-card {
+      transform: translateY(0);
+    }
+    
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-header h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--black);
+    }
+    
+    .modal-close-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #999;
+    }
+    
+    .modal-body {
+      padding: 24px;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    
+    .form-group label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #555;
+    }
+    
+    .form-group input, .form-group select {
+      padding: 10px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      width: 100%;
+    }
+    
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--gold);
+    }
+    
+    .modal-footer {
+      padding: 18px 24px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid #ccc;
+      color: #555;
+    }
+    
+    .btn-secondary:hover {
+      background: #f4f5f7;
+    }
+    
+    /* Toast messages */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 12px 24px;
+      border-radius: 4px;
+      color: white;
+      font-weight: 600;
+      font-size: 13px;
+      z-index: 11000;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(150%);
+      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .toast.active {
+      transform: translateY(0);
+    }
+    
+    .toast.success {
+      background: #2ecc71;
+    }
+    
+    .toast.error {
+      background: #e74c3c;
+    }
+    
+    /* Mobile Header */
+    #mobile-header {
+      display: none;
+      background: #000;
+      color: #fff;
+      padding: 10px 16px;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 2px solid var(--maroon);
+    }
+    
+    .menu-toggle {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    
+    .drawer-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1005;
+      backdrop-filter: blur(2px);
+    }
+    
+    .close-drawer {
+      display: none;
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      background: transparent;
+      border: none;
+      color: var(--gold);
+      font-size: 28px;
+      cursor: pointer;
+    }
+    
+    /* Responsiveness */
+    @media (max-width: 850px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      #mobile-header {
+        display: flex;
+      }
+      nav.side {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 280px;
+        height: 100vh;
+        z-index: 1010;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+        border-bottom: none;
+        border-right: 3px solid var(--maroon);
+      }
+      .side-open nav.side {
+        left: 0;
+      }
+      .side-open .drawer-backdrop {
+        display: block;
+      }
+      .close-drawer {
+        display: block;
+      }
+      main {
+        padding: 20px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mobile Topbar -->
+  <div id="mobile-header">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <img src="macewan-logo.png" alt="MacEwan" style="width:32px; height:32px; background:#fff; border-radius:4px; padding:2px;">
+      <span style="font-weight:700; font-size:0.9em; letter-spacing:0.3px; color:#fff;">Griffins Hoops</span>
+    </div>
+    <button class="menu-toggle" onclick="toggleDrawer(true)">☰</button>
+  </div>
+  
+  <div class="drawer-backdrop" id="backdrop" onclick="toggleDrawer(false)"></div>
+
+  <div class="layout">
+    <!-- Sidebar Navigation -->
+    <nav class="side">
+      <button class="close-drawer" onclick="toggleDrawer(false)">×</button>
+      <div class="brand">
+        <img src="macewan-logo.png" alt="MacEwan">
+        <h1>Griffins Hoops<small>Coaching Hub</small></h1>
+      </div>
+      
+      <h2>Quick nav</h2>
+      <ul>
+        <li><a href="index.html">🏠 Dashboard</a></li>
+        <li><a href="canadawest-scout-2026-27.html" style="background:rgba(152,0,46,0.1);color:#98002e;font-weight:700;border-left:3px solid #98002e;padding-left:7px">CW Scouting Hub ➔</a></li>
+        <li><a href="drills.html" style="background:rgba(209,173,125,0.1);color:#d1ad7d;font-weight:700;border-left:3px solid #d1ad7d;padding-left:7px">Animated Drill Bank ➔</a></li>
+        <li><a href="griffin-concepts.html" style="background:rgba(152,0,46,0.15);color:#fff;font-weight:700;border-left:3px solid var(--gold);padding-left:7px">Griffin Concepts ➔</a></li>
+        <li><a href="playbook.html" style="background:rgba(209,173,125,0.15);color:#d1ad7d;font-weight:700;border-left:3px solid #d1ad7d;padding-left:7px">Playbook Links ➔</a></li>
+        <li><a href="offseason-sc-app/index.html">S&amp;C app</a></li>
+        <li id="rosterManagerNav" style="display:none;"><a href="players.html" style="background:rgba(209,173,125,0.15);color:#d1ad7d;font-weight:700;border-left:3px solid #d1ad7d;padding-left:7px">Roster Manager ➔</a></li>
+        <li><a href="#" onclick="logoutHub(); return false;" style="color:#ff5e5e; font-weight:600; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">🔒 Log Out</a></li>
+      </ul>
+    </nav>
+    
+    <!-- Main Panel -->
+    <main>
+      <!-- Admin Bar -->
+      <div class="admin-bar" id="adminBar">
+        <h4>Admin Dashboard Controls</h4>
+        <button class="btn btn-accent" onclick="openAddModal()">➕ Add New Link</button>
+      </div>
+
+      <!-- Header Cover -->
+      <div class="header-cover">
+        <h1>Playbook & External Links</h1>
+        <p>Dynamic library of systems, video playlists, and external resources. Clicks are logged to verify team preparation.</p>
+      </div>
+
+      <!-- Categories Links Grid -->
+      <div class="loader-container" id="loader">
+        <div class="spinner"></div>
+        <p style="font-size: 13px; color: #777; font-weight: 500;">Loading playbook links...</p>
+      </div>
+      
+      <div class="categories-grid" id="categoriesContainer" style="display: none;">
+        <!-- Dynamic Category Cards Inserted Here -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modalHeaderTitle">Add Playbook Link</h3>
+        <button class="modal-close-btn" onclick="closeModal()">×</button>
+      </div>
+      <form id="linkForm" onsubmit="handleFormSubmit(event)">
+        <div class="modal-body">
+          <input type="hidden" id="linkId">
+          <div class="form-group">
+            <label for="linkLabel">Word / Label</label>
+            <input type="text" id="linkLabel" placeholder="e.g. Horns Continuity" required>
+          </div>
+          <div class="form-group">
+            <label for="linkCategory">Category</label>
+            <select id="linkCategory" required>
+              <option value="">-- Choose Category --</option>
+              <option value="Offensive Systems">Offensive Systems</option>
+              <option value="Defensive Concepts">Defensive Concepts</option>
+              <option value="Drills / Skill Bank">Drills / Skill Bank</option>
+              <option value="Hudl & Synergy Film">Hudl & Synergy Film</option>
+              <option value="General & Roster">General & Roster</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="linkUrl">External Target URL</label>
+            <input type="url" id="linkUrl" placeholder="https://example.com" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn" id="modalSubmitBtn">Save Link</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Feed -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // Navigation Drawer Toggle
+    function toggleDrawer(open) {
+      if (open) {
+        document.body.classList.add('side-open');
+      } else {
+        document.body.classList.remove('side-open');
+      }
+    }
+    
+    // Check if Coach or Admin
+    const isCoachOrAdmin = typeof window.isCoachOrAdmin === 'function' ? window.isCoachOrAdmin() : (sessionStorage.getItem('griffin_hub_admin') === 'true' || sessionStorage.getItem('griffin_coaches_authorized') === 'true');
+    const isAdmin = sessionStorage.getItem('griffin_hub_admin') === 'true';
+
+    if (isCoachOrAdmin) {
+      document.getElementById('adminBar').style.display = 'flex';
+    } else {
+      document.getElementById('adminBar').style.display = 'none';
+    }
+    if (isAdmin) {
+      const rNav = document.getElementById('rosterManagerNav');
+      if (rNav) rNav.style.display = 'block';
+    }
+
+    let playbookLinks = [];
+
+    // On Load: Fetch Links
+    document.addEventListener('DOMContentLoaded', fetchLinks);
+
+    function fetchLinks() {
+      const apiURL = typeof window.TRACKING_API_URL !== 'undefined' ? window.TRACKING_API_URL : (typeof TRACKING_API_URL !== 'undefined' ? TRACKING_API_URL : '');
+      if (!apiURL) {
+        showToast("Error: API URL not defined.", "error");
+        document.getElementById('loader').style.display = 'none';
+        return;
+      }
+
+      fetch(apiURL + "?action=getPlaybookLinks")
+        .then(res => res.json())
+        .then(data => {
+          playbookLinks = data;
+          renderLinks();
+        })
+        .catch(err => {
+          console.error("Failed to load links:", err);
+          showToast("Failed to load links from Google Sheet.", "error");
+          document.getElementById('loader').style.display = 'none';
+        });
+    }
+
+    function renderLinks() {
+      const container = document.getElementById('categoriesContainer');
+      const loader = document.getElementById('loader');
+      container.innerHTML = '';
+
+      if (playbookLinks.length === 0) {
+        container.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;">No playbook links have been added yet.</div>`;
+      } else {
+        // Group by category
+        const groups = {};
+        playbookLinks.forEach(link => {
+          const cat = link.category || "General & Roster";
+          if (!groups[cat]) groups[cat] = [];
+          groups[cat].push(link);
+        });
+
+        // Generate Cards
+        for (const cat in groups) {
+          const card = document.createElement('div');
+          card.className = 'category-card';
+          
+          let listItems = '';
+          groups[cat].forEach(link => {
+            listItems += `
+              <li class="link-item" id="item-${link.id}">
+                <a href="${link.url}" target="_blank" class="link-anchor" onclick="interceptClick(event, '${link.label.replace(/'/g, "\\'")}', '${link.url}')">
+                  📄 ${link.label} <span style="font-size:10px;opacity:0.6;">↗</span>
+                </a>
+                <div class="link-actions" style="display: ${isAdmin ? 'flex' : 'none'};">
+                  <button class="action-icon edit" onclick="openEditModal('${link.id}')" title="Edit Link">✏️</button>
+                  <button class="action-icon delete" onclick="deleteLink('${link.id}')" title="Delete Link">🗑️</button>
+                </div>
+              </li>
+            `;
+          });
+
+          card.innerHTML = `
+            <div class="category-header">
+              <h3>${cat}</h3>
+              <span style="font-size:12px; font-weight:700; color:var(--maroon); background:rgba(152,0,46,0.06); padding:2px 8px; border-radius:10px;">${groups[cat].length}</span>
+            </div>
+            <ul class="links-list">
+              ${listItems}
+            </ul>
+          `;
+          container.appendChild(card);
+        }
+      }
+
+      loader.style.display = 'none';
+      container.style.display = 'grid';
+    }
+
+    // Intercept Click to Track click-out
+    function interceptClick(e, label, url) {
+      if (window.trackExternalClick) {
+        window.trackExternalClick(label, url);
+      }
+    }
+
+    // Modal Operations
+    const modalOverlay = document.getElementById('modalOverlay');
+    const form = document.getElementById('linkForm');
+    const modalHeaderTitle = document.getElementById('modalHeaderTitle');
+    const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+
+    function openAddModal() {
+      form.reset();
+      document.getElementById('linkId').value = '';
+      modalHeaderTitle.innerText = "Add Playbook Link";
+      modalSubmitBtn.innerText = "Save Link";
+      modalOverlay.classList.add('active');
+    }
+
+    function openEditModal(id) {
+      const link = playbookLinks.find(l => l.id === id);
+      if (!link) return;
+
+      document.getElementById('linkId').value = link.id;
+      document.getElementById('linkLabel').value = link.label;
+      document.getElementById('linkCategory').value = link.category;
+      document.getElementById('linkUrl').value = link.url;
+
+      modalHeaderTitle.innerText = "Edit Playbook Link";
+      modalSubmitBtn.innerText = "Update Link";
+      modalOverlay.classList.add('active');
+    }
+
+    function closeModal() {
+      modalOverlay.classList.remove('active');
+    }
+
+    // Form Submit Handler (Add/Edit APIs)
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      
+      const id = document.getElementById('linkId').value;
+      const label = document.getElementById('linkLabel').value.trim();
+      const category = document.getElementById('linkCategory').value;
+      const url = document.getElementById('linkUrl').value.trim();
+
+      const action = id ? "editPlaybookLink" : "addPlaybookLink";
+      const payload = id ? { id, label, category, url } : { label, category, url };
+
+      modalSubmitBtn.disabled = true;
+      modalSubmitBtn.innerText = "Processing...";
+
+      const apiURL = typeof window.TRACKING_API_URL !== 'undefined' ? window.TRACKING_API_URL : (typeof TRACKING_API_URL !== 'undefined' ? TRACKING_API_URL : '');
+      
+      fetch(apiURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain'
+        },
+        body: JSON.stringify({
+          action: action,
+          ...payload
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          showToast(id ? "Link updated successfully!" : "Link added successfully!", "success");
+          closeModal();
+          fetchLinks(); // Re-load and re-render links list
+        } else {
+          throw new Error(data.message || "Failed to edit link");
+        }
+      })
+      .catch(err => {
+        console.error("API Error:", err);
+        showToast("Error executing database operation.", "error");
+      })
+      .finally(() => {
+        modalSubmitBtn.disabled = false;
+        modalSubmitBtn.innerText = id ? "Update Link" : "Save Link";
+      });
+    }
+
+    // Delete Link operation
+    function deleteLink(id) {
+      if (!confirm("Are you sure you want to permanently delete this playbook link?")) return;
+
+      const apiURL = typeof window.TRACKING_API_URL !== 'undefined' ? window.TRACKING_API_URL : (typeof TRACKING_API_URL !== 'undefined' ? TRACKING_API_URL : '');
+      
+      showToast("Deleting link...", "success");
+
+      fetch(apiURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain'
+        },
+        body: JSON.stringify({
+          action: "deletePlaybookLink",
+          id: id
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          showToast("Link deleted successfully!", "success");
+          fetchLinks();
+        } else {
+          throw new Error(data.message || "Failed to delete link");
+        }
+      })
+      .catch(err => {
+        console.error("Delete Error:", err);
+        showToast("Error deleting link from database.", "error");
+      });
+    }
+
+    // Success/Error Toast Message
+    function showToast(msg, type) {
+      const toast = document.getElementById('toast');
+      toast.className = `toast ${type}`;
+      toast.innerText = msg;
+      toast.classList.add('active');
+      setTimeout(() => {
+        toast.classList.remove('active');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

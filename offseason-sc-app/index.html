@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="../auth-lock.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#000000" />
+<title>MacEwan Griffins — Offseason S&amp;C</title>
+<link rel="stylesheet" href="styles.css" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="macewan-logo.png" />
+<link rel="apple-touch-icon" href="macewan-logo.png" />
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-row">
+    <div class="brand">
+      <img class="brand-logo" src="macewan-logo.png" alt="MacEwan Griffins" />
+      <div>
+        <h1>Griffins Offseason</h1>
+        <p class="sub">Mass • Hips • Hoops</p>
+      </div>
+    </div>
+    <a href="../index.html" class="topbar-back-btn">← Back to Hub</a>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button data-tab="today" class="active">Today</button>
+    <button data-tab="week">Week</button>
+    <button data-tab="mobility">Mobility</button>
+    <button data-tab="conditioning">Conditioning</button>
+    <button data-tab="about">About</button>
+    <button data-tab="profile" id="profileTabBtn">👤 Login</button>
+  </nav>
+</header>
+
+<main id="view"></main>
+
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-card">
+    <button class="close" id="modalClose" aria-label="Close">×</button>
+    <h3 id="modalTitle"></h3>
+    <div class="video-wrap"><iframe id="modalVideo" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+    <p id="modalCues" class="cues"></p>
+  </div>
+</div>
+
+<footer class="foot">
+  <p>Train hard. Recover harder. Rebound everything. 🏆</p>
+</footer>
+
+<script src="data.js"></script>
+<script src="tracking-config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

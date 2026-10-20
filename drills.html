@@ -1,0 +1,2923 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="auth-lock.js"></script>
+  <script src="offseason-sc-app/tracking-config.js"></script>
+  <script src="site-tracking.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MacEwan Griffins Coaching Hub | Animated Drill Bank</title>
+  <!-- Google Fonts for premium typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --maroon: #98002e;
+      --maroon-dark: #6e0020;
+      --maroon-light: #b30036;
+      --gold: #d1ad7d;
+      --gold-dark: #b59567;
+      --gold-light: #e5cdad;
+      --bg-dark: #0f1219;
+      --bg-card: #181d28;
+      --border-color: rgba(209, 173, 125, 0.25);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --sidebar-width: 250px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Core layout grid */
+    .app-container {
+      display: grid;
+      grid-template-columns: var(--sidebar-width) 1fr;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    /* Left navigation bar */
+    nav.side {
+      position: sticky;
+      top: 0;
+      align-self: start;
+      height: 100vh;
+      overflow-y: auto;
+      background: #000;
+      color: #fff;
+      padding: 20px 16px;
+      font-size: .92em;
+      border-right: 3px solid var(--maroon);
+      z-index: 100;
+    }
+
+    nav.side h2 {
+      font-size: .78em;
+      margin: 22px 0 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--gold);
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    nav.side h2:first-of-type {
+      margin-top: 0;
+    }
+
+    nav.side ul {
+      list-style: none;
+      margin: 0 0 18px;
+      padding: 0;
+    }
+
+    nav.side li {
+      margin: 4px 0;
+    }
+
+    nav.side a {
+      display: block;
+      padding: 8px 12px;
+      color: #E6E7E9;
+      border-radius: 4px;
+      font-size: .9em;
+      transition: background 0.2s, color 0.2s;
+      text-decoration: none;
+    }
+
+    nav.side a:hover {
+      background: rgba(255, 255, 255, .08);
+      color: #fff;
+    }
+
+    nav.side a.active {
+      background: rgba(152, 0, 46, 0.15);
+      color: var(--gold);
+      font-weight: 700;
+      border-left: 3px solid var(--maroon);
+      padding-left: 9px;
+    }
+
+    nav.side .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, .15);
+    }
+
+    nav.side .brand img {
+      width: 42px;
+      height: 42px;
+      background: #fff;
+      border-radius: 6px;
+      padding: 3px;
+    }
+
+    nav.side .brand h1 {
+      margin: 0;
+      font-size: .95em;
+      line-height: 1.2;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+    }
+
+    nav.side .brand h1 small {
+      display: block;
+      font-size: .7em;
+      font-weight: 400;
+      color: var(--gold);
+      margin-top: 2px;
+    }
+
+    /* Main Workspace area */
+    main {
+      padding: 24px 30px 40px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    /* Cover Header block */
+    .header-block {
+      background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+      color: #fff;
+      padding: 24px 28px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-left: 5px solid var(--gold);
+    }
+
+    .header-text h1 {
+      margin: 0 0 4px;
+      font-size: 2em;
+      font-family: 'Montserrat', sans-serif;
+      letter-spacing: .01em;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .header-text p {
+      margin: 0;
+      opacity: .9;
+      font-size: 0.95em;
+    }
+
+    /* Primary buttons */
+    .btn-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--gold);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 0.9em;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      background: var(--gold);
+      color: #000;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(209, 173, 125, 0.25);
+    }
+
+    .btn.btn-primary {
+      background: var(--gold);
+      color: #000;
+      border-color: var(--gold);
+    }
+
+    .btn.btn-primary:hover {
+      background: var(--gold-light);
+      box-shadow: 0 4px 12px rgba(209, 173, 125, 0.4);
+    }
+
+    .btn.btn-danger {
+      background: rgba(152, 0, 46, 0.2);
+      border-color: var(--maroon-light);
+      color: var(--maroon-light);
+    }
+
+    .btn.btn-danger:hover {
+      background: var(--maroon-light);
+      color: #fff;
+    }
+
+    /* Workplace Grid */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+      flex-grow: 1;
+      min-height: 0; /* allows proper inner overflow */
+    }
+
+    /* Left pane (court & timeline) */
+    .court-pane {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      position: relative;
+    }
+
+    /* Responsive SVG Court Container */
+    .court-container {
+      width: 100%;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #0b0d13;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+      aspect-ratio: 940 / 500;
+      transition: aspect-ratio 0.3s ease;
+    }
+
+    .court-container.half-court {
+      aspect-ratio: 470 / 500;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .court-container svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Timeline controller container */
+    .timeline-container {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 12px 18px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .timeline-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .timeline-buttons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-icon {
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-size: 1.3em;
+      cursor: pointer;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-icon:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--gold);
+    }
+
+    .btn-icon.active {
+      color: var(--gold);
+      background: rgba(209, 173, 125, 0.1);
+    }
+
+    /* Scrubber Slider */
+    .timeline-slider-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .timeline-slider-row span {
+      font-size: 0.85em;
+      font-weight: 600;
+      color: var(--text-muted);
+      min-width: 35px;
+    }
+
+    .slider-track-container {
+      position: relative;
+      flex-grow: 1;
+      height: 24px;
+      display: flex;
+      align-items: center;
+    }
+
+    input[type=range].timeline-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      background: transparent;
+      margin: 0;
+    }
+
+    input[type=range].timeline-slider:focus {
+      outline: none;
+    }
+
+    input[type=range].timeline-slider::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 6px;
+      cursor: pointer;
+      background: #272f3e;
+      border-radius: 3px;
+      border: none;
+    }
+
+    input[type=range].timeline-slider::-webkit-slider-thumb {
+      height: 16px;
+      width: 16px;
+      border-radius: 50%;
+      background: var(--gold);
+      cursor: pointer;
+      -webkit-appearance: none;
+      margin-top: -5px;
+      box-shadow: 0 0 8px rgba(209, 173, 125, 0.6);
+      transition: transform 0.1s;
+    }
+
+    input[type=range].timeline-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    /* Editor drawer details */
+    .editor-controls-drawer {
+      display: none;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px dashed var(--border-color);
+      margin-top: 5px;
+    }
+
+    .editor-controls-drawer.active {
+      display: grid;
+    }
+
+    .edit-tool-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      padding: 8px;
+      text-align: center;
+      font-size: 0.8em;
+    }
+
+    .edit-tool-card h4 {
+      margin: 0 0 6px;
+      font-size: 0.9em;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .edit-tool-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .btn-sm {
+      padding: 5px 8px;
+      font-size: 0.82em;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-sm:hover {
+      background: rgba(209, 173, 125, 0.2);
+      border-color: var(--gold);
+    }
+
+    .btn-sm.active {
+      background: var(--gold);
+      color: #000;
+      border-color: var(--gold);
+    }
+
+    .btn-sm.btn-success {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: #10b981;
+      color: #34d399;
+    }
+
+    .btn-sm.btn-success:hover {
+      background: #10b981;
+      color: #fff;
+    }
+
+    .btn-sm.btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: #ef4444;
+      color: #f87171;
+    }
+
+    .btn-sm.btn-danger:hover {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    /* Toast messages */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 12px 24px;
+      border-radius: 4px;
+      color: white;
+      font-weight: 600;
+      font-size: 13px;
+      z-index: 11000;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      transform: translateY(150%);
+      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .toast.active {
+      transform: translateY(0);
+    }
+    
+    .toast.success {
+      background: #10b981;
+    }
+    
+    .toast.error {
+      background: #ef4444;
+    }
+
+    /* Right pane (notes & library) */
+    .sidebar-pane {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      min-height: 0;
+    }
+
+    /* Cards in right column */
+    .card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-header h3 {
+      margin: 0;
+      font-size: 1.1em;
+      font-family: 'Montserrat', sans-serif;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .card-body {
+      padding: 20px;
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+
+    /* Notes Box styling */
+    .notes-card {
+      flex: 1 1 50%;
+      min-height: 250px;
+    }
+
+    .notes-box {
+      font-size: 0.95em;
+      line-height: 1.6;
+      color: #e5e7eb;
+    }
+
+    .notes-box h4 {
+      color: var(--gold);
+      margin-top: 0;
+      margin-bottom: 6px;
+      font-size: 1em;
+      border-bottom: 1px solid rgba(209, 173, 125, 0.2);
+      padding-bottom: 4px;
+    }
+
+    .notes-box textarea {
+      width: 100%;
+      height: 120px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      color: #fff;
+      padding: 10px;
+      font-family: inherit;
+      font-size: 0.95em;
+      resize: none;
+      outline: none;
+    }
+
+    .notes-box textarea:focus {
+      border-color: var(--gold);
+    }
+
+    /* Drill Library List */
+    .library-card {
+      flex: 1 1 50%;
+      min-height: 220px;
+    }
+
+    .drill-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .drill-item {
+      padding: 10px 14px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.15s ease;
+    }
+
+    .drill-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(209, 173, 125, 0.3);
+    }
+
+    .drill-item.active {
+      background: rgba(152, 0, 46, 0.2);
+      border-color: var(--maroon-light);
+    }
+
+    .drill-info-title {
+      font-weight: 600;
+      font-size: 0.9em;
+      color: #fff;
+    }
+
+    .drill-item.active .drill-info-title {
+      color: var(--gold);
+    }
+
+    .drill-info-meta {
+      font-size: 0.75em;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .drill-tag {
+      font-size: 0.7em;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+    }
+
+    .drill-tag.tag-transition {
+      background: rgba(30, 64, 175, 0.2);
+      color: #93c5fd;
+      border: 1px solid rgba(30, 64, 175, 0.5);
+    }
+
+    .drill-tag.tag-defense {
+      background: rgba(153, 27, 27, 0.2);
+      color: #fca5a5;
+      border: 1px solid rgba(153, 27, 27, 0.5);
+    }
+
+    .drill-tag.tag-offense {
+      background: rgba(22, 101, 52, 0.2);
+      color: #86efac;
+      border: 1px solid rgba(22, 101, 52, 0.5);
+    }
+
+    .drill-tag.tag-shooting {
+      background: rgba(146, 64, 14, 0.2);
+      color: #fde047;
+      border: 1px solid rgba(146, 64, 14, 0.5);
+    }
+
+    /* Drill Editor Forms (Metadata in edit mode) */
+    .edit-metadata-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-group label {
+      font-size: 0.8em;
+      font-weight: 600;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .form-group input, .form-group select {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.9em;
+      outline: none;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--gold);
+    }
+
+    /* Keyboard shortcuts helper */
+    .shortcut-legend {
+      font-size: 0.75em;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 4px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 8px;
+    }
+
+    /* SVG Player tokens and UI styling */
+    .player-token {
+      transition: transform 0.05s ease-out;
+    }
+    
+    .player-circle {
+      stroke-width: 2.5px;
+      filter: drop-shadow(0px 3px 5px rgba(0,0,0,0.5));
+      transition: stroke-width 0.15s, r 0.15s;
+    }
+
+    .player-token:hover .player-circle {
+      cursor: grab;
+      stroke-width: 3.5px;
+      r: 17px;
+    }
+
+    .player-token:active .player-circle {
+      cursor: grabbing;
+      r: 16px;
+    }
+
+    .player-text {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 14px;
+      pointer-events: none;
+      user-select: none;
+      dominant-baseline: central;
+      text-anchor: middle;
+    }
+
+    .ball-token:hover circle {
+      cursor: grab;
+      r: 10px;
+    }
+
+    .ball-token:active circle {
+      cursor: grabbing;
+    }
+
+    /* Action path vectors */
+    .vector-path {
+      fill: none;
+      stroke-linecap: round;
+    }
+
+    /* Sidebar controls in editor mode */
+    .editor-mode-only {
+      display: none;
+    }
+
+    body.edit-mode .editor-mode-only {
+      display: block;
+    }
+
+    body.edit-mode .view-mode-only {
+      display: none;
+    }
+
+    body.edit-mode {
+      --border-color: rgba(209, 173, 125, 0.5);
+    }
+
+    /* Mobile details */
+    #mobile-header {
+      display: none;
+      background: #000;
+      color: #fff;
+      padding: 10px 16px;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 2px solid var(--maroon);
+    }
+
+    .menu-toggle {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .drawer-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1005;
+      backdrop-filter: blur(2px);
+    }
+
+    .close-drawer {
+      display: none;
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      background: transparent;
+      border: none;
+      color: var(--gold);
+      font-size: 28px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 1024px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+      .sidebar-pane {
+        height: auto;
+      }
+    }
+
+    @media (max-width: 850px) {
+      .app-container {
+        grid-template-columns: 1fr;
+      }
+      #mobile-header {
+        display: flex;
+      }
+      nav.side {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 280px;
+        height: 100vh;
+        z-index: 1010;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+      }
+      .side-open nav.side {
+        left: 0;
+      }
+      .side-open .drawer-backdrop {
+        display: block;
+      }
+      .close-drawer {
+        display: block;
+      }
+      main {
+        padding: 16px 14px 40px;
+      }
+      .header-block {
+        padding: 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .header-text h1 {
+        font-size: 1.5em;
+      }
+      .btn-group {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+    }
+
+    /* Print styling rules */
+    @media print {
+      body {
+        background: #fff !important;
+        color: #000 !important;
+      }
+      .app-container {
+        display: block !important;
+      }
+      nav.side, #mobile-header, .header-block, .timeline-container, .editor-controls-drawer, .library-card, .btn-group, .shortcut-legend {
+        display: none !important;
+      }
+      main {
+        padding: 0 !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+      .workspace-grid {
+        display: block !important;
+      }
+      .court-pane {
+        background: #fff !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        page-break-after: always;
+      }
+      .court-container {
+        background: #fff !important;
+        border: 2px solid #000 !important;
+        aspect-ratio: 940 / 500 !important;
+      }
+      /* Invert court lines for printing on white paper */
+      svg rect[width="940"] {
+        fill: #ffffff !important;
+      }
+      svg g[stroke="#d1ad7d"] {
+        stroke: #000000 !important;
+        filter: none !important;
+      }
+      svg text {
+        fill: #000000 !important;
+      }
+      .notes-card {
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+      }
+      .notes-box {
+        color: #000 !important;
+      }
+      /* Render multiple steps on paper */
+      .print-steps-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-top: 30px;
+      }
+      .print-step-item {
+        border: 1px solid #ccc;
+        padding: 10px;
+        page-break-inside: avoid;
+      }
+      .print-step-court {
+        width: 100%;
+        aspect-ratio: 940 / 500;
+        border: 1px solid #000;
+      }
+    }
+
+    .print-steps-grid {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div id="mobile-header">
+  <div style="display:flex; align-items:center; gap:8px;">
+    <img src="macewan-logo.png" alt="MacEwan" style="width:32px; height:32px; background:#fff; border-radius:4px; padding:2px;">
+    <span style="font-weight:700; font-size:0.9em; letter-spacing:0.3px; color:#fff;">Griffins Hoops</span>
+  </div>
+  <button class="menu-toggle" onclick="toggleDrawer(true)">☰</button>
+</div>
+<div class="drawer-backdrop" id="backdrop" onclick="toggleDrawer(false)"></div>
+
+<div class="app-container">
+  <!-- Sidebar Navigation -->
+  <nav class="side">
+    <button class="close-drawer" onclick="toggleDrawer(false)">×</button>
+    <div class="brand">
+      <img src="macewan-logo.png" alt="MacEwan">
+      <h1>Griffins Hoops<small>Coaching Hub</small></h1>
+    </div>
+    
+    <h2>Quick nav</h2>
+    <ul>
+      <li><a href="canadawest-scout-2026-27.html">CW Scouting Hub ➔</a></li>
+      <li><a href="drills.html" class="active">Animated Drill Bank ➔</a></li>
+      <li><a href="griffin-concepts.html" style="background:rgba(152,0,46,0.15);color:#fff;font-weight:700;border-left:3px solid var(--gold);padding-left:7px">Griffin Concepts ➔</a></li>
+      <li><a href="index.html#ourteam">Our Team</a></li>
+      <li><a href="index.html#opponents">Opponents</a></li>
+      <li><a href="index.html#tools">Tools and library</a></li>
+      <li><a href="offseason-sc-app/index.html">S&amp;C app</a></li>
+      <li id="rosterManagerNav" style="display:none;"><a href="players.html" style="background:rgba(209,173,125,0.15);color:#d1ad7d;font-weight:700;border-left:3px solid #d1ad7d;padding-left:7px">Roster Manager ➔</a></li>
+    </ul>
+    
+    <h2>Library</h2>
+    <ul>
+      <li><a href="systems/">Systems</a></li>
+      <li><a href="templates/">Templates</a></li>
+      <li><a href="practice-plans/">Practice plans</a></li>
+      <li><a href="sources/foundation.md">Foundation</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main workspace -->
+  <main>
+    <div class="header-block">
+      <div class="header-text">
+        <h1 id="drill-display-title">3-Man Weave</h1>
+        <p><span id="drill-display-category">Transition</span> · Focus: <span id="drill-display-focus">Passing, Cuts, Conditioning</span></p>
+      </div>
+      <div class="btn-group">
+        <button class="btn" id="toggle-court-type-btn" onclick="toggleCourtType()">
+          <span>Full Court</span>
+        </button>
+        <button class="btn" id="toggle-edit-mode-btn" onclick="toggleEditMode()">
+          <span>Edit Mode</span>
+        </button>
+        <button class="btn btn-primary" onclick="printDrill()">Print / PDF</button>
+      </div>
+    </div>
+
+    <div class="workspace-grid">
+      <!-- Court Pane -->
+      <div class="court-pane">
+        <div class="court-container" id="court-box">
+          <svg id="court-svg" viewBox="0 0 940 500" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="court-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#12161f" />
+                <stop offset="100%" stop-color="#1a202c" />
+              </linearGradient>
+              
+              <filter id="glow" x="-10%" y="-10%" width="120%" height="120%">
+                <feGaussianBlur stdDeviation="1.5" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+
+              <!-- Vector arrow markers -->
+              <marker id="arrow-cut" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#d1ad7d"/>
+              </marker>
+              <marker id="arrow-pass" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#38bdf8"/>
+              </marker>
+              <marker id="arrow-dribble" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#f97316"/>
+              </marker>
+              <marker id="arrow-screen" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 6 0 L 6 10 M 0 5 L 6 5" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+              </marker>
+            </defs>
+
+            <!-- Base board -->
+            <rect width="940" height="500" fill="url(#court-grad)"/>
+
+            <!-- Court Lines -->
+            <g stroke="#d1ad7d" stroke-width="2" fill="none" opacity="0.8" filter="url(#glow)">
+              <!-- Boundary outer frame -->
+              <rect x="0" y="0" width="940" height="500" stroke-width="3" />
+              <!-- Half court division -->
+              <line x1="470" y1="0" x2="470" y2="500" />
+              <!-- Restraining Center circle -->
+              <circle cx="470" cy="250" r="60" />
+              <circle cx="470" cy="250" r="20" />
+
+              <!-- Left Side Court Elements -->
+              <rect x="0" y="190" width="190" height="120" />
+              <path d="M 190 190 A 60 60 0 0 1 190 310" />
+              <path d="M 190 310 A 60 60 0 0 1 190 190" stroke-dasharray="6,6" />
+              <line x1="40" y1="220" x2="40" y2="280" stroke-width="3" />
+              <line x1="0" y1="250" x2="40" y2="250" />
+              <circle cx="47.5" cy="250" r="7.5" stroke="#f97316" stroke-width="2" />
+              <line x1="0" y1="34" x2="140" y2="34" />
+              <line x1="0" y1="466" x2="140" y2="466" />
+              <path d="M 140 34 A 221.5 221.5 0 0 1 140 466" />
+              <path d="M 40 210 A 40 40 0 0 1 40 290" stroke-dasharray="4,4" />
+
+              <!-- Right Side Court Elements -->
+              <rect x="750" y="190" width="190" height="120" />
+              <path d="M 750 310 A 60 60 0 0 1 750 190" />
+              <path d="M 750 190 A 60 60 0 0 1 750 310" stroke-dasharray="6,6" />
+              <line x1="900" y1="220" x2="900" y2="280" stroke-width="3" />
+              <line x1="940" y1="250" x2="900" y2="250" />
+              <circle cx="892.5" cy="250" r="7.5" stroke="#f97316" stroke-width="2" />
+              <line x1="940" y1="34" x2="800" y2="34" />
+              <line x1="940" y1="466" x2="800" y2="466" />
+              <path d="M 800 466 A 221.5 221.5 0 0 1 800 34" />
+              <path d="M 900 290 A 40 40 0 0 1 900 210" stroke-dasharray="4,4" />
+            </g>
+
+            <!-- Painting area fills -->
+            <rect x="0" y="190" width="190" height="120" fill="rgba(152, 0, 46, 0.15)" pointer-events="none" />
+            <rect x="750" y="190" width="190" height="120" fill="rgba(152, 0, 46, 0.15)" pointer-events="none" />
+            
+            <!-- Mid-court logo image -->
+            <image href="macewan-logo.png" x="430" y="210" width="80" height="80" opacity="0.25" pointer-events="none" />
+
+            <!-- Group containing flow line paths -->
+            <g id="flow-vectors"></g>
+
+            <!-- Group containing interactive players and ball -->
+            <g id="court-tokens"></g>
+          </svg>
+        </div>
+
+        <!-- Timeline Controller panel -->
+        <div class="timeline-container">
+          <div class="timeline-slider-row">
+            <span id="current-frame-lbl">Frame 0</span>
+            <div class="slider-track-container">
+              <input type="range" class="timeline-slider" id="scrub-slider" min="0" max="0" value="0" oninput="scrubTimeline(this.value)">
+            </div>
+            <span id="total-frames-lbl">/ 0</span>
+          </div>
+
+          <div class="timeline-controls">
+            <div class="timeline-buttons">
+              <button class="btn-icon" title="Reset to Start" onclick="resetAnimation()"><span style="font-size:1.1em">⏮</span></button>
+              <button class="btn-icon" title="Step Back" onclick="stepFrame(-1)"><span>◀</span></button>
+              <button class="btn-icon" id="play-pause-btn" title="Play / Pause" onclick="togglePlayPause()" style="font-size:1.4em; color:var(--gold);"><span>▶</span></button>
+              <button class="btn-icon" title="Step Forward" onclick="stepFrame(1)"><span>▶</span></button>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:16px;">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span style="font-size:0.8em; font-weight:600; color:var(--text-muted);">SPEED</span>
+                <select id="play-speed-select" onchange="changeSpeed(this.value)" style="background:#1e2533; border:1px solid var(--border-color); color:#fff; border-radius:4px; padding:3px 6px; font-size:0.85em; outline:none;">
+                  <option value="2000">0.5x</option>
+                  <option value="1200" selected>1.0x (Normal)</option>
+                  <option value="800">1.5x</option>
+                  <option value="500">2.0x</option>
+                </select>
+              </div>
+
+              <div style="display:flex; align-items:center; gap:6px;">
+                <label style="font-size:0.8em; font-weight:600; color:var(--text-muted); cursor:pointer;">
+                  <input type="checkbox" id="loop-chk" style="vertical-align:middle; margin-right:4px;"> LOOP
+                </label>
+              </div>
+            </div>
+
+            <!-- Editor Frame actions -->
+            <div class="editor-mode-only" style="display:flex; gap:6px;">
+              <button class="btn-sm" title="Add New Frame after current" onclick="insertFrame()">+ Frame</button>
+              <button class="btn-sm" title="Duplicate Current Frame" onclick="duplicateFrame()">Duplicate</button>
+              <button class="btn-sm btn-danger" style="padding:4px 6px;" title="Delete current frame" onclick="deleteFrame()">Delete Frame</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Editor Toolbar Drawers (Edit mode only) -->
+        <div class="editor-controls-drawer" id="editor-drawer">
+          <div class="edit-tool-card">
+            <h4>Add Player</h4>
+            <div class="edit-tool-buttons">
+              <button class="btn-sm" onclick="addPlayerToCourt('offense')">+ Offense (O)</button>
+              <button class="btn-sm" onclick="addPlayerToCourt('defense')">+ Defense (X)</button>
+            </div>
+          </div>
+
+          <div class="edit-tool-card">
+            <h4>Court Type</h4>
+            <div class="edit-tool-buttons">
+              <button class="btn-sm" id="court-toggle-f" onclick="setDrillCourt('full')">Full Court</button>
+              <button class="btn-sm" id="court-toggle-h" onclick="setDrillCourt('half')">Half Court</button>
+            </div>
+          </div>
+
+          <div class="edit-tool-card" id="selection-card" style="grid-column: span 2; display: none;">
+            <h4 id="selection-name">Selected: Player 1</h4>
+            <div style="display:flex; gap:6px; margin-top:4px;">
+              <div class="form-group" style="flex:1;">
+                <input type="text" id="selection-label-input" placeholder="Label" oninput="updateSelectedLabel(this.value)" style="padding:4px; font-size:0.85em;">
+              </div>
+              <div style="display:flex; align-items:center; gap:4px;">
+                <button class="btn-sm" id="selected-team-btn" onclick="toggleSelectedTeam()" title="Toggle Offense/Defense">Swap Side</button>
+                <button class="btn-sm" id="selected-screen-btn" onclick="toggleSelectedScreen()" title="Mark as setting a screen (shows T-bar path)">Screen</button>
+                <button class="btn-sm btn-danger" onclick="deleteSelectedPlayer()" style="background:rgba(239,68,68,0.2); border-color:#ef4444; color:#f87171;">Delete</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="edit-tool-card" style="grid-column: span 2;">
+            <h4>Manage Drills</h4>
+            <div style="display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-top:4px;">
+              <button class="btn-sm" onclick="createNewDrill()">New Drill</button>
+              <button class="btn-sm btn-success" id="btn-save-cloud" onclick="saveActiveDrillToServer()">Save to Cloud</button>
+              <button class="btn-sm btn-danger" id="btn-delete-drill" onclick="deleteActiveDrill()">Delete Drill</button>
+              <button class="btn-sm" onclick="exportActiveDrill()">Export JSON</button>
+              <button class="btn-sm" onclick="document.getElementById('import-file').click()">Import JSON</button>
+              <input type="file" id="import-file" style="display:none;" onchange="importDrillFile(event)">
+              <button class="btn-sm btn-danger" onclick="resetToDefaults()">Reset Defaults</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="shortcut-legend">
+          💡 <strong>Coaching Tip</strong>: Drag players and the ball (orange) to design positions. In Edit Mode, select player to edit labels/teams.
+        </div>
+      </div>
+
+      <!-- Right Panel pane (Notes & Library) -->
+      <div class="sidebar-pane">
+        <!-- Coaching notes card -->
+        <div class="card notes-card">
+          <div class="card-header">
+            <h3>Notes & Instructions</h3>
+            <span id="step-count-badge" class="drill-tag" style="background:var(--gold); color:#000;">Step 1 / 1</span>
+          </div>
+          <div class="card-body">
+            <div class="notes-box">
+              <div class="view-mode-only" id="notes-view-content">
+                <!-- Notes text rendered here -->
+              </div>
+              <div class="editor-mode-only">
+                <div class="form-group" style="margin-bottom:12px;">
+                  <label for="step-notes-input">Coaching cues for this step</label>
+                  <textarea id="step-notes-input" placeholder="What are players executing in this frame? E.g., '1 makes an outlet pass to 2 filling the lane...'" oninput="saveCurrentFrameNotes(this.value)"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Drill Library Selector card -->
+        <div class="card library-card">
+          <div class="card-header">
+            <h3>Drill Library</h3>
+          </div>
+          <div class="card-body" style="padding: 14px 18px;">
+            <!-- Metadata forms in edit mode -->
+            <div class="editor-mode-only edit-metadata-fields">
+              <div class="form-group">
+                <label for="edit-drill-title">Drill Title</label>
+                <input type="text" id="edit-drill-title" oninput="updateDrillMeta('title', this.value)">
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div class="form-group">
+                  <label for="edit-drill-category">Category</label>
+                  <select id="edit-drill-category" onchange="updateDrillMeta('category', this.value)">
+                    <option value="Transition">Transition</option>
+                    <option value="Offense">Offense</option>
+                    <option value="Defense">Defense</option>
+                    <option value="Shooting">Shooting</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="edit-drill-difficulty">Difficulty</label>
+                  <select id="edit-drill-difficulty" onchange="updateDrillMeta('difficulty', this.value)">
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Hard">Hard</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="edit-drill-focus">Focus Areas (comma separated)</label>
+                <input type="text" id="edit-drill-focus" placeholder="e.g., Passing, Conditioning" oninput="updateDrillMeta('focus', this.value)">
+              </div>
+            </div>
+
+            <!-- Selector List -->
+            <ul class="drill-list" id="library-list-el">
+              <!-- Drills inserted here -->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Static print view element generated via script during print preparation -->
+<div id="print-root"></div>
+
+<script>
+  // Core Drill database
+  const DEFAULT_DRILLS = [
+    {
+      id: "3_man_weave",
+      title: "3-Man Weave",
+      category: "Transition",
+      difficulty: "Medium",
+      focus: ["Passing on run", "Weaving lanes", "Layup execution"],
+      courtType: "full",
+      frames: [
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 100, y: 150, isScreener: false },
+            { id: "O2", label: "2", team: "offense", x: 100, y: 250, isScreener: false },
+            { id: "O3", label: "3", team: "offense", x: 100, y: 350, isScreener: false }
+          ],
+          ball: { x: 100, y: 250 },
+          notes: "<strong>Starting Position:</strong> 3 lines on the baseline. Player 2 (middle) starts with the ball. 1 and 3 are on the wings.<br><br><strong>Action:</strong> 2 makes a chest pass to 3 on the right wing. Once you pass, you MUST run behind the player you passed to."
+        },
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 260, y: 120, isScreener: false },
+            { id: "O2", label: "2", team: "offense", x: 260, y: 360, isScreener: false },
+            { id: "O3", label: "3", team: "offense", x: 280, y: 250, isScreener: false }
+          ],
+          ball: { x: 280, y: 250 },
+          notes: "3 catches the ball in stride and immediately passes to 1 cutting down the middle lane. 3 sprints behind 1 after passing. 2 sprints wide to fill the right lane."
+        },
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 480, y: 250, isScreener: false },
+            { id: "O2", label: "2", team: "offense", x: 480, y: 380, isScreener: false },
+            { id: "O3", label: "3", team: "offense", x: 480, y: 120, isScreener: false }
+          ],
+          ball: { x: 480, y: 250 },
+          notes: "1 catches the ball in the middle, and immediately passes to 2 running the right wing. 1 cuts behind 2. 3 runs wide filling the left wing."
+        },
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 680, y: 380, isScreener: false },
+            { id: "O2", label: "2", team: "offense", x: 700, y: 250, isScreener: false },
+            { id: "O3", label: "3", team: "offense", x: 720, y: 120, isScreener: false }
+          ],
+          ball: { x: 700, y: 250 },
+          notes: "2 catches, driving inside, and passes to 3 cutting toward the rim from the left lane. 2 runs behind 3."
+        },
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 800, y: 320, isScreener: false },
+            { id: "O2", label: "2", team: "offense", x: 820, y: 210, isScreener: false },
+            { id: "O3", label: "3", team: "offense", x: 860, y: 250, isScreener: false }
+          ],
+          ball: { x: 860, y: 250 },
+          notes: "3 catches the ball in the paint and finishes with a strong layup. 1 and 2 follow the play to rebound or receive an outlet."
+        }
+      ]
+    },
+    {
+      id: "4_on_4_shell",
+      title: "4-on-4 Shell Drill",
+      category: "Defense",
+      difficulty: "Hard",
+      focus: ["Pack-line positioning", "On-ball closeouts", "Help-side defense"],
+      courtType: "half",
+      frames: [
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 80, y: 100, isScreener: false },
+            { id: "O2", label: "2", team: "offense", x: 230, y: 50, isScreener: false },
+            { id: "O3", label: "3", team: "offense", x: 340, y: 150, isScreener: false },
+            { id: "O4", label: "4", team: "offense", x: 280, y: 420, isScreener: false },
+            { id: "X1", label: "D1", team: "defense", x: 105, y: 120, isScreener: false },
+            { id: "X2", label: "D2", team: "defense", x: 200, y: 100, isScreener: false },
+            { id: "X3", label: "D3", team: "defense", x: 240, y: 210, isScreener: false },
+            { id: "X4", label: "D4", team: "defense", x: 210, y: 340, isScreener: false }
+          ],
+          ball: { x: 80, y: 100 },
+          notes: "<strong>Starting Position:</strong> Ball is with offensive player 1 in the corner. D1 is playing high-intensity **on-ball** defense.<br><br><strong>Defense Roles:</strong> D2 is **one pass away** (denying the pass to 2). D3 and D4 are **two passes away** on the help side (in the paint, aligned with the rim split line)."
+        },
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 80, y: 100, isScreener: false },
+            { id: "O2", label: "2", team: "offense", x: 230, y: 50, isScreener: false },
+            { id: "O3", label: "3", team: "offense", x: 340, y: 150, isScreener: false },
+            { id: "O4", label: "4", team: "offense", x: 280, y: 420, isScreener: false },
+            { id: "X1", label: "D1", team: "defense", x: 130, y: 130, isScreener: false },
+            { id: "X2", label: "D2", team: "defense", x: 210, y: 70, isScreener: false },
+            { id: "X3", label: "D3", team: "defense", x: 270, y: 170, isScreener: false },
+            { id: "X4", label: "D4", team: "defense", x: 230, y: 310, isScreener: false }
+          ],
+          ball: { x: 230, y: 50 },
+          notes: "1 passes to 2 at the top. <br><br><strong>Defensive Shift:</strong> D2 closes out hard to play **on-ball**. D1 drops back into **denial/gap** support. D3 shifts up into denial range. D4 drops lower on the help side (midline of the paint)."
+        },
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 80, y: 100, isScreener: false },
+            { id: "O2", label: "2", team: "offense", x: 230, y: 50, isScreener: false },
+            { id: "O3", label: "3", team: "offense", x: 340, y: 150, isScreener: false },
+            { id: "O4", label: "4", team: "offense", x: 280, y: 420, isScreener: false },
+            { id: "X1", label: "D1", team: "defense", x: 180, y: 200, isScreener: false },
+            { id: "X2", label: "D2", team: "defense", x: 230, y: 90, isScreener: false },
+            { id: "X3", label: "D3", team: "defense", x: 300, y: 150, isScreener: false },
+            { id: "X4", label: "D4", team: "defense", x: 240, y: 330, isScreener: false }
+          ],
+          ball: { x: 340, y: 150 },
+          notes: "2 passes to 3 on the right wing.<br><br><strong>Defensive Shift:</strong> D3 closes out **on-ball**. D2 shifts to denial. D4 stays inside. D1 drops all the way to **deep help-side** in the paint (protecting the midline and back door)."
+        },
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 80, y: 100, isScreener: false },
+            { id: "O2", label: "2", team: "offense", x: 230, y: 50, isScreener: false },
+            { id: "O3", label: "3", team: "offense", x: 340, y: 150, isScreener: false },
+            { id: "O4", label: "4", team: "offense", x: 280, y: 420, isScreener: false },
+            { id: "X1", label: "D1", team: "defense", x: 190, y: 220, isScreener: false },
+            { id: "X2", label: "D2", team: "defense", x: 230, y: 110, isScreener: false },
+            { id: "X3", label: "D3", team: "defense", x: 310, y: 165, isScreener: false },
+            { id: "X4", label: "D4", team: "defense", x: 260, y: 390, isScreener: false }
+          ],
+          ball: { x: 280, y: 420 },
+          notes: "3 skips the ball to 4 in the opposite corner.<br><br><strong>Defensive Shift:</strong> D4 closes out hard **on-ball**. D3 drops into denial. D2 and D1 sprint to get inside the **pack line** on help-side. D1 has midline help, D2 has high help."
+        }
+      ]
+    },
+    {
+      id: "pnr_drop",
+      title: "Pick & Roll: Drop Coverage",
+      category: "Defense",
+      difficulty: "Medium",
+      focus: ["Screen defense", "Big drop alignment", "Guard recovery"],
+      courtType: "half",
+      frames: [
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 280, y: 250, isScreener: false },
+            { id: "O5", label: "5", team: "offense", x: 250, y: 220, isScreener: true },
+            { id: "X1", label: "D1", team: "defense", x: 260, y: 250, isScreener: false },
+            { id: "X5", label: "D5", team: "defense", x: 210, y: 210, isScreener: false }
+          ],
+          ball: { x: 280, y: 250 },
+          notes: "<strong>Starting Setup:</strong> Ball handler O1 is at the top. D1 is guarding O1 closely. O5 (the offensive big) moves up to set a ball screen on D1's right side.<br><br><strong>Call out:</strong> D5 sees the screen coming and shouts 'Screen Left! Drop! Drop!' D5 immediately retreats/drops into the paint."
+        },
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 220, y: 170, isScreener: false },
+            { id: "O5", label: "5", team: "offense", x: 250, y: 220, isScreener: false },
+            { id: "X1", label: "D1", team: "defense", x: 235, y: 195, isScreener: false },
+            { id: "X5", label: "D5", team: "defense", x: 150, y: 190, isScreener: false }
+          ],
+          ball: { x: 220, y: 170 },
+          notes: "<strong>Action:</strong> O1 drives off O5's screen towards the wing. D1 fights over the top of the screen to recover. <br><br><strong>Drop Position:</strong> D5 drops back, keeping O1 in front while tracking O5 rolling. D5's job is to stall the ball handler and prevent a direct drive."
+        },
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 140, y: 180, isScreener: false },
+            { id: "O5", label: "5", team: "offense", x: 120, y: 240, isScreener: false },
+            { id: "X1", label: "D1", team: "defense", x: 135, y: 165, isScreener: false },
+            { id: "X5", label: "D5", team: "defense", x: 105, y: 210, isScreener: false }
+          ],
+          ball: { x: 140, y: 180 },
+          notes: "O5 rolls to the basket. D5 intercepts the roll path, forcing O1 to pull up or pass over. D1 catches up from behind, contesting O1's shot, allowing D5 to recover to O5."
+        }
+      ]
+    },
+    {
+      id: "give_and_go",
+      title: "Give and Go Concept",
+      category: "Offense",
+      difficulty: "Easy",
+      focus: ["Passing", "Basket cuts", "Off-ball movement"],
+      courtType: "half",
+      frames: [
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 280, y: 250, isScreener: false },
+            { id: "O2", label: "2", team: "offense", x: 220, y: 100, isScreener: false }
+          ],
+          ball: { x: 280, y: 250 },
+          notes: "<strong>Setup:</strong> Player 1 has the ball at the top of the key. Player 2 is on the wing.<br><br><strong>Pass:</strong> 1 makes a chest pass to 2."
+        },
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 200, y: 200, isScreener: false },
+            { id: "O2", label: "2", team: "offense", x: 220, y: 100, isScreener: false }
+          ],
+          ball: { x: 220, y: 100 },
+          notes: "<strong>Basket Cut:</strong> Immediately after passing, 1 gives a quick head-fake/change-of-direction and cuts hard to the basket. 2 holds the ball, waiting for 1 to clear."
+        },
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 80, y: 230, isScreener: false },
+            { id: "O2", label: "2", team: "offense", x: 220, y: 100, isScreener: false }
+          ],
+          ball: { x: 80, y: 230 },
+          notes: "<strong>Return Pass:</strong> 2 delivers a sharp bounce pass to 1 cutting down the lane for an open layup."
+        }
+      ]
+    },
+    {
+      id: "kickout_shooting",
+      title: "3-Spot Kickout Shooting",
+      category: "Shooting",
+      difficulty: "Medium",
+      focus: ["Drive and kick", "Extra pass", "Catch & shoot"],
+      courtType: "half",
+      frames: [
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 280, y: 250, isScreener: false },
+            { id: "O2", label: "2", team: "offense", x: 80, y: 70, isScreener: false },
+            { id: "O3", label: "3", team: "offense", x: 110, y: 430, isScreener: false },
+            { id: "X1", label: "D1", team: "defense", x: 240, y: 250, isScreener: false },
+            { id: "X2", label: "D2", team: "defense", x: 100, y: 110, isScreener: false }
+          ],
+          ball: { x: 280, y: 250 },
+          notes: "<strong>Drive:</strong> O1 drives hard down the center of the key. D1 is beaten. D2 (guarding the corner shooter O2) collapses into the paint to help protect the rim."
+        },
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 140, y: 250, isScreener: false },
+            { id: "O2", label: "2", team: "offense", x: 80, y: 70, isScreener: false },
+            { id: "O3", label: "3", team: "offense", x: 110, y: 430, isScreener: false },
+            { id: "X1", label: "D1", team: "defense", x: 145, y: 220, isScreener: false },
+            { id: "X2", label: "D2", team: "defense", x: 130, y: 150, isScreener: false }
+          ],
+          ball: { x: 80, y: 70 },
+          notes: "<strong>Kickout:</strong> O1 kicks the ball out to O2 standing open in the left corner. D2 runs hard to close out on O2."
+        },
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 160, y: 250, isScreener: false },
+            { id: "O2", label: "2", team: "offense", x: 80, y: 70, isScreener: false },
+            { id: "O3", label: "3", team: "offense", x: 110, y: 430, isScreener: false },
+            { id: "X1", label: "D1", team: "defense", x: 170, y: 230, isScreener: false },
+            { id: "X2", label: "D2", team: "defense", x: 90, y: 80, isScreener: false }
+          ],
+          ball: { x: 110, y: 430 },
+          notes: "<strong>Extra Pass:</strong> Instead of shooting a contested shot, O2 makes the 'one more' pass across the court to O3 on the opposite wing. O3 catches and shoots an open 3-pointer."
+        }
+      ]
+    },
+    {
+      id: "fist_concept",
+      title: "FIST Concept",
+      category: "Offense",
+      difficulty: "Hard",
+      focus: ["PnR Drag Screen", "Skip / Swing Pass", "SHARK / Snap Hand-off Option"],
+      courtType: "half",
+      frames: [
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 340, y: 300, isScreener: false },
+            { id: "O2", label: "2", team: "offense", x: 60, y: 70, isScreener: false },
+            { id: "O3", label: "3", team: "offense", x: 60, y: 430, isScreener: false },
+            { id: "O4", label: "4", team: "offense", x: 260, y: 120, isScreener: false },
+            { id: "O5", label: "5", team: "offense", x: 280, y: 320, isScreener: true },
+            { id: "X1", label: "D1", team: "defense", x: 325, y: 295, isScreener: false },
+            { id: "X5", label: "D5", team: "defense", x: 270, y: 330, isScreener: false }
+          ],
+          ball: { x: 340, y: 300 },
+          notes: "<strong>Phase 1 — Drag Screen & Cut:</strong> O1 brings the ball up the top-right slot. O5 sets a high on-ball drag screen on D1. O1 uses O5's screen to drive toward the middle/left slot. Simultaneously, O3 cuts up from the right corner toward the wing while O2 and O4 hold spacing."
+        },
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 280, y: 240, isScreener: false },
+            { id: "O2", label: "2", team: "offense", x: 60, y: 70, isScreener: false },
+            { id: "O3", label: "3", team: "offense", x: 240, y: 390, isScreener: false },
+            { id: "O4", label: "4", team: "offense", x: 260, y: 120, isScreener: false },
+            { id: "O5", label: "5", team: "offense", x: 190, y: 260, isScreener: false },
+            { id: "X1", label: "D1", team: "defense", x: 290, y: 230, isScreener: false },
+            { id: "X5", label: "D5", team: "defense", x: 180, y: 240, isScreener: false }
+          ],
+          ball: { x: 280, y: 240 },
+          notes: "<strong>Phase 2 — Reads & Swing Pass:</strong> O1 comes off O5's screen with multiple options: 1) Skip pass to O2 in the corner, 2) Swing pass to O4 at left slot, or 3) Hit O3 lifting up. O1 swings the ball to O4 on the left slot."
+        },
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 330, y: 320, isScreener: false },
+            { id: "O2", label: "2", team: "offense", x: 130, y: 100, isScreener: false },
+            { id: "O3", label: "3", team: "offense", x: 70, y: 440, isScreener: false },
+            { id: "O4", label: "4", team: "offense", x: 220, y: 150, isScreener: false },
+            { id: "O5", label: "5", team: "offense", x: 170, y: 260, isScreener: false },
+            { id: "X2", label: "D2", team: "defense", x: 120, y: 110, isScreener: false },
+            { id: "X4", label: "D4", team: "defense", x: 230, y: 160, isScreener: false }
+          ],
+          ball: { x: 220, y: 150 },
+          notes: "<strong>Phase 3 — SHARK / Snap Action:</strong> O4 holds the ball at left slot. O2 lifts up from the corner for a hand-off/pitch action.<br><br><em>Note: Option for SNAP hand-off instead of SHARK.</em> O1 and O3 re-balance floor spacing on the weak side."
+        },
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 360, y: 340, isScreener: false },
+            { id: "O2", label: "2", team: "offense", x: 140, y: 220, isScreener: false },
+            { id: "O3", label: "3", team: "offense", x: 60, y: 450, isScreener: false },
+            { id: "O4", label: "4", team: "offense", x: 200, y: 120, isScreener: false },
+            { id: "O5", label: "5", team: "offense", x: 100, y: 280, isScreener: false },
+            { id: "X2", label: "D2", team: "defense", x: 130, y: 200, isScreener: false },
+            { id: "X5", label: "D5", team: "defense", x: 80, y: 240, isScreener: false }
+          ],
+          ball: { x: 140, y: 220 },
+          notes: "<strong>Phase 4 — Downhill Attack & Finish:</strong> O2 takes the pitch/hand-off from O4 and attacks downhill into the paint for a pull-up, floater, or kick-out. O5 seals the helper at the rim for a dump-off layup option."
+        }
+      ]
+    }
+  ];
+
+  let drills = [];
+  let activeDrill = null;
+  let currentFrameIndex = 0;
+  
+  // Animation states
+  let isPlaying = false;
+  let animTimer = null;
+  let animStartTime = 0;
+  let animDuration = 1200; // ms per frame transition
+  let animProgress = 0; // 0 to 1
+  let lastFrameTime = 0;
+
+  // Editor states
+  let isEditMode = false;
+  let activeTool = "select"; // "select", "drag"
+  let selectedToken = null; // {type: 'player'|'ball', id: string}
+  let isDragging = false;
+  let dragOffset = { x: 0, y: 0 };
+
+  // Setup DOM elements
+  const courtSvg = document.getElementById('court-svg');
+  const courtBox = document.getElementById('court-box');
+  const tokensGroup = document.getElementById('court-tokens');
+  const vectorsGroup = document.getElementById('flow-vectors');
+  const scrubSlider = document.getElementById('scrub-slider');
+  const playPauseBtn = document.getElementById('play-pause-btn');
+  const totalFramesLbl = document.getElementById('total-frames-lbl');
+  const currentFrameLbl = document.getElementById('current-frame-lbl');
+  const stepCountBadge = document.getElementById('step-count-badge');
+  const notesViewContent = document.getElementById('notes-view-content');
+  const notesEditInput = document.getElementById('step-notes-input');
+  
+  const drillTitleDisplay = document.getElementById('drill-display-title');
+  const drillCatDisplay = document.getElementById('drill-display-category');
+  const drillFocusDisplay = document.getElementById('drill-display-focus');
+
+  // Load from localstorage or defaults
+  function initApp() {
+    // Hide edit mode button if not coach or admin
+    const isCoachOrAdmin = typeof window.isCoachOrAdmin === 'function' ? window.isCoachOrAdmin() : (sessionStorage.getItem('griffin_hub_admin') === 'true' || sessionStorage.getItem('griffin_coaches_authorized') === 'true');
+    const isAdmin = sessionStorage.getItem('griffin_hub_admin') === 'true';
+    const editBtn = document.getElementById('toggle-edit-mode-btn');
+    if (editBtn) {
+      editBtn.style.display = isCoachOrAdmin ? 'inline-flex' : 'none';
+    }
+
+    if (isAdmin) {
+      const rNav = document.getElementById('rosterManagerNav');
+      if (rNav) rNav.style.display = 'block';
+    }
+
+    // Add SVG mouse listeners for drag & drop
+    courtSvg.addEventListener('mousedown', handleMouseDown);
+    courtSvg.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+
+    // Touch support for iPad
+    courtSvg.addEventListener('touchstart', handleTouchStart, {passive: false});
+    courtSvg.addEventListener('touchmove', handleTouchMove, {passive: false});
+    window.addEventListener('touchend', handleTouchEnd);
+
+    // Load from server (falls back to local storage and defaults on failure)
+    loadDrillsFromServer();
+  }
+
+  // Draw list of drills
+  function populateLibraryList() {
+    const listEl = document.getElementById('library-list-el');
+    listEl.innerHTML = '';
+    
+    drills.forEach(drill => {
+      const li = document.createElement('li');
+      li.className = `drill-item ${activeDrill && activeDrill.id === drill.id ? 'active' : ''}`;
+      li.onclick = () => loadDrill(drill.id);
+      
+      const tagClass = `tag-${drill.category.toLowerCase()}`;
+      
+      li.innerHTML = `
+        <div>
+          <div class="drill-info-title">${drill.title}</div>
+          <div class="drill-info-meta">${drill.courtType === 'full' ? 'Full Court' : 'Half Court'} · ${drill.frames.length} steps</div>
+        </div>
+        <span class="drill-tag ${tagClass}">${drill.category}</span>
+      `;
+      listEl.appendChild(li);
+    });
+  }
+
+  // Load selected drill
+  function loadDrill(id) {
+    stopAnimation();
+    activeDrill = drills.find(d => d.id === id);
+    if (!activeDrill) return;
+    
+    currentFrameIndex = 0;
+    
+    // Update headers
+    drillTitleDisplay.innerText = activeDrill.title;
+    drillCatDisplay.innerText = activeDrill.category;
+    drillFocusDisplay.innerText = activeDrill.focus.join(', ');
+
+    // Fill inputs in edit mode
+    document.getElementById('edit-drill-title').value = activeDrill.title;
+    document.getElementById('edit-drill-category').value = activeDrill.category;
+    document.getElementById('edit-drill-difficulty').value = activeDrill.difficulty;
+    document.getElementById('edit-drill-focus').value = activeDrill.focus.join(', ');
+
+    // Court Viewbox adjustments
+    setDrillCourt(activeDrill.courtType, false);
+
+    // Timeline setups
+    scrubSlider.max = activeDrill.frames.length - 1;
+    scrubSlider.value = 0;
+    totalFramesLbl.innerText = `/ ${activeDrill.frames.length - 1}`;
+    
+    deselectAll();
+    updateUIForFrame();
+    populateLibraryList();
+  }
+
+  // Frame details updating
+  function updateUIForFrame() {
+    if (!activeDrill) return;
+    currentFrameLbl.innerText = `Frame ${currentFrameIndex}`;
+    stepCountBadge.innerText = `Step ${currentFrameIndex + 1} / ${activeDrill.frames.length}`;
+    
+    const frame = activeDrill.frames[currentFrameIndex];
+    if (frame) {
+      notesViewContent.innerHTML = frame.notes || "<em>No instructions written for this step.</em>";
+      notesEditInput.value = (frame.notes || "").replace(/<br\s*\/?>/gi, '\n');
+    }
+    
+    renderPositions();
+  }
+
+  // Toggles between full-court and half-court
+  function toggleCourtType() {
+    if (!activeDrill) return;
+    const nextType = activeDrill.courtType === "full" ? "half" : "full";
+    setDrillCourt(nextType, true);
+  }
+
+  function setDrillCourt(type, modifyDrill = false) {
+    if (modifyDrill && activeDrill) {
+      activeDrill.courtType = type;
+      saveDrillsToStorage();
+      populateLibraryList();
+    }
+
+    const courtBox = document.getElementById('court-box');
+    const fToggleBtn = document.getElementById('court-toggle-f');
+    const hToggleBtn = document.getElementById('court-toggle-h');
+    const courtToggleBtnHeader = document.getElementById('toggle-court-type-btn');
+
+    if (type === "half") {
+      courtSvg.setAttribute('viewBox', '0 0 470 500');
+      courtBox.classList.add('half-court');
+      courtToggleBtnHeader.querySelector('span').innerText = "Half Court";
+      if (fToggleBtn) fToggleBtn.classList.remove('active');
+      if (hToggleBtn) hToggleBtn.classList.add('active');
+    } else {
+      courtSvg.setAttribute('viewBox', '0 0 940 500');
+      courtBox.classList.remove('half-court');
+      courtToggleBtnHeader.querySelector('span').innerText = "Full Court";
+      if (fToggleBtn) fToggleBtn.classList.add('active');
+      if (hToggleBtn) hToggleBtn.classList.remove('active');
+    }
+    
+    renderPositions();
+  }
+
+  // Render tokens (Players and Ball) on Court
+  function renderPositions(progress = 0, nextFrame = false) {
+    if (!activeDrill) return;
+    
+    tokensGroup.innerHTML = '';
+    vectorsGroup.innerHTML = '';
+
+    const currentFrame = activeDrill.frames[currentFrameIndex];
+    let targetFrame = nextFrame ? activeDrill.frames[currentFrameIndex + 1] : null;
+
+    if (!currentFrame) return;
+
+    // Draw vectors (arrows) representing actions from Frame N to Frame N+1
+    // Render only when paused or in Edit mode
+    if (!isPlaying && currentFrameIndex < activeDrill.frames.length - 1) {
+      const nextF = activeDrill.frames[currentFrameIndex + 1];
+      
+      // Draw player paths
+      currentFrame.players.forEach(p => {
+        const nextP = nextF.players.find(np => np.id === p.id);
+        if (nextP) {
+          const dist = Math.hypot(nextP.x - p.x, nextP.y - p.y);
+          if (dist > 6) {
+            // Draw path vector
+            let marker = "url(#arrow-cut)";
+            let strokeColor = "#d1ad7d";
+            let strokeDash = "none";
+            
+            if (p.isScreener) {
+              marker = "url(#arrow-screen)";
+              strokeColor = "#ef4444";
+            }
+            
+            drawArrow(p.x, p.y, nextP.x, nextP.y, strokeColor, strokeDash, marker);
+          }
+        }
+      });
+
+      // Draw Ball passes
+      const hasBallNow = getBallCarrier(currentFrame);
+      const hasBallNext = getBallCarrier(nextF);
+      
+      if (hasBallNow && hasBallNext && hasBallNow.id !== hasBallNext.id) {
+        // Passed to another player
+        drawArrow(hasBallNow.x, hasBallNow.y, hasBallNext.x, hasBallNext.y, "#38bdf8", "5,5", "url(#arrow-pass)");
+      } else if (hasBallNow && !hasBallNext) {
+        // Ball passed to a coordinate
+        drawArrow(hasBallNow.x, hasBallNow.y, nextF.ball.x, nextF.ball.y, "#38bdf8", "5,5", "url(#arrow-pass)");
+      } else if (!hasBallNow && hasBallNext) {
+        // Ball picked up by player
+        drawArrow(currentFrame.ball.x, currentFrame.ball.y, hasBallNext.x, hasBallNext.y, "#38bdf8", "5,5", "url(#arrow-pass)");
+      } else if (currentFrame.ball && nextF.ball && !hasBallNow && !hasBallNext) {
+        // Free ball movement
+        const ballDist = Math.hypot(nextF.ball.x - currentFrame.ball.x, nextF.ball.y - currentFrame.ball.y);
+        if (ballDist > 6) {
+          drawArrow(currentFrame.ball.x, currentFrame.ball.y, nextF.ball.x, nextF.ball.y, "#38bdf8", "5,5", "url(#arrow-pass)");
+        }
+      }
+
+      // Draw Ball dribble waves
+      if (hasBallNow && hasBallNext && hasBallNow.id === hasBallNext.id) {
+        const dist = Math.hypot(hasBallNext.x - hasBallNow.x, hasBallNext.y - hasBallNow.y);
+        if (dist > 6) {
+          // Player is dribbling
+          drawDribbleWavyLine(hasBallNow.x, hasBallNow.y, hasBallNext.x, hasBallNext.y);
+        }
+      }
+    }
+
+    // Render Players
+    currentFrame.players.forEach(p => {
+      let x = p.x;
+      let y = p.y;
+
+      if (isPlaying && targetFrame) {
+        const nextP = targetFrame.players.find(np => np.id === p.id);
+        if (nextP) {
+          x = lerp(p.x, nextP.x, progress);
+          y = lerp(p.y, nextP.y, progress);
+        }
+      }
+
+      // Create SVG group for player token
+      const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      g.setAttribute("class", "player-token");
+      g.setAttribute("transform", `translate(${x}, ${y})`);
+      g.setAttribute("data-id", p.id);
+      
+      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("class", "player-circle");
+      circle.setAttribute("r", "15");
+      
+      if (p.team === 'offense') {
+        circle.setAttribute("fill", "var(--gold)");
+        circle.setAttribute("stroke", "#ffffff");
+      } else {
+        circle.setAttribute("fill", "var(--maroon)");
+        circle.setAttribute("stroke", "var(--gold)");
+      }
+      
+      // Highlight selected
+      if (selectedToken && selectedToken.type === 'player' && selectedToken.id === p.id) {
+        circle.setAttribute("stroke", "#10b981");
+        circle.setAttribute("stroke-width", "3.5");
+      }
+      
+      const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      text.setAttribute("class", "player-text");
+      text.setAttribute("fill", p.team === 'offense' ? '#000000' : '#ffffff');
+      text.textContent = p.label || p.id.replace(/[OX]/g, '');
+
+      g.appendChild(circle);
+      g.appendChild(text);
+      tokensGroup.appendChild(g);
+    });
+
+    // Render Ball
+    if (currentFrame.ball) {
+      let bx = currentFrame.ball.x;
+      let by = currentFrame.ball.y;
+
+      if (isPlaying && targetFrame && targetFrame.ball) {
+        bx = lerp(currentFrame.ball.x, targetFrame.ball.x, progress);
+        by = lerp(currentFrame.ball.y, targetFrame.ball.y, progress);
+      }
+
+      const ballG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      ballG.setAttribute("class", "ball-token");
+      ballG.setAttribute("transform", `translate(${bx}, ${by})`);
+      ballG.setAttribute("id", "ball-token-el");
+
+      const ballCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      ballCircle.setAttribute("r", "8");
+      ballCircle.setAttribute("fill", "#f97316");
+      ballCircle.setAttribute("stroke", "#000");
+      ballCircle.setAttribute("stroke-width", "1.5");
+      
+      // Highlight if ball is selected
+      if (selectedToken && selectedToken.type === 'ball') {
+        ballCircle.setAttribute("stroke", "#10b981");
+        ballCircle.setAttribute("stroke-width", "2.5");
+      }
+
+      // Ball seam lines for a basketball visual
+      const seam1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      seam1.setAttribute("d", "M -8 0 A 8 8 0 0 0 8 0");
+      seam1.setAttribute("stroke", "#000");
+      seam1.setAttribute("stroke-width", "0.7");
+      seam1.setAttribute("fill", "none");
+
+      const seam2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      seam2.setAttribute("d", "M 0 -8 A 8 8 0 0 0 0 8");
+      seam2.setAttribute("stroke", "#000");
+      seam2.setAttribute("stroke-width", "0.7");
+      seam2.setAttribute("fill", "none");
+
+      ballG.appendChild(ballCircle);
+      ballG.appendChild(seam1);
+      ballG.appendChild(seam2);
+      tokensGroup.appendChild(ballG);
+    }
+  }
+
+  // Draw single action vector arrow line
+  function drawArrow(x1, y1, x2, y2, color, strokeDash, marker) {
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    
+    // Shorten line slightly at target to prevent arrowhead overlap with player token
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+    const endX = x2 - 18 * Math.cos(angle);
+    const endY = y2 - 18 * Math.sin(angle);
+    const startX = x1 + 15 * Math.cos(angle);
+    const startY = y1 + 15 * Math.sin(angle);
+
+    line.setAttribute("d", `M ${startX} ${startY} L ${endX} ${endY}`);
+    line.setAttribute("stroke", color);
+    line.setAttribute("stroke-width", "2.5");
+    line.setAttribute("stroke-dasharray", strokeDash);
+    line.setAttribute("class", "vector-path");
+    line.setAttribute("marker-end", marker);
+    vectorsGroup.appendChild(line);
+  }
+
+  // Draw wavy line for dribble path
+  function drawDribbleWavyLine(x1, y1, x2, y2) {
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+    const startX = x1 + 15 * Math.cos(angle);
+    const startY = y1 + 15 * Math.sin(angle);
+    const endX = x2 - 18 * Math.cos(angle);
+    const endY = y2 - 18 * Math.sin(angle);
+
+    const dist = Math.hypot(endX - startX, endY - startY);
+    const steps = Math.floor(dist / 12);
+    
+    let pathD = `M ${startX} ${startY}`;
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps;
+      const x = lerp(startX, endX, t);
+      const y = lerp(startY, endY, t);
+      
+      // Perpendicular wiggle offset
+      const wiggleAmp = 4;
+      const wX = -Math.sin(angle) * Math.sin(t * Math.PI * 6) * wiggleAmp;
+      const wY = Math.cos(angle) * Math.sin(t * Math.PI * 6) * wiggleAmp;
+      
+      if (i === 0) {
+        pathD += ` L ${x + wX} ${y + wY}`;
+      } else {
+        pathD += ` L ${x + wX} ${y + wY}`;
+      }
+    }
+    
+    path.setAttribute("d", pathD);
+    path.setAttribute("stroke", "#f97316");
+    path.setAttribute("stroke-width", "2.5");
+    path.setAttribute("fill", "none");
+    path.setAttribute("class", "vector-path");
+    path.setAttribute("marker-end", "url(#arrow-dribble)");
+    vectorsGroup.appendChild(path);
+  }
+
+  // Lerp math
+  function lerp(start, end, amt) {
+    return (1 - amt) * start + amt * end;
+  }
+
+  // Check if ball is centered inside a player circle (possession)
+  function getBallCarrier(frame) {
+    if (!frame || !frame.ball) return null;
+    return frame.players.find(p => {
+      const dist = Math.hypot(frame.ball.x - p.x, frame.ball.y - p.y);
+      return dist < 12; // Snap radius
+    });
+  }
+
+  // Animation player engine loop
+  function animLoop(timestamp) {
+    if (!isPlaying) return;
+    
+    if (!animStartTime) animStartTime = timestamp;
+    const elapsed = timestamp - animStartTime;
+    animProgress = Math.min(elapsed / animDuration, 1);
+    
+    // Render positions interpolated
+    const hasNext = currentFrameIndex < activeDrill.frames.length - 1;
+    renderPositions(animProgress, hasNext);
+    
+    // Update timeline progress bar and scrubber
+    const progressVal = currentFrameIndex + animProgress;
+    scrubSlider.value = progressVal.toFixed(2);
+    
+    if (animProgress >= 1) {
+      if (currentFrameIndex < activeDrill.frames.length - 2) {
+        currentFrameIndex++;
+        animStartTime = timestamp;
+        animProgress = 0;
+        updateUIForFrame();
+      } else {
+        // Last frame reached
+        if (document.getElementById('loop-chk').checked) {
+          currentFrameIndex = 0;
+          animStartTime = timestamp;
+          animProgress = 0;
+          updateUIForFrame();
+        } else {
+          stopAnimation();
+          currentFrameIndex = activeDrill.frames.length - 1;
+          updateUIForFrame();
+        }
+      }
+    }
+    
+    animTimer = requestAnimationFrame(animLoop);
+  }
+
+  function togglePlayPause() {
+    if (isPlaying) {
+      stopAnimation();
+    } else {
+      startAnimation();
+    }
+  }
+
+  function startAnimation() {
+    if (!activeDrill || activeDrill.frames.length <= 1) return;
+    
+    // If at the end, restart
+    if (currentFrameIndex >= activeDrill.frames.length - 1) {
+      currentFrameIndex = 0;
+    }
+    
+    isPlaying = true;
+    playPauseBtn.querySelector('span').innerText = "⏸";
+    animStartTime = 0;
+    animProgress = 0;
+    
+    deselectAll();
+    animTimer = requestAnimationFrame(animLoop);
+  }
+
+  function stopAnimation() {
+    isPlaying = false;
+    if (animTimer) cancelAnimationFrame(animTimer);
+    playPauseBtn.querySelector('span').innerText = "▶";
+    
+    // Snap timeline back to nearest integer frame
+    if (activeDrill) {
+      scrubSlider.value = currentFrameIndex;
+      updateUIForFrame();
+    }
+  }
+
+  function resetAnimation() {
+    stopAnimation();
+    currentFrameIndex = 0;
+    updateUIForFrame();
+  }
+
+  function stepFrame(dir) {
+    stopAnimation();
+    if (!activeDrill) return;
+    const target = currentFrameIndex + dir;
+    if (target >= 0 && target < activeDrill.frames.length) {
+      currentFrameIndex = target;
+      updateUIForFrame();
+    }
+  }
+
+  function scrubTimeline(val) {
+    if (!activeDrill) return;
+    
+    // If playing, pause first
+    if (isPlaying) stopAnimation();
+    
+    const floatVal = parseFloat(val);
+    const baseFrame = Math.floor(floatVal);
+    const progress = floatVal - baseFrame;
+    
+    currentFrameIndex = baseFrame;
+    
+    if (progress > 0 && currentFrameIndex < activeDrill.frames.length - 1) {
+      // Draw intermediate state
+      currentFrameLbl.innerText = `Frame ${currentFrameIndex} (${Math.round(progress*100)}%)`;
+      renderPositions(progress, true);
+    } else {
+      updateUIForFrame();
+    }
+  }
+
+  function changeSpeed(val) {
+    animDuration = parseInt(val);
+  }
+
+  // Toggles edit mode and visual dashboard
+  function toggleEditMode() {
+    isEditMode = !isEditMode;
+    const body = document.body;
+    const editBtn = document.getElementById('toggle-edit-mode-btn');
+    const editorDrawer = document.getElementById('editor-drawer');
+
+    if (isEditMode) {
+      body.classList.add('edit-mode');
+      editBtn.querySelector('span').innerText = "Lock Layout";
+      editBtn.classList.add('btn-primary');
+      editorDrawer.classList.add('active');
+      stopAnimation();
+    } else {
+      body.classList.remove('edit-mode');
+      editBtn.querySelector('span').innerText = "Edit Mode";
+      editBtn.classList.remove('btn-primary');
+      editorDrawer.classList.remove('active');
+      deselectAll();
+      saveDrillsToStorage();
+    }
+    updateUIForFrame();
+  }
+
+  // Save current checklist notes to frame object
+  function saveCurrentFrameNotes(val) {
+    if (!activeDrill) return;
+    const frame = activeDrill.frames[currentFrameIndex];
+    if (frame) {
+      // Save formatting line breaks
+      frame.notes = val.replace(/\n/g, '<br>');
+      document.getElementById('notes-view-content').innerHTML = frame.notes;
+    }
+  }
+
+  // Update Drill metadata details
+  function updateDrillMeta(field, val) {
+    if (!activeDrill) return;
+    if (field === 'title') {
+      activeDrill.title = val;
+      drillTitleDisplay.innerText = val;
+    } else if (field === 'category') {
+      activeDrill.category = val;
+      drillCatDisplay.innerText = val;
+    } else if (field === 'difficulty') {
+      activeDrill.difficulty = val;
+    } else if (field === 'focus') {
+      activeDrill.focus = val.split(',').map(s => s.trim());
+      drillFocusDisplay.innerText = activeDrill.focus.join(', ');
+    }
+    
+    saveDrillsToStorage();
+    populateLibraryList();
+  }
+
+  // Drag and Drop implementation
+  function handleMouseDown(e) {
+    if (!isEditMode || isPlaying) return;
+    
+    const target = e.target;
+    const tokenEl = target.closest('.player-token');
+    const ballEl = target.closest('.ball-token');
+    
+    const coords = getCoordsFromEvent(e);
+    
+    if (tokenEl) {
+      const pid = tokenEl.getAttribute('data-id');
+      selectToken('player', pid);
+      startDrag(coords, tokenEl);
+    } else if (ballEl) {
+      selectToken('ball');
+      startDrag(coords, ballEl);
+    } else {
+      deselectAll();
+    }
+  }
+
+  function handleMouseMove(e) {
+    if (!isDragging || !selectedToken || isPlaying) return;
+    
+    const coords = getCoordsFromEvent(e);
+    const frame = activeDrill.frames[currentFrameIndex];
+    if (!frame) return;
+
+    const newX = Math.max(0, Math.min(activeDrill.courtType === 'half' ? 470 : 940, coords.x - dragOffset.x));
+    const newY = Math.max(0, Math.min(500, coords.y - dragOffset.y));
+
+    if (selectedToken.type === 'player') {
+      const player = frame.players.find(p => p.id === selectedToken.id);
+      if (player) {
+        // Check if ball should snap to moving player
+        const isCarrying = frame.ball && Math.hypot(frame.ball.x - player.x, frame.ball.y - player.y) < 15;
+        
+        player.x = Math.round(newX);
+        player.y = Math.round(newY);
+
+        if (isCarrying && frame.ball) {
+          frame.ball.x = player.x;
+          frame.ball.y = player.y;
+        }
+      }
+    } else if (selectedToken.type === 'ball') {
+      frame.ball.x = Math.round(newX);
+      frame.ball.y = Math.round(newY);
+
+      // Snap ball to player if dragged over one
+      const playerToSnap = frame.players.find(p => Math.hypot(newX - p.x, newY - p.y) < 18);
+      if (playerToSnap) {
+        frame.ball.x = playerToSnap.x;
+        frame.ball.y = playerToSnap.y;
+      }
+    }
+
+    renderPositions();
+  }
+
+  function handleMouseUp() {
+    isDragging = false;
+  }
+
+  // Touch listener wraps (iOS/iPad support)
+  function handleTouchStart(e) {
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      const target = touch.target;
+      const tokenEl = target.closest('.player-token');
+      const ballEl = target.closest('.ball-token');
+      const coords = getCoordsFromEvent(touch);
+
+      if (tokenEl || ballEl) {
+        e.preventDefault(); // Stop scrolling while dragging
+        if (tokenEl) {
+          const pid = tokenEl.getAttribute('data-id');
+          selectToken('player', pid);
+          startDrag(coords, tokenEl);
+        } else {
+          selectToken('ball');
+          startDrag(coords, ballEl);
+        }
+      }
+    }
+  }
+
+  function handleTouchMove(e) {
+    if (isDragging && e.touches.length === 1) {
+      e.preventDefault();
+      handleMouseMove(e.touches[0]);
+    }
+  }
+
+  function handleTouchEnd() {
+    handleMouseUp();
+  }
+
+  // Get coordinates adjusted to local SVG viewport space
+  function getCoordsFromEvent(e) {
+    const rect = courtSvg.getBoundingClientRect();
+    const viewBox = courtSvg.viewBox.baseVal;
+    
+    // Support responsive mapping
+    const x = ((e.clientX - rect.left) / rect.width) * viewBox.width;
+    const y = ((e.clientY - rect.top) / rect.height) * viewBox.height;
+    
+    return { x, y };
+  }
+
+  function startDrag(coords, element) {
+    isDragging = true;
+    
+    // Calculate difference between drag click position and center of token
+    let cx = 0, cy = 0;
+    if (selectedToken.type === 'player') {
+      const frame = activeDrill.frames[currentFrameIndex];
+      const player = frame.players.find(p => p.id === selectedToken.id);
+      if (player) {
+        cx = player.x;
+        cy = player.y;
+      }
+    } else {
+      const frame = activeDrill.frames[currentFrameIndex];
+      if (frame.ball) {
+        cx = frame.ball.x;
+        cy = frame.ball.y;
+      }
+    }
+
+    dragOffset.x = coords.x - cx;
+    dragOffset.y = coords.y - cy;
+  }
+
+  // Selection actions
+  function selectToken(type, id = null) {
+    selectedToken = { type, id };
+    
+    // Show details drawer card
+    const card = document.getElementById('selection-card');
+    const nameEl = document.getElementById('selection-name');
+    const labelInput = document.getElementById('selection-label-input');
+    const screenBtn = document.getElementById('selected-screen-btn');
+
+    card.style.display = 'block';
+    
+    if (type === 'player') {
+      const frame = activeDrill.frames[currentFrameIndex];
+      const player = frame.players.find(p => p.id === id);
+      
+      nameEl.innerText = `${player.team === 'offense' ? 'Offense' : 'Defense'} Player (${player.id})`;
+      labelInput.value = player.label || player.id.replace(/[OX]/g, '');
+      
+      if (player.isScreener) {
+        screenBtn.classList.add('active');
+      } else {
+        screenBtn.classList.remove('active');
+      }
+    } else {
+      nameEl.innerText = "Basketball";
+      labelInput.value = "BALL";
+      screenBtn.classList.remove('active');
+    }
+
+    renderPositions();
+  }
+
+  function deselectAll() {
+    selectedToken = null;
+    document.getElementById('selection-card').style.display = 'none';
+    renderPositions();
+  }
+
+  // Selection action handlers
+  function updateSelectedLabel(val) {
+    if (!selectedToken || selectedToken.type !== 'player') return;
+    const frame = activeDrill.frames[currentFrameIndex];
+    const player = frame.players.find(p => p.id === selectedToken.id);
+    if (player) {
+      player.label = val;
+      renderPositions();
+      saveDrillsToStorage();
+    }
+  }
+
+  function toggleSelectedTeam() {
+    if (!selectedToken || selectedToken.type !== 'player') return;
+    const frame = activeDrill.frames[currentFrameIndex];
+    const player = frame.players.find(p => p.id === selectedToken.id);
+    if (player) {
+      // Toggle offense/defense side
+      player.team = player.team === 'offense' ? 'defense' : 'offense';
+      
+      // Update prefix id index to avoid name collision
+      const index = player.id.replace(/[OX]/g, '');
+      player.id = player.team === 'offense' ? `O${index}` : `X${index}`;
+      
+      selectedToken.id = player.id;
+      selectToken('player', player.id);
+    }
+  }
+
+  function toggleSelectedScreen() {
+    if (!selectedToken || selectedToken.type !== 'player') return;
+    const frame = activeDrill.frames[currentFrameIndex];
+    const player = frame.players.find(p => p.id === selectedToken.id);
+    if (player) {
+      player.isScreener = !player.isScreener;
+      document.getElementById('selected-screen-btn').classList.toggle('active', player.isScreener);
+      renderPositions();
+      saveDrillsToStorage();
+    }
+  }
+
+  function deleteSelectedPlayer() {
+    if (!selectedToken || selectedToken.type !== 'player') return;
+    const frame = activeDrill.frames[currentFrameIndex];
+    frame.players = frame.players.filter(p => p.id !== selectedToken.id);
+    deselectAll();
+    saveDrillsToStorage();
+  }
+
+  // Add a player token to the court center
+  function addPlayerToCourt(team) {
+    if (!activeDrill) return;
+    const frame = activeDrill.frames[currentFrameIndex];
+    if (!frame) return;
+
+    // Find next unique number index
+    let maxIdx = 0;
+    frame.players.forEach(p => {
+      const idx = parseInt(p.id.replace(/[OX]/g, ''));
+      if (!isNaN(idx) && idx > maxIdx) maxIdx = idx;
+    });
+    const nextIdx = maxIdx + 1;
+    const pid = team === 'offense' ? `O${nextIdx}` : `X${nextIdx}`;
+
+    // Place at center relative to viewBox
+    const cx = activeDrill.courtType === 'half' ? 235 : 470;
+    const cy = 250;
+
+    frame.players.push({
+      id: pid,
+      label: nextIdx.toString(),
+      team: team,
+      x: cx,
+      y: cy,
+      isScreener: false
+    });
+
+    renderPositions();
+    saveDrillsToStorage();
+  }
+
+  // Frame addition and copy
+  function insertFrame() {
+    if (!activeDrill) return;
+    const current = activeDrill.frames[currentFrameIndex];
+    
+    // Copy current state for next frame
+    const copy = JSON.parse(JSON.stringify(current));
+    copy.notes = "Coaching instructions for next step.";
+    
+    activeDrill.frames.splice(currentFrameIndex + 1, 0, copy);
+    currentFrameIndex++;
+    
+    scrubSlider.max = activeDrill.frames.length - 1;
+    totalFramesLbl.innerText = `/ ${activeDrill.frames.length - 1}`;
+    
+    updateUIForFrame();
+    saveDrillsToStorage();
+    populateLibraryList();
+  }
+
+  function duplicateFrame() {
+    if (!activeDrill) return;
+    const current = activeDrill.frames[currentFrameIndex];
+    const copy = JSON.parse(JSON.stringify(current));
+    
+    activeDrill.frames.splice(currentFrameIndex + 1, 0, copy);
+    currentFrameIndex++;
+    
+    scrubSlider.max = activeDrill.frames.length - 1;
+    totalFramesLbl.innerText = `/ ${activeDrill.frames.length - 1}`;
+    
+    updateUIForFrame();
+    saveDrillsToStorage();
+    populateLibraryList();
+  }
+
+  function deleteFrame() {
+    if (!activeDrill || activeDrill.frames.length <= 1) {
+      alert("A drill must contain at least 1 frame.");
+      return;
+    }
+    
+    activeDrill.frames.splice(currentFrameIndex, 1);
+    if (currentFrameIndex >= activeDrill.frames.length) {
+      currentFrameIndex = activeDrill.frames.length - 1;
+    }
+    
+    scrubSlider.max = activeDrill.frames.length - 1;
+    totalFramesLbl.innerText = `/ ${activeDrill.frames.length - 1}`;
+    
+    updateUIForFrame();
+    saveDrillsToStorage();
+    populateLibraryList();
+  }
+
+  // Load drills from Google Sheet database
+  function loadDrillsFromServer() {
+    const apiURL = typeof window.TRACKING_API_URL !== 'undefined' ? window.TRACKING_API_URL : (typeof TRACKING_API_URL !== 'undefined' ? TRACKING_API_URL : '');
+    if (!apiURL) {
+      console.warn("API URL not set. Using local drills.");
+      loadDrillsFromLocalOrDefaults();
+      populateLibraryList();
+      loadDrill(drills[0]?.id || "3_man_weave");
+      return;
+    }
+    
+    const listEl = document.getElementById('library-list-el');
+    if (listEl) {
+      listEl.innerHTML = '<li class="drill-item" style="pointer-events:none; opacity:0.6; display:flex; align-items:center; justify-content:center; padding: 20px;">Loading drills from server...</li>';
+    }
+    
+    fetch(apiURL + "?action=getDrills")
+      .then(res => res.json())
+      .then(data => {
+        if (data && Array.isArray(data) && data.length > 0) {
+          drills = data;
+        } else {
+          // If server sheet has no drills yet, load from local storage or defaults
+          loadDrillsFromLocalOrDefaults();
+        }
+        populateLibraryList();
+        loadDrill(drills[0]?.id || "3_man_weave");
+      })
+      .catch(err => {
+        console.error("Error loading drills from server:", err);
+        showToast("Failed to load drills from server. Using local cache.", "error");
+        loadDrillsFromLocalOrDefaults();
+        populateLibraryList();
+        loadDrill(drills[0]?.id || "3_man_weave");
+      });
+  }
+
+  function loadDrillsFromLocalOrDefaults() {
+    const saved = localStorage.getItem('griffin_drills');
+    if (saved) {
+      try {
+        drills = JSON.parse(saved);
+        DEFAULT_DRILLS.forEach(defDrill => {
+          if (!drills.some(d => d.id === defDrill.id)) {
+            drills.push(defDrill);
+          }
+        });
+      } catch (e) {
+        drills = JSON.parse(JSON.stringify(DEFAULT_DRILLS));
+      }
+    } else {
+      drills = JSON.parse(JSON.stringify(DEFAULT_DRILLS));
+    }
+  }
+
+  // Save active drill permanently to Google Sheet
+  function saveActiveDrillToServer() {
+    if (!activeDrill) {
+      showToast("No active drill to save.", "error");
+      return;
+    }
+    
+    const apiURL = typeof window.TRACKING_API_URL !== 'undefined' ? window.TRACKING_API_URL : (typeof TRACKING_API_URL !== 'undefined' ? TRACKING_API_URL : '');
+    if (!apiURL) {
+      showToast("Error: API URL not defined.", "error");
+      return;
+    }
+    
+    const saveBtn = document.getElementById('btn-save-cloud');
+    const originalText = saveBtn.innerText;
+    saveBtn.innerText = "Saving...";
+    saveBtn.disabled = true;
+    
+    fetch(apiURL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain'
+      },
+      body: JSON.stringify({
+        action: 'saveDrill',
+        drill: activeDrill
+      }),
+      redirect: 'follow'
+    })
+    .then(res => res.json())
+    .then(resData => {
+      saveBtn.innerText = originalText;
+      saveBtn.disabled = false;
+      if (resData && resData.status === 'success') {
+        showToast("Drill saved to cloud successfully!", "success");
+        // Update local cache as well
+        saveDrillsToStorage();
+      } else {
+        showToast("Error: " + (resData.message || "Failed to save to cloud"), "error");
+      }
+    })
+    .catch(err => {
+      saveBtn.innerText = originalText;
+      saveBtn.disabled = false;
+      console.error(err);
+      showToast("Error saving to cloud.", "error");
+    });
+  }
+
+  // Delete active drill from Google Sheet
+  function deleteActiveDrill() {
+    if (!activeDrill) return;
+    if (!confirm(`Are you sure you want to permanently delete "${activeDrill.title}" from the cloud and all devices?`)) {
+      return;
+    }
+    
+    const apiURL = typeof window.TRACKING_API_URL !== 'undefined' ? window.TRACKING_API_URL : (typeof TRACKING_API_URL !== 'undefined' ? TRACKING_API_URL : '');
+    if (!apiURL) {
+      // Local delete fallback
+      const index = drills.findIndex(d => d.id === activeDrill.id);
+      if (index !== -1) {
+        drills.splice(index, 1);
+        saveDrillsToStorage();
+        showToast("Drill deleted locally.", "success");
+        loadNextAvailableDrill();
+      }
+      return;
+    }
+    
+    const deleteBtn = document.getElementById('btn-delete-drill');
+    const originalText = deleteBtn.innerText;
+    deleteBtn.innerText = "Deleting...";
+    deleteBtn.disabled = true;
+    
+    fetch(apiURL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain'
+      },
+      body: JSON.stringify({
+        action: 'deleteDrill',
+        id: activeDrill.id
+      }),
+      redirect: 'follow'
+    })
+    .then(res => res.json())
+    .then(resData => {
+      deleteBtn.innerText = originalText;
+      deleteBtn.disabled = false;
+      if (resData && resData.status === 'success') {
+        showToast("Drill deleted from cloud successfully!", "success");
+        
+        // Remove locally too
+        const index = drills.findIndex(d => d.id === activeDrill.id);
+        if (index !== -1) {
+          drills.splice(index, 1);
+          saveDrillsToStorage();
+        }
+        loadNextAvailableDrill();
+      } else {
+        showToast("Error: " + (resData.message || "Failed to delete from cloud"), "error");
+      }
+    })
+    .catch(err => {
+      deleteBtn.innerText = originalText;
+      deleteBtn.disabled = false;
+      console.error(err);
+      showToast("Error deleting from cloud.", "error");
+    });
+  }
+
+  function loadNextAvailableDrill() {
+    if (drills.length > 0) {
+      loadDrill(drills[0].id);
+    } else {
+      activeDrill = null;
+      document.getElementById('library-list-el').innerHTML = '';
+      drillTitleDisplay.innerText = "No Drills Loaded";
+      drillCatDisplay.innerText = "—";
+      drillFocusDisplay.innerText = "—";
+      deselectAll();
+      updateUIForFrame();
+    }
+  }
+
+  // Toast Notification Message
+  function showToast(msg, type) {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+    toast.className = `toast ${type}`;
+    toast.innerText = msg;
+    toast.classList.add('active');
+    
+    // Auto dismiss after 3 seconds
+    if (window.toastTimeout) clearTimeout(window.toastTimeout);
+    window.toastTimeout = setTimeout(() => {
+      toast.classList.remove('active');
+    }, 3000);
+  }
+
+  // Create new blank template drill
+  function createNewDrill() {
+    const nextId = `custom_drill_${Date.now()}`;
+    const newDrill = {
+      id: nextId,
+      title: "New Custom Drill",
+      category: "Offense",
+      difficulty: "Easy",
+      focus: ["Focus Area"],
+      courtType: "half",
+      frames: [
+        {
+          players: [
+            { id: "O1", label: "1", team: "offense", x: 120, y: 150, isScreener: false },
+            { id: "O2", label: "2", team: "offense", x: 120, y: 350, isScreener: false },
+            { id: "X1", label: "X1", team: "defense", x: 80, y: 250, isScreener: false }
+          ],
+          ball: { x: 120, y: 150 },
+          notes: "Write starting coaching cues here."
+        }
+      ]
+    };
+    
+    drills.push(newDrill);
+    saveDrillsToStorage();
+    loadDrill(nextId);
+    
+    // Toggle edit mode if not already active to help them start building
+    if (!isEditMode) {
+      toggleEditMode();
+    }
+  }
+
+  // Reset local storage back to code defaults
+  function resetToDefaults() {
+    if (confirm("Are you sure you want to revert all drills to default layouts? This overrides all custom edits.")) {
+      localStorage.removeItem('griffin_drills');
+      drills = JSON.parse(JSON.stringify(DEFAULT_DRILLS));
+      loadDrill("3_man_weave");
+    }
+  }
+
+  function saveDrillsToStorage() {
+    localStorage.setItem('griffin_drills', JSON.stringify(drills));
+  }
+
+  // Export JSON file
+  function exportActiveDrill() {
+    if (!activeDrill) return;
+    const blob = new Blob([JSON.stringify(activeDrill, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${activeDrill.title.toLowerCase().replace(/[^a-z0-9]+/g, '_')}_drill.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // Import JSON file
+  function importDrillFile(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      try {
+        const drill = JSON.parse(evt.target.result);
+        if (drill.id && drill.title && Array.isArray(drill.frames)) {
+          // Check ID collision
+          const existsIdx = drills.findIndex(d => d.id === drill.id);
+          if (existsIdx !== -1) {
+            drill.id = `${drill.id}_imported_${Date.now()}`;
+          }
+          drills.push(drill);
+          saveDrillsToStorage();
+          loadDrill(drill.id);
+        } else {
+          alert("Invalid drill file format.");
+        }
+      } catch (err) {
+        alert("Failed to parse JSON.");
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // High fidelity printing setup
+  function printDrill() {
+    if (!activeDrill) return;
+    
+    const printRoot = document.getElementById('print-root');
+    printRoot.innerHTML = '';
+    
+    // Generate header detail
+    const header = document.createElement('div');
+    header.style.textAlign = 'center';
+    header.style.marginBottom = '20px';
+    header.innerHTML = `
+      <h1 style="margin: 0; font-size: 28px; font-family: 'Montserrat', sans-serif;">MacEwan Griffins Men's Basketball</h1>
+      <h2 style="margin: 5px 0 0; font-size: 22px; font-weight: 600; color: #98002e;">DRILL: ${activeDrill.title}</h2>
+      <p style="margin: 5px 0; font-size: 14px; color: #555;">Category: ${activeDrill.category} · Focus: ${activeDrill.focus.join(', ')}</p>
+    `;
+    printRoot.appendChild(header);
+    
+    // Create static layout of all steps side-by-side
+    const grid = document.createElement('div');
+    grid.className = 'print-steps-grid';
+    
+    activeDrill.frames.forEach((frame, idx) => {
+      const stepItem = document.createElement('div');
+      stepItem.className = 'print-step-item';
+      
+      const stepTitle = document.createElement('h3');
+      stepTitle.style.margin = '0 0 8px 0';
+      stepTitle.style.fontSize = '16px';
+      stepTitle.innerText = `Step ${idx + 1}`;
+      stepItem.appendChild(stepTitle);
+
+      const stepCourt = document.createElement('div');
+      stepCourt.className = 'print-step-court';
+      
+      // Clone SVG for static display
+      const courtSvgClone = courtSvg.cloneNode(true);
+      courtSvgClone.removeAttribute('id');
+      
+      // Clear interactive classes and listeners
+      const tGrp = courtSvgClone.querySelector('#court-tokens');
+      const vGrp = courtSvgClone.querySelector('#flow-vectors');
+      tGrp.innerHTML = '';
+      vGrp.innerHTML = '';
+      
+      // Set to static frame coordinates
+      const nextF = activeDrill.frames[idx + 1];
+      
+      // Render vectors for cloned SVG
+      if (idx < activeDrill.frames.length - 1) {
+        frame.players.forEach(p => {
+          const nextP = nextF.players.find(np => np.id === p.id);
+          if (nextP) {
+            const dist = Math.hypot(nextP.x - p.x, nextP.y - p.y);
+            if (dist > 6) {
+              const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
+              const angle = Math.atan2(nextP.y - p.y, nextP.x - p.x);
+              const startX = p.x + 15 * Math.cos(angle);
+              const startY = p.y + 15 * Math.sin(angle);
+              const endX = nextP.x - 18 * Math.cos(angle);
+              const endY = nextP.y - 18 * Math.sin(angle);
+              
+              line.setAttribute("d", `M ${startX} ${startY} L ${endX} ${endY}`);
+              line.setAttribute("stroke", p.isScreener ? "#ef4444" : "#000000");
+              line.setAttribute("stroke-width", "2.5");
+              if (p.isScreener) {
+                line.setAttribute("marker-end", "url(#arrow-screen)");
+              } else {
+                line.setAttribute("marker-end", "url(#arrow-cut)");
+              }
+              vGrp.appendChild(line);
+            }
+          }
+        });
+
+        // Passes on static
+        const hasBallNow = getBallCarrier(frame);
+        const hasBallNext = getBallCarrier(nextF);
+        if (hasBallNow && hasBallNext && hasBallNow.id !== hasBallNext.id) {
+          const passLine = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          const angle = Math.atan2(hasBallNext.y - hasBallNow.y, hasBallNext.x - hasBallNow.x);
+          const startX = hasBallNow.x + 15 * Math.cos(angle);
+          const startY = hasBallNow.y + 15 * Math.sin(angle);
+          const endX = hasBallNext.x - 18 * Math.cos(angle);
+          const endY = hasBallNext.y - 18 * Math.sin(angle);
+
+          passLine.setAttribute("d", `M ${startX} ${startY} L ${endX} ${endY}`);
+          passLine.setAttribute("stroke", "#0000ff");
+          passLine.setAttribute("stroke-width", "2.5");
+          passLine.setAttribute("stroke-dasharray", "5,5");
+          passLine.setAttribute("marker-end", "url(#arrow-pass)");
+          vGrp.appendChild(passLine);
+        }
+      }
+
+      // Render players on static clone
+      frame.players.forEach(p => {
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.setAttribute("transform", `translate(${p.x}, ${p.y})`);
+        
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("r", "15");
+        circle.setAttribute("fill", p.team === 'offense' ? '#f0f0f0' : '#800000');
+        circle.setAttribute("stroke", '#000000');
+        circle.setAttribute("stroke-width", '2');
+
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("fill", p.team === 'offense' ? '#000000' : '#ffffff');
+        text.setAttribute("font-family", "Montserrat");
+        text.setAttribute("font-size", "14");
+        text.setAttribute("font-weight", "800");
+        text.setAttribute("text-anchor", "middle");
+        text.setAttribute("dominant-baseline", "central");
+        text.textContent = p.label || p.id.replace(/[OX]/g, '');
+
+        g.appendChild(circle);
+        g.appendChild(text);
+        tGrp.appendChild(g);
+      });
+
+      // Render ball on static clone
+      if (frame.ball) {
+        const ballG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        ballG.setAttribute("transform", `translate(${frame.ball.x}, ${frame.ball.y})`);
+
+        const ballCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        ballCircle.setAttribute("r", "8");
+        ballCircle.setAttribute("fill", "#ff9900");
+        ballCircle.setAttribute("stroke", "#000");
+        ballCircle.setAttribute("stroke-width", "1.5");
+
+        ballG.appendChild(ballCircle);
+        tGrp.appendChild(ballG);
+      }
+
+      stepCourt.appendChild(courtSvgClone);
+      stepItem.appendChild(stepCourt);
+
+      const stepNotes = document.createElement('p');
+      stepNotes.style.fontSize = '12px';
+      stepNotes.style.marginTop = '10px';
+      stepNotes.style.lineHeight = '1.4';
+      stepNotes.innerHTML = frame.notes || "";
+      stepItem.appendChild(stepNotes);
+
+      grid.appendChild(stepItem);
+    });
+    
+    printRoot.appendChild(grid);
+    window.print();
+  }
+
+  function toggleDrawer(open) {
+    if (open) {
+      document.body.classList.add('side-open');
+    } else {
+      document.body.classList.remove('side-open');
+    }
+  }
+
+  // Initialize page components
+  document.addEventListener('DOMContentLoaded', initApp);
+  
+  // Close drawer on clicking nav links or backdrop
+  document.querySelectorAll('nav.side a').forEach(link => {
+    link.addEventListener('click', () => {
+      toggleDrawer(false);
+    });
+  });
+</script>
+
+  <!-- Toast notification feed -->
+  <div class="toast" id="toast"></div>
+</body>
+</html>

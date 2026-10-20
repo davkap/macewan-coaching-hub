@@ -1,0 +1,1669 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="auth-lock.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MacEwan Griffins: Live Game Lineup Logger</title>
+  <style>
+    :root {
+      --mac-maroon: #98002e;
+      --mac-maroon-dark: #6e0021;
+      --mac-tan: #d1ad7d;
+      --mac-gold: #f39c12;
+      --mac-black: #111;
+      --bg: #090a0d;
+      --card-bg: #14161f;
+      --card-inner: #1c1e2b;
+      --border-color: #272a3b;
+      --pos-green: #2ecc71;
+      --neg-red: #e74c3c;
+      --neutral-gray: #95a5a6;
+      --accent-blue: #3498db;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: #eee;
+      margin: 0;
+      padding: 12px;
+      padding-bottom: 90px;
+      user-select: none;
+    }
+
+    /* Mobile Sticky Top Navigation Header */
+    #mobile-header {
+      display: none;
+      background: #0d0f17;
+      color: #fff;
+      padding: 10px 14px;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 99990;
+      border-bottom: 2px solid var(--mac-maroon);
+      margin: -12px -12px 12px -12px;
+    }
+    .menu-toggle-btn {
+      background: var(--card-inner);
+      border: 1px solid var(--mac-tan);
+      color: #fff;
+      font-size: 22px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    /* Mobile Sliding Side Navigation Drawer */
+    .drawer-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 999990;
+      backdrop-filter: blur(3px);
+    }
+    nav.mobile-side-nav {
+      position: fixed;
+      top: 0;
+      left: -290px;
+      width: 290px;
+      height: 100vh;
+      background: #12141d;
+      border-right: 2px solid var(--mac-maroon);
+      z-index: 999999;
+      padding: 20px 16px;
+      transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 5px 0 25px rgba(0, 0, 0, 0.7);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    body.side-open nav.mobile-side-nav { left: 0; }
+    body.side-open .drawer-backdrop { display: block; }
+    .close-drawer-btn {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: none;
+      border: none;
+      color: var(--mac-tan);
+      font-size: 28px;
+      cursor: pointer;
+    }
+    .drawer-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 16px;
+    }
+    .drawer-brand h2 { margin: 0; font-size: 16px; color: #fff; }
+    .drawer-nav-list { list-style: none; padding: 0; margin: 0; }
+    .drawer-nav-list li { margin-bottom: 8px; }
+    .drawer-nav-list a {
+      display: block;
+      padding: 10px 12px;
+      background: var(--card-inner);
+      color: #eee;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13.5px;
+      border-left: 3px solid var(--mac-tan);
+    }
+    .drawer-nav-list a.active {
+      background: var(--mac-maroon);
+      color: #fff;
+      border-left-color: var(--mac-gold);
+    }
+
+    header.main-header {
+      max-width: 1200px;
+      margin: 0 auto 12px;
+      border-bottom: 2px solid var(--mac-maroon);
+      padding-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .header-title h1 {
+      margin: 0;
+      font-size: 20px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .header-title p {
+      margin: 2px 0 0;
+      color: var(--mac-tan);
+      font-size: 12px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 8px;
+    }
+    .nav-btn {
+      background: var(--card-inner);
+      color: var(--mac-tan);
+      text-decoration: none;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      border: 1px solid var(--border-color);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .nav-btn:hover { background: var(--mac-maroon); color: #fff; border-color: var(--mac-maroon); }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Access Denied Card */
+    #access-denied-card {
+      display: none;
+      max-width: 500px;
+      margin: 60px auto;
+      padding: 30px;
+      background: var(--card-bg);
+      border: 2px solid var(--mac-maroon);
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    /* Live Game Header & Timer Card */
+    .game-status-card {
+      background: linear-gradient(135deg, #1d0f1b 0%, #14161f 100%);
+      border: 1px solid var(--mac-maroon);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    .game-status-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+    .game-name-display {
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .game-date-badge {
+      font-size: 11px;
+      background: var(--card-inner);
+      color: var(--mac-tan);
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+    
+    /* Clock Display Bar */
+    .clock-bar {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 12px;
+      background: var(--card-inner);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px 16px;
+    }
+    .quarter-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .quarter-selector label { font-size: 10px; color: var(--mac-tan); text-transform: uppercase; font-weight: 700; }
+    .period-select {
+      background: #090a0d;
+      border: 1px solid var(--border-color);
+      color: var(--mac-gold);
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .timer-display-box {
+      text-align: center;
+    }
+    .timer-readout {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 36px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 2px;
+      cursor: pointer;
+    }
+    .timer-readout.running {
+      color: var(--pos-green);
+      text-shadow: 0 0 10px rgba(46, 204, 113, 0.4);
+    }
+    .stint-duration-lbl {
+      font-size: 11px;
+      color: #aaa;
+      margin-top: 2px;
+    }
+
+    .timer-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-end;
+    }
+    .btn-timer-toggle {
+      background: var(--pos-green);
+      color: #000;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 900;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+    }
+    .btn-timer-toggle.paused {
+      background: var(--mac-gold);
+      box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+    }
+    .nudge-btns {
+      display: flex;
+      gap: 4px;
+    }
+    .btn-nudge {
+      background: #090a0d;
+      border: 1px solid var(--border-color);
+      color: #ccc;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 10.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Point Buttons Grid (Mobile Touch Friendly) */
+    .scoring-section {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    .section-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .section-header-row h3 {
+      margin: 0;
+      font-size: 14px;
+      color: var(--mac-tan);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .btn-customize-pts {
+      background: none;
+      border: 1px solid var(--border-color);
+      color: #aaa;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .points-buttons-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+    }
+    .btn-pt {
+      height: 56px;
+      border-radius: 10px;
+      font-size: 20px;
+      font-weight: 900;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .btn-pt:active { transform: scale(0.92); }
+    .btn-pt.neg {
+      background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+      color: #fff;
+    }
+    .btn-pt.pos {
+      background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+      color: #fff;
+    }
+
+    /* Active Stint Live Sequence display */
+    .stint-live-banner {
+      background: #090a0d;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .live-seq-notes {
+      font-family: monospace;
+      font-size: 14px;
+      color: var(--mac-gold);
+    }
+    .live-net-badge {
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    /* On-Court Lineup Section */
+    .lineup-management-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    @media (min-width: 800px) {
+      .lineup-management-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .court-card {
+      background: var(--card-bg);
+      border: 1px solid var(--mac-maroon);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .court-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .court-card-header h3 {
+      margin: 0;
+      font-size: 15px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vet-count-pill {
+      background: var(--mac-tan);
+      color: #000;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
+
+    .on-court-slots {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .court-slot {
+      background: var(--card-inner);
+      border: 1px dashed var(--border-color);
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .court-slot.active-occupied {
+      border: 1px solid var(--mac-tan);
+      background: #1e2233;
+    }
+    .court-slot.selected-target {
+      border: 2px solid var(--mac-gold);
+      background: #282417;
+    }
+    .player-slot-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .jersey-badge {
+      background: var(--mac-maroon);
+      color: #fff;
+      font-weight: 900;
+      font-size: 13px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .player-name-txt {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .player-meta-txt {
+      font-size: 11px;
+      color: #888;
+    }
+    .btn-sub-out {
+      background: none;
+      border: 1px solid var(--border-color);
+      color: #aaa;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    /* Bench Roster Section */
+    .bench-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .bench-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .bench-player-item {
+      background: var(--card-inner);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .bench-player-item:hover, .bench-player-item:active {
+      border-color: var(--mac-tan);
+      background: #252839;
+    }
+    .bench-player-item.on-court {
+      opacity: 0.4;
+      pointer-events: none;
+      filter: grayscale(1);
+    }
+
+    /* Action Control Buttons (Substitution / Lineup Change) */
+    .sub-action-bar {
+      margin-bottom: 14px;
+      display: flex;
+      gap: 10px;
+    }
+    .btn-confirm-sub {
+      flex: 2;
+      background: linear-gradient(135deg, var(--mac-maroon) 0%, var(--mac-maroon-dark) 100%);
+      color: white;
+      border: 1px solid var(--mac-tan);
+      padding: 14px;
+      border-radius: 10px;
+      font-weight: 900;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(152,0,46,0.4);
+    }
+    .btn-add-custom-player {
+      flex: 1;
+      background: var(--card-inner);
+      color: var(--mac-tan);
+      border: 1px solid var(--border-color);
+      padding: 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 12.5px;
+      cursor: pointer;
+    }
+
+    /* Completed Stints Log & Corrections Drawer */
+    .stints-log-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 24px;
+    }
+    .stints-table-container {
+      overflow-x: auto;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left; }
+    th { background: #090a0d; color: var(--mac-tan); padding: 8px 10px; font-weight: 700; border-bottom: 2px solid var(--mac-maroon); font-size: 11px; text-transform: uppercase; }
+    td { padding: 8px 10px; border-bottom: 1px solid var(--border-color); color: #ddd; }
+    .btn-edit-stint { background: none; border: 1px solid var(--border-color); color: var(--mac-tan); padding: 3px 6px; border-radius: 4px; font-size: 10.5px; cursor: pointer; }
+    .btn-del-stint { background: none; border: 1px solid var(--neg-red); color: var(--neg-red); padding: 3px 6px; border-radius: 4px; font-size: 10.5px; cursor: pointer; }
+
+    /* Bottom Fixed Action Bar */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: #0d0f17;
+      border-top: 1px solid var(--mac-maroon);
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.6);
+    }
+    .btn-save-game {
+      background: #1b2838;
+      color: #70a1ff;
+      border: 1px solid #2a475e;
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-save-game:hover {
+      background: #23364d;
+      border-color: #3b6385;
+      color: #fff;
+    }
+    .btn-end-game {
+      background: var(--mac-maroon);
+      color: #fff;
+      border: 1px solid #bd2130;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-end-game:hover {
+      background: #b00035;
+    }
+    .toast-notice {
+      position: fixed;
+      bottom: 75px;
+      right: 20px;
+      background: #101924;
+      border: 1px solid #2ecc71;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.7);
+      z-index: 99999;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      animation: fadeInToast 0.3s ease;
+    }
+    @keyframes fadeInToast {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Pre-Game & Edit Modals */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .modal-content {
+      background: var(--card-bg);
+      border: 1px solid var(--mac-maroon);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 500px;
+      padding: 20px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .modal-header h3 { margin: 0; color: #fff; font-size: 18px; }
+    .close-modal { background: none; border: none; color: #aaa; font-size: 24px; cursor: pointer; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 11px; color: var(--mac-tan); text-transform: uppercase; margin-bottom: 4px; font-weight: 700; }
+    .form-group input, .form-group select {
+      width: 100%; background: #090a0d; border: 1px solid var(--border-color); color: white; padding: 10px; border-radius: 6px; font-size: 14px;
+    }
+
+    @media (max-width: 850px) {
+      #mobile-header { display: flex; }
+      header.main-header { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Mobile Header & Navigation Drawer -->
+<div id="mobile-header">
+  <div style="display:flex; align-items:center; gap:8px;">
+    <img src="macewan-logo.png" alt="MacEwan" style="width:30px; height:30px; background:#fff; border-radius:4px; padding:2px;">
+    <span style="font-weight:800; font-size:14px; color:#fff;">Griffins Hoops Logger</span>
+  </div>
+  <button class="menu-toggle-btn" onclick="toggleDrawer(true)">☰</button>
+</div>
+
+<div class="drawer-backdrop" onclick="toggleDrawer(false)"></div>
+<nav class="mobile-side-nav">
+  <button class="close-drawer-btn" onclick="toggleDrawer(false)">&times;</button>
+  <div class="drawer-brand">
+    <img src="macewan-logo.png" alt="MacEwan" style="width:36px; height:36px; background:#fff; border-radius:6px; padding:3px;">
+    <div>
+      <h2>Griffins Hoops</h2>
+      <span style="font-size:11px; color:var(--mac-tan); font-weight:700;">Coaching Navigation</span>
+    </div>
+  </div>
+  <ul class="drawer-nav-list">
+    <li><a href="index.html">🏠 Coaching Hub Home</a></li>
+    <li><a href="lineup-logger.html" class="active">📱 Live Game Lineup Logger</a></li>
+    <li><a href="offense-logger.html">🏀 Tactical Offense Logger</a></li>
+    <li><a href="defense-logger.html">🛡️ Tactical Defense Logger</a></li>
+    <li><a href="lineup-tracker.html">📊 MacEwan Database</a></li>
+    <li><a href="canadawest-scout-2026-27.html">🏀 CW Scouting Hub</a></li>
+    <li><a href="drills.html">🏀 Animated Drill Bank</a></li>
+    <li><a href="griffin-concepts.html">⭐ Griffin Concepts</a></li>
+    <li><a href="playbook.html">📖 Playbook Links</a></li>
+    <li><a href="players.html">👤 Roster Manager</a></li>
+    <li><a href="offseason-sc-app/index.html">🏋️ S&amp;C App</a></li>
+  </ul>
+</nav>
+
+<header class="main-header">
+  <div class="header-title">
+    <h1>🏀 Griffins Live Lineup Logger</h1>
+    <p>In-Game Live Lineup, Clock &amp; Plus/Minus Tracker</p>
+  </div>
+  <div class="nav-links">
+    <a href="offense-logger.html" class="nav-btn" style="background:#3b141e; color:#ff708a; border-color:#5c1d2e;">🏀 Offense Logger</a>
+    <a href="defense-logger.html" class="nav-btn" style="background:#1b253b; color:#70a1ff; border-color:#2a3b5c;">🛡️ Defense Logger</a>
+    <a href="lineup-tracker.html" class="nav-btn" style="background:#2b2015; color:var(--mac-gold); border-color:#5c432a;">📊 MacEwan Database</a>
+    <a href="index.html" class="nav-btn">🏠 Hub Home</a>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Access Denied View for Non-Coaches -->
+  <div id="access-denied-card">
+    <h2 style="color:#ff4a4a; margin-top:0;">🔒 Coach Access Restricted</h2>
+    <p style="color:#ccc; font-size:14.5px; line-height:1.5;">The Live Game Lineup Logger is restricted to Coaches and Head Coach Administrators only.</p>
+    <a href="index.html" class="nav-btn" style="background:var(--mac-maroon); color:#fff; padding:10px 20px; font-size:14px; margin-top:10px;">Return to Coaching Hub</a>
+  </div>
+
+  <!-- Main App Layout (Visible for Coaches/Admins) -->
+  <div id="main-app-content">
+
+    <!-- Game Status & Clock Card -->
+    <div class="game-status-card">
+      <div class="game-status-top">
+        <div class="game-name-display">
+          <span id="txt-opponent-name">Select Game Opponent</span>
+          <span class="game-date-badge" id="txt-game-date">2026-10-09</span>
+        </div>
+        <button class="nav-btn" onclick="openSetupModal()">⚙️ Game Setup</button>
+      </div>
+
+      <!-- Clock Display Bar -->
+      <div class="clock-bar">
+        <div class="quarter-selector">
+          <label>Period</label>
+          <select class="period-select" id="sel-period" onchange="onPeriodChange(this.value)">
+            <option value="Q1">Q1</option>
+            <option value="Q2">Q2</option>
+            <option value="Q3">Q3</option>
+            <option value="Q4">Q4</option>
+            <option value="OT1">OT1</option>
+            <option value="OT2">OT2</option>
+          </select>
+        </div>
+
+        <div class="timer-display-box">
+          <div class="timer-readout" id="clock-display" onclick="promptDirectClockEdit()">10:00</div>
+          <div class="stint-duration-lbl" id="stint-timer-lbl">Stint Time: 00:00</div>
+        </div>
+
+        <div class="timer-actions">
+          <button class="btn-timer-toggle paused" id="btn-timer-toggle" onclick="toggleGameTimer()">▶ START</button>
+          <div class="nudge-btns">
+            <button class="btn-nudge" onclick="nudgeClock(10)">+10s</button>
+            <button class="btn-nudge" onclick="nudgeClock(-10)">-10s</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scoring & Point Buttons Section (Default: -3, -2, -1, +1, +2, +3) -->
+    <div class="scoring-section">
+      <div class="section-header-row">
+        <h3>⚡ Record Point Action (Active Lineup)</h3>
+        <button class="btn-customize-pts" onclick="openCustomizePtsModal()">⚙️ Customize Buttons</button>
+      </div>
+      <div class="points-buttons-grid" id="pts-buttons-grid"></div>
+
+      <!-- Active Stint Live Log Banner -->
+      <div class="stint-live-banner">
+        <div>
+          <span style="font-size:11px; color:#888; text-transform:uppercase;">Current Stint Points:</span>
+          <div class="live-seq-notes" id="live-seq-notes">None yet</div>
+        </div>
+        <div>
+          <span style="font-size:11px; color:#888; text-transform:uppercase;">Stint +/- :</span>
+          <div class="live-net-badge" id="live-net-badge" style="color:var(--neutral-gray);">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Substitution & Lineup Manager -->
+    <div class="sub-action-bar">
+      <button class="btn-confirm-sub" onclick="logSubstitutionAndNewStint()">
+        <span>🔄 LOG SUBSTITUTION / LINEUP CHANGE</span>
+      </button>
+      <button class="btn-add-custom-player" onclick="openAddPlayerModal()">➕ Add Player</button>
+    </div>
+
+    <div class="lineup-management-grid">
+      <!-- On-Court 5 Slots Card -->
+      <div class="court-card">
+        <div class="court-card-header">
+          <h3>🏀 ON COURT (5 Players)</h3>
+          <span class="vet-count-pill" id="lbl-vet-count">0/5 Veterans</span>
+        </div>
+        <div class="on-court-slots" id="court-slots-container"></div>
+      </div>
+
+      <!-- Bench Roster Card -->
+      <div class="bench-card">
+        <div class="court-card-header">
+          <h3 style="margin:0; font-size:14px; color:var(--mac-tan);">📋 BENCH ROSTER (Tap player to swap into selected slot)</h3>
+        </div>
+        <div class="bench-grid" id="bench-grid-container"></div>
+      </div>
+    </div>
+
+    <!-- Completed Stints Log & Corrections Drawer -->
+    <div class="stints-log-card">
+      <div class="section-header-row">
+        <h3 style="color:#fff;">📊 Logged Game Stints (<span id="txt-stint-count">0</span>)</h3>
+        <span style="font-size:11px; color:#888;">Live stint history &amp; error correction table</span>
+      </div>
+      <p style="font-size:11.5px; color:#aaa; margin:0 0 10px;">
+        💡 <strong>What is this for?</strong> Each time you log a substitution, the lineup unit that came off the court is logged here. Use the <strong>Edit</strong> button to correct any point tap or duration mistake during fast-paced play.
+      </p>
+      <div class="stints-table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Period</th>
+              <th>Duration</th>
+              <th>5-Man Lineup</th>
+              <th>Point Sequence</th>
+              <th style="text-align:center;">Net (+/-)</th>
+              <th style="text-align:center;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-logged-stints"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Bottom Navigation Bar -->
+<div class="bottom-bar" id="bottom-bar-el">
+  <div style="font-size:12px; color:#aaa;" id="txt-bottom-summary">
+    Active Stint: <strong style="color:#fff;" id="txt-bottom-stint-num">#1</strong>
+    <span id="save-status-indicator" style="margin-left:10px; font-size:11px; color:#2ecc71;"></span>
+  </div>
+  <div style="display:flex; gap:8px; align-items:center;">
+    <button type="button" class="btn-save-game" onclick="saveGameProgress(true)">💾 SAVE GAME</button>
+    <button type="button" class="btn-end-game" onclick="endGameAndSaveToTracker()">🏁 END GAME</button>
+  </div>
+</div>
+<div id="toast-notification" class="toast-notice"></div>
+
+<!-- Modal 1: Pre-Game Setup (With Cancel/Return & Start New Game Buttons) -->
+<div class="modal-overlay" id="modal-game-setup">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>📋 Game Setup</h3>
+      <button class="close-modal" onclick="closeModal('modal-game-setup')">&times;</button>
+    </div>
+    <form onsubmit="handleSaveGameSetup(event)">
+      <div class="form-group">
+        <label>Opponent School / Team Name</label>
+        <input type="text" id="setup-opponent" placeholder="e.g. Lethbridge Pronghorns, Calgary Dinos" required>
+      </div>
+      <div class="form-group">
+        <label>Game Date</label>
+        <input type="date" id="setup-date" required>
+      </div>
+      <div class="form-group">
+        <label>Game Type</label>
+        <select id="setup-type">
+          <option value="Exhibition Game">Exhibition Game</option>
+          <option value="Regular Season">Regular Season (Canada West)</option>
+          <option value="Playoffs">Playoffs</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Quarter Length (Minutes)</label>
+        <select id="setup-q-len">
+          <option value="10:00">10 Minutes (FIBA / USports Standard)</option>
+          <option value="12:00">12 Minutes (NBA Standard)</option>
+          <option value="08:00">8 Minutes (High School Standard)</option>
+        </select>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-top:18px;">
+        <button type="button" class="nav-btn" onclick="closeModal('modal-game-setup')" style="background:#272a3b; color:#ddd;">✕ Cancel / Return to Game</button>
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="nav-btn" onclick="startNewGameFromSetup()" style="background:#27ae60; color:#fff; font-weight:700;">➕ Start New Game</button>
+          <button type="submit" class="btn-timer-toggle" style="margin:0; padding:8px 16px;">💾 Save Setup Info</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal 2: Customize Buttons -->
+<div class="modal-overlay" id="modal-customize-pts">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>⚙️ Customize Scoring Buttons</h3>
+      <button class="close-modal" onclick="closeModal('modal-customize-pts')">&times;</button>
+    </div>
+    <form onsubmit="handleSaveCustomButtons(event)">
+      <p style="font-size:12px; color:#aaa;">Configure the point values or event notes for each button:</p>
+      <div id="custom-btns-inputs-container"></div>
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;">
+        <button type="button" class="nav-btn" onclick="closeModal('modal-customize-pts')">Cancel</button>
+        <button type="submit" class="btn-timer-toggle">Save Buttons</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal 3: Add/Edit Player -->
+<div class="modal-overlay" id="modal-add-player">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>👤 Add Roster Player</h3>
+      <button class="close-modal" onclick="closeModal('modal-add-player')">&times;</button>
+    </div>
+    <form onsubmit="handleSaveNewPlayer(event)">
+      <div class="form-group">
+        <label>Player Full Name</label>
+        <input type="text" id="new-player-name" placeholder="e.g. John Doe" required>
+      </div>
+      <div class="form-group">
+        <label>Jersey Number</label>
+        <input type="text" id="new-player-number" placeholder="e.g. 23" required>
+      </div>
+      <div class="form-group">
+        <label>Short Name / Abbreviation</label>
+        <input type="text" id="new-player-short" placeholder="e.g. John" required>
+      </div>
+      <div class="form-group">
+        <label>USports Experience Year</label>
+        <select id="new-player-year">
+          <option value="1">Year 1 (Rookie)</option>
+          <option value="2">Year 2 (Developing)</option>
+          <option value="3">Year 3 (Veteran)</option>
+          <option value="4">Year 4 (Senior Veteran)</option>
+          <option value="5">Year 5 (5th Year Veteran)</option>
+        </select>
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;">
+        <button type="button" class="nav-btn" onclick="closeModal('modal-add-player')">Cancel</button>
+        <button type="submit" class="btn-timer-toggle">Add to Bench</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal 4: Edit Logged Stint -->
+<div class="modal-overlay" id="modal-edit-stint">
+  <div class="modal-content" style="max-width:520px;">
+    <div class="modal-header">
+      <h3>✏️ Correct Logged Stint</h3>
+      <button class="close-modal" onclick="closeModal('modal-edit-stint')">&times;</button>
+    </div>
+    <form onsubmit="handleSaveStintEdit(event)">
+      <input type="hidden" id="edit-stint-index">
+      
+      <div class="form-group">
+        <label>5 On-Court Players for this Stint</label>
+        <p style="font-size:11.5px; color:#aaa; margin-top:-2px; margin-bottom:8px;">Change any player's name if the wrong player was logged during play:</p>
+        <div id="edit-stint-players-grid" style="display:flex; flex-direction:column; gap:8px;"></div>
+      </div>
+
+      <div class="form-group" style="margin-top:12px;">
+        <label>Point Sequence Notes (Comma Separated)</label>
+        <input type="text" id="edit-stint-seq" placeholder="e.g. +2, -1, +3">
+      </div>
+      <div class="form-group">
+        <label>Duration On Court (mm:ss)</label>
+        <input type="text" id="edit-stint-duration" placeholder="e.g. 02:45">
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;">
+        <button type="button" class="nav-btn" onclick="closeModal('modal-edit-stint')">Cancel</button>
+        <button type="submit" class="btn-timer-toggle">Update Stint</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function toggleDrawer(open) {
+    if (open) {
+      document.body.classList.add('side-open');
+    } else {
+      document.body.classList.remove('side-open');
+    }
+  }
+
+  var roster = [
+    { id: "p0", name: "Owen Hickey", number: "0", short: "Owen", year: 3, exp: true, pos: "G" },
+    { id: "p1", name: "Jojo Muyo", number: "1", short: "JoJo", year: 3, exp: true, pos: "G" },
+    { id: "p2", name: "Khushal Shukla", number: "2", short: "Khush", year: 2, exp: false, pos: "G" },
+    { id: "p3", name: "Joel Seke", number: "3", short: "Joel", year: 3, exp: true, pos: "W" },
+    { id: "p4", name: "Elisha Ampofo", number: "4", short: "El", year: 5, exp: true, pos: "G" },
+    { id: "p5", name: "Diego Presingular", number: "5", short: "Diego", year: 3, exp: true, pos: "G" },
+    { id: "p6", name: "Noah Simon", number: "6", short: "Noah", year: 2, exp: false, pos: "F" },
+    { id: "p7", name: "Judson Weir", number: "7", short: "Jud", year: 3, exp: true, pos: "W" },
+    { id: "p8", name: "Dele Osuma", number: "8", short: "Dele", year: 4, exp: true, pos: "W" },
+    { id: "p9", name: "Ryan Ziolkowski", number: "9", short: "Ryan", year: 3, exp: true, pos: "F" },
+    { id: "p10", name: "Wol Wol", number: "10", short: "Wol", year: 2, exp: false, pos: "F" },
+    { id: "p11", name: "Favour Igbinyemi", number: "11", short: "Fav", year: 5, exp: true, pos: "F" },
+    { id: "p12", name: "Abdi Musse", number: "12", short: "Abdi", year: 1, exp: false, pos: "G" },
+    { id: "p13", name: "Nathan Lefevre", number: "13", short: "Nathan", year: 1, exp: false, pos: "G" },
+    { id: "p14", name: "David Wilmes", number: "14", short: "David", year: 2, exp: false, pos: "F" },
+    { id: "p15", name: "Otis Onink", number: "15", short: "Otis", year: 1, exp: false, pos: "F" },
+    { id: "p17", name: "Peter-Aluk Deng", number: "17", short: "Peter", year: 2, exp: false, pos: "G" },
+    { id: "p18", name: "Freddy Kapinga", number: "18", short: "Freddy", year: 3, exp: true, pos: "G" }
+  ];
+
+  var ptButtons = [
+    { label: "-3", val: -3, type: "neg" },
+    { label: "-2", val: -2, type: "neg" },
+    { label: "-1", val: -1, type: "neg" },
+    { label: "+1", val: 1, type: "pos" },
+    { label: "+2", val: 2, type: "pos" },
+    { label: "+3", val: 3, type: "pos" }
+  ];
+
+  var gameSetup = {
+    opponent: "",
+    date: new Date().toISOString().split('T')[0],
+    gameType: "Exhibition Game",
+    qLen: "10:00"
+  };
+
+  var activeOnCourt = ["Elisha Ampofo", "Khushal Shukla", "Dele Osuma", "Judson Weir", "Ryan Ziolkowski"];
+  var selectedSlotIndex = null;
+
+  var currentStintIndex = 1;
+  var currentStintSeq = [];
+  var currentStintVals = [];
+  var stintSecondsElapsed = 0;
+
+  var clockTotalSeconds = 600;
+  var isTimerRunning = false;
+  var timerInterval = null;
+
+  var loggedStints = [];
+
+  function initApp() {
+    if (window.isCoachOrAdmin && !window.isCoachOrAdmin()) {
+      document.getElementById('main-app-content').style.display = 'none';
+      document.getElementById('bottom-bar-el').style.display = 'none';
+      document.getElementById('access-denied-card').style.display = 'block';
+      return;
+    }
+
+    renderPointButtons();
+    renderCourtSlots();
+    renderBenchGrid();
+
+    var savedSetup = localStorage.getItem('macewan_current_game_setup');
+    if (savedSetup) {
+      try {
+        gameSetup = JSON.parse(savedSetup);
+        updateGameHeaderUI();
+      } catch(e) { openSetupModal(); }
+    } else {
+      openSetupModal();
+    }
+  }
+
+  var toastTimeout = null;
+  function showToastNotice(msg) {
+    var toast = document.getElementById('toast-notification');
+    if (!toast) return;
+    toast.innerHTML = '<span>✅</span> <span>' + msg + '</span>';
+    toast.style.display = 'flex';
+    if (toastTimeout) clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(function() {
+      toast.style.display = 'none';
+    }, 3500);
+  }
+
+  function getActiveGameId() {
+    if (!gameSetup.gameId) {
+      var d = gameSetup.date || new Date().toISOString().split('T')[0];
+      var o = (gameSetup.opponent || 'opponent').toLowerCase().replace(/[^a-z0-9]/g,'');
+      gameSetup.gameId = 'game_' + d.replace(/-/g,'') + '_' + o;
+      localStorage.setItem('macewan_current_game_setup', JSON.stringify(gameSetup));
+    }
+    return gameSetup.gameId;
+  }
+
+  function syncLineupGamesToNetlify(games) {
+    fetch('/.netlify/functions/save-content', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: 'macewan_lineup_games', content: games })
+    }).catch(function(err){ console.warn('Netlify sync offline:', err); });
+  }
+
+  function openSetupModal() {
+    document.getElementById('setup-date').value = gameSetup.date;
+    document.getElementById('setup-opponent').value = gameSetup.opponent || '';
+    document.getElementById('setup-type').value = gameSetup.gameType || 'Regular Season';
+    document.getElementById('setup-q-len').value = gameSetup.qLen || '10:00';
+    document.getElementById('modal-game-setup').style.display = 'flex';
+  }
+  function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+  }
+
+  function handleSaveGameSetup(e) {
+    if (e) e.preventDefault();
+    gameSetup.opponent = document.getElementById('setup-opponent').value.trim();
+    gameSetup.date = document.getElementById('setup-date').value;
+    gameSetup.gameType = document.getElementById('setup-type').value;
+    gameSetup.qLen = document.getElementById('setup-q-len').value;
+
+    localStorage.setItem('macewan_current_game_setup', JSON.stringify(gameSetup));
+    updateGameHeaderUI();
+    closeModal('modal-game-setup');
+    showToastNotice("📋 Game setup details updated!");
+  }
+
+  function startNewGameFromSetup() {
+    var opp = document.getElementById('setup-opponent').value.trim() || "Opponent";
+    var dt = document.getElementById('setup-date').value || new Date().toISOString().split('T')[0];
+    var gt = document.getElementById('setup-type').value;
+    var ql = document.getElementById('setup-q-len').value;
+
+    var hasActiveData = (loggedStints && loggedStints.length > 0) || (stintSecondsElapsed > 0) || (currentStintVals && currentStintVals.length > 0);
+    if (hasActiveData) {
+      if (!confirm("⚠️ Start a new game vs " + opp + "?\n\nThis will reset the clock, period, and active stint log for the new game. If you wish to save the current game first, click Cancel and then 'SAVE GAME'.")) {
+        return;
+      }
+    }
+
+    if (isTimerRunning) toggleGameTimer();
+
+    gameSetup.opponent = opp;
+    gameSetup.date = dt;
+    gameSetup.gameType = gt;
+    gameSetup.qLen = ql;
+    gameSetup.gameId = 'game_' + dt.replace(/-/g,'') + '_' + opp.toLowerCase().replace(/[^a-z0-9]/g,'') + '_' + Date.now();
+    localStorage.setItem('macewan_current_game_setup', JSON.stringify(gameSetup));
+
+    var parts = ql.split(':');
+    clockTotalSeconds = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+    currentPeriod = "Q1";
+    document.getElementById('sel-period').value = "Q1";
+    stintSecondsElapsed = 0;
+    currentStintVals = [];
+    currentStintSeq = [];
+    stintPlusMinus = 0;
+    currentStintIndex = 1;
+    loggedStints = [];
+
+    updateGameHeaderUI();
+    updateClockDisplay();
+    renderLoggedStintsTable();
+    updateBottomSummary();
+    closeModal('modal-game-setup');
+    showToastNotice("🏀 Started new game vs " + opp + "!");
+  }
+
+  function updateGameHeaderUI() {
+    document.getElementById('txt-opponent-name').textContent = "vs. " + (gameSetup.opponent || "Select Opponent");
+    document.getElementById('txt-game-date').textContent = gameSetup.date + " (" + gameSetup.gameType + ")";
+  }
+
+  function toggleGameTimer() {
+    isTimerRunning = !isTimerRunning;
+    var btn = document.getElementById('btn-timer-toggle');
+    var readout = document.getElementById('clock-display');
+
+    if (isTimerRunning) {
+      btn.textContent = "⏸ PAUSE";
+      btn.classList.remove('paused');
+      readout.classList.add('running');
+
+      timerInterval = setInterval(function() {
+        if (clockTotalSeconds > 0) {
+          clockTotalSeconds--;
+          stintSecondsElapsed++;
+          updateClockDisplay();
+        } else {
+          toggleGameTimer();
+        }
+      }, 1000);
+    } else {
+      btn.textContent = "▶ START";
+      btn.classList.add('paused');
+      readout.classList.remove('running');
+      clearInterval(timerInterval);
+    }
+  }
+
+  function updateClockDisplay() {
+    var m = Math.floor(clockTotalSeconds / 60).toString().padStart(2, '0');
+    var s = (clockTotalSeconds % 60).toString().padStart(2, '0');
+    document.getElementById('clock-display').textContent = m + ":" + s;
+
+    var sm = Math.floor(stintSecondsElapsed / 60).toString().padStart(2, '0');
+    var ss = (stintSecondsElapsed % 60).toString().padStart(2, '0');
+    document.getElementById('stint-timer-lbl').textContent = "Stint Time: " + sm + ":" + ss;
+  }
+
+  function nudgeClock(secs) {
+    clockTotalSeconds = Math.max(0, clockTotalSeconds + secs);
+    updateClockDisplay();
+  }
+
+  function promptDirectClockEdit() {
+    var input = prompt("Enter clock time (mm:ss or seconds):", document.getElementById('clock-display').textContent);
+    if (input) {
+      if (input.includes(':')) {
+        var parts = input.split(':');
+        clockTotalSeconds = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+      } else {
+        clockTotalSeconds = parseInt(input, 10);
+      }
+      updateClockDisplay();
+    }
+  }
+
+  function onPeriodChange(val) {
+    var parts = gameSetup.qLen.split(':');
+    clockTotalSeconds = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+    updateClockDisplay();
+  }
+
+  function renderPointButtons() {
+    var grid = document.getElementById('pts-buttons-grid');
+    grid.innerHTML = '';
+    for (var i = 0; i < ptButtons.length; i++) {
+      (function(b) {
+        var btn = document.createElement('button');
+        btn.className = 'btn-pt ' + b.type;
+        var labelTxt = b.val > 0 ? '+' + b.val : '' + b.val;
+        btn.innerHTML = '<span>' + labelTxt + '</span>';
+        btn.onclick = function() {
+          recordPointAction(b.val, labelTxt);
+        };
+        grid.appendChild(btn);
+      })(ptButtons[i]);
+    }
+  }
+
+  function recordPointAction(val, labelTxt) {
+    currentStintSeq.push(labelTxt);
+    currentStintVals.push(val);
+    updateStintLiveBanner();
+    if (navigator.vibrate) navigator.vibrate(40);
+  }
+
+  function updateStintLiveBanner() {
+    var seqStr = currentStintSeq.length > 0 ? currentStintSeq.join(', ') : 'None yet';
+    document.getElementById('live-seq-notes').textContent = seqStr;
+
+    var net = currentStintVals.reduce(function(a,b){ return a+b; }, 0);
+    var badge = document.getElementById('live-net-badge');
+    badge.textContent = (net > 0 ? '+' : '') + net;
+    badge.style.color = net > 0 ? 'var(--pos-green)' : (net < 0 ? 'var(--neg-red)' : 'var(--neutral-gray)');
+  }
+
+  function renderCourtSlots() {
+    var container = document.getElementById('court-slots-container');
+    container.innerHTML = '';
+    var vetCount = 0;
+
+    for (var idx = 0; idx < activeOnCourt.length; idx++) {
+      (function(slotIdx) {
+        var playerName = activeOnCourt[slotIdx];
+        var pData = roster.find(function(r){ return r.name === playerName; }) || { number: "?", name: playerName, year: 1, exp: false };
+        if (pData.exp) vetCount++;
+
+        var isSelected = selectedSlotIndex === slotIdx;
+        var div = document.createElement('div');
+        div.className = 'court-slot ' + (isSelected ? 'selected-target' : 'active-occupied');
+        div.innerHTML = '<div class="player-slot-info">' +
+          '<div class="jersey-badge">#' + (pData.number || '?') + '</div>' +
+          '<div>' +
+          '<div class="player-name-txt">' + pData.name + (pData.exp ? ' ⭐' : '') + '</div>' +
+          '<div class="player-meta-txt">' + pData.short + ' • Year ' + pData.year + (pData.exp ? ' (Vet)' : ' (Rookie)') + '</div>' +
+          '</div></div>' +
+          '<button class="btn-sub-out">Swap Out</button>';
+
+        div.onclick = function() {
+          selectCourtSlot(slotIdx);
+        };
+
+        var btnSwap = div.querySelector('.btn-sub-out');
+        btnSwap.onclick = function(e) {
+          e.stopPropagation();
+          subOutSlot(slotIdx);
+        };
+
+        container.appendChild(div);
+      })(idx);
+    }
+
+    document.getElementById('lbl-vet-count').textContent = vetCount + "/5 Veterans";
+  }
+
+  function selectCourtSlot(idx) {
+    selectedSlotIndex = idx;
+    renderCourtSlots();
+  }
+
+  function subOutSlot(idx) {
+    selectedSlotIndex = idx;
+    renderCourtSlots();
+  }
+
+  function renderBenchGrid() {
+    var container = document.getElementById('bench-grid-container');
+    container.innerHTML = '';
+
+    for (var i = 0; i < roster.length; i++) {
+      (function(p) {
+        var isOnCourt = activeOnCourt.includes(p.name);
+        var div = document.createElement('div');
+        div.className = 'bench-player-item ' + (isOnCourt ? 'on-court' : '');
+        div.innerHTML = '<div class="jersey-badge" style="width:24px; height:24px; font-size:11px;">#' + p.number + '</div>' +
+          '<div><div style="font-size:12px; font-weight:700; color:#fff;">' + p.name + '</div>' +
+          '<div style="font-size:10px; color:#888;">' + p.short + ' (Yr ' + p.year + ')</div></div>';
+        
+        div.onclick = function() {
+          swapBenchPlayerIntoSlot(p.name);
+        };
+
+        container.appendChild(div);
+      })(roster[i]);
+    }
+  }
+
+  function swapBenchPlayerIntoSlot(benchPlayerName) {
+    if (selectedSlotIndex === null) {
+      alert("Please tap one of the 5 on-court slots first to select who is coming off!");
+      return;
+    }
+
+    activeOnCourt[selectedSlotIndex] = benchPlayerName;
+    selectedSlotIndex = null;
+    renderCourtSlots();
+    renderBenchGrid();
+  }
+
+  function logSubstitutionAndNewStint() {
+    if (activeOnCourt.length < 5) {
+      alert("Please ensure 5 players are on court before logging stint!");
+      return;
+    }
+
+    var net = currentStintVals.reduce(function(a,b){ return a+b; }, 0);
+    var sm = Math.floor(stintSecondsElapsed / 60).toString().padStart(2, '0');
+    var ss = (stintSecondsElapsed % 60).toString().padStart(2, '0');
+    var durationStr = sm + ":" + ss;
+
+    var shortNames = activeOnCourt.map(function(pName) {
+      var found = roster.find(function(r){ return r.name === pName; });
+      return found ? found.short : pName;
+    });
+
+    var stintObj = {
+      id: currentStintIndex,
+      period: document.getElementById('sel-period').value,
+      duration: durationStr,
+      players: activeOnCourt.slice(),
+      shortNames: shortNames,
+      seq: currentStintSeq.length > 0 ? currentStintSeq.join(', ') : '0',
+      vals: currentStintVals.length > 0 ? currentStintVals.slice() : [0],
+      net: net
+    };
+
+    loggedStints.push(stintObj);
+
+    currentStintIndex++;
+    currentStintSeq = [];
+    currentStintVals = [];
+    stintSecondsElapsed = 0;
+
+    updateStintLiveBanner();
+    updateClockDisplay();
+    renderLoggedStintsTable();
+
+    document.getElementById('txt-bottom-stint-num').textContent = "#" + currentStintIndex;
+  }
+
+  function renderLoggedStintsTable() {
+    var tbody = document.getElementById('tbody-logged-stints');
+    document.getElementById('txt-stint-count').textContent = loggedStints.length;
+    var html = "";
+
+    for (var idx = 0; idx < loggedStints.length; idx++) {
+      var s = loggedStints[idx];
+      var netBadge = s.net > 0 
+        ? '<span style="color:var(--pos-green); font-weight:800;">+' + s.net + '</span>'
+        : s.net < 0 
+          ? '<span style="color:var(--neg-red); font-weight:800;">' + s.net + '</span>'
+          : '<span style="color:var(--neutral-gray); font-weight:800;">0</span>';
+
+      var playerPills = s.players.map(function(p) {
+        var found = roster.find(function(r){ return r.name === p; });
+        return '<span style="background:#1e202a; padding:2px 6px; border-radius:4px; font-size:11px; margin:1px; display:inline-block;">' + (found ? found.short : p) + '</span>';
+      }).join('');
+
+      html += '<tr>';
+      html += '<td><strong>#' + s.id + '</strong></td>';
+      html += '<td>' + s.period + '</td>';
+      html += '<td>' + s.duration + '</td>';
+      html += '<td>' + playerPills + '</td>';
+      html += '<td style="font-family:monospace;">' + s.seq + '</td>';
+      html += '<td style="text-align:center;">' + netBadge + '</td>';
+      html += '<td style="text-align:center;">';
+      html += '<button class="btn-edit-stint" onclick="openEditStintModal(' + idx + ')">Edit</button> ';
+      html += '<button class="btn-del-stint" onclick="deleteStint(' + idx + ')">Del</button>';
+      html += '</td></tr>';
+    }
+
+    tbody.innerHTML = html;
+  }
+
+  function openEditStintModal(idx) {
+    var s = loggedStints[idx];
+    document.getElementById('edit-stint-index').value = idx;
+    document.getElementById('edit-stint-seq').value = s.seq;
+    document.getElementById('edit-stint-duration').value = s.duration;
+
+    var container = document.getElementById('edit-stint-players-grid');
+    var html = "";
+    var currentPlayers = s.players && s.players.length === 5 ? s.players : ["", "", "", "", ""];
+
+    for (var i = 0; i < 5; i++) {
+      var pVal = currentPlayers[i] || "";
+      html += '<div style="display:flex; align-items:center; gap:8px;">';
+      html += '<span style="font-size:12px; font-weight:700; color:var(--mac-gold); min-width:55px;">Slot ' + (i+1) + ':</span>';
+      html += '<select id="edit-stint-pselect-' + i + '" style="flex:1; padding:7px 10px; background:#14151a; color:#fff; border:1px solid #333; border-radius:6px; font-size:13px;">';
+      
+      var inRoster = roster.some(function(r){ return r.name === pVal; });
+      if (pVal && !inRoster) {
+        html += '<option value="' + pVal.replace(/"/g, '&quot;') + '" selected>' + pVal + ' (Custom)</option>';
+      }
+
+      for (var rIdx = 0; rIdx < roster.length; rIdx++) {
+        var rPlayer = roster[rIdx];
+        var selected = (rPlayer.name === pVal) ? ' selected' : '';
+        html += '<option value="' + rPlayer.name.replace(/"/g, '&quot;') + '"' + selected + '>#' + rPlayer.number + ' ' + rPlayer.name + ' (' + rPlayer.short + ')</option>';
+      }
+      html += '</select>';
+      html += '</div>';
+    }
+
+    container.innerHTML = html;
+    document.getElementById('modal-edit-stint').style.display = 'flex';
+  }
+
+  function handleSaveStintEdit(e) {
+    e.preventDefault();
+    var idx = parseInt(document.getElementById('edit-stint-index').value, 10);
+    var seqStr = document.getElementById('edit-stint-seq').value.trim();
+    var duration = document.getElementById('edit-stint-duration').value.trim();
+
+    var updatedPlayers = [];
+    var updatedShortNames = [];
+
+    for (var i = 0; i < 5; i++) {
+      var selEl = document.getElementById('edit-stint-pselect-' + i);
+      var chosenName = selEl ? selEl.value : "";
+      updatedPlayers.push(chosenName);
+      var foundRoster = roster.find(function(r){ return r.name === chosenName; });
+      updatedShortNames.push(foundRoster ? foundRoster.short : chosenName);
+    }
+
+    var seqArr = seqStr.split(',').map(function(x){ return x.trim(); }).filter(function(x){ return x.length > 0; });
+    var valArr = seqArr.map(function(x){ return parseInt(x.replace('+',''), 10); }).filter(function(n){ return !isNaN(n); });
+    var net = valArr.reduce(function(a,b){ return a+b; }, 0);
+
+    loggedStints[idx].players = updatedPlayers;
+    loggedStints[idx].shortNames = updatedShortNames;
+    loggedStints[idx].seq = seqStr;
+    loggedStints[idx].vals = valArr;
+    loggedStints[idx].net = net;
+    loggedStints[idx].duration = duration;
+
+    closeModal('modal-edit-stint');
+    renderLoggedStintsTable();
+  }
+
+  function deleteStint(idx) {
+    if (confirm("Are you sure you want to delete Stint #" + loggedStints[idx].id + "?")) {
+      loggedStints.splice(idx, 1);
+      renderLoggedStintsTable();
+    }
+  }
+
+  function openAddPlayerModal() {
+    document.getElementById('modal-add-player').style.display = 'flex';
+  }
+
+  function handleSaveNewPlayer(e) {
+    e.preventDefault();
+    var name = document.getElementById('new-player-name').value.trim();
+    var num = document.getElementById('new-player-number').value.trim();
+    var short = document.getElementById('new-player-short').value.trim();
+    var yr = parseInt(document.getElementById('new-player-year').value, 10);
+
+    var newP = {
+      id: "p_" + Date.now(),
+      name: name,
+      number: num,
+      short: short,
+      year: yr,
+      exp: yr >= 3,
+      pos: "G"
+    };
+
+    roster.push(newP);
+    closeModal('modal-add-player');
+    renderBenchGrid();
+  }
+
+  function openCustomizePtsModal() {
+    var container = document.getElementById('custom-btns-inputs-container');
+    var html = "";
+    for (var i = 0; i < ptButtons.length; i++) {
+      var b = ptButtons[i];
+      html += '<div style="display:flex; gap:8px; margin-bottom:8px; align-items:center;">';
+      html += '<span style="width:60px; font-weight:bold; font-size:12px; color:var(--mac-tan);">Btn ' + (i+1) + ':</span>';
+      html += '<input type="text" value="' + b.label + '" id="custom-btn-lbl-' + i + '" placeholder="Label e.g. +2" style="flex:1;">';
+      html += '<input type="number" value="' + b.val + '" id="custom-btn-val-' + i + '" placeholder="Value e.g. 2" style="width:80px;">';
+      html += '</div>';
+    }
+    container.innerHTML = html;
+    document.getElementById('modal-customize-pts').style.display = 'flex';
+  }
+
+  function handleSaveCustomButtons(e) {
+    e.preventDefault();
+    for (var i = 0; i < ptButtons.length; i++) {
+      var lbl = document.getElementById('custom-btn-lbl-' + i).value;
+      var val = parseInt(document.getElementById('custom-btn-val-' + i).value, 10) || 0;
+      ptButtons[i].label = lbl;
+      ptButtons[i].val = val;
+      ptButtons[i].type = val >= 0 ? 'pos' : 'neg';
+    }
+    closeModal('modal-customize-pts');
+    renderPointButtons();
+  }
+
+  function saveGameProgress(showNotice) {
+    var gameId = getActiveGameId();
+
+    var savedGames = [];
+    var local = localStorage.getItem('macewan_lineup_games');
+    if (local) {
+      try { savedGames = JSON.parse(local); } catch(e) {}
+    }
+
+    var gameObj = {
+      gameId: gameId,
+      opponent: gameSetup.opponent || "Opponent",
+      date: gameSetup.date || new Date().toISOString().split('T')[0],
+      gameType: gameSetup.gameType || "Regular Season",
+      location: "MacEwan Gym",
+      stints: loggedStints.slice(),
+      lastSaved: new Date().toISOString(),
+      isFinal: false
+    };
+
+    // DEDUPLICATION: Replace existing game with matching gameId or opponent+date in-place!
+    var existingIdx = savedGames.findIndex(function(g) {
+      return g.gameId === gameId || (g.date === gameObj.date && g.opponent && g.opponent.toLowerCase() === gameObj.opponent.toLowerCase());
+    });
+
+    if (existingIdx >= 0) {
+      gameObj.gameId = savedGames[existingIdx].gameId || gameId;
+      savedGames[existingIdx] = gameObj;
+    } else {
+      savedGames.push(gameObj);
+    }
+
+    localStorage.setItem('macewan_lineup_games', JSON.stringify(savedGames));
+    syncLineupGamesToNetlify(savedGames);
+
+    var now = new Date();
+    var timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    var statusEl = document.getElementById('save-status-indicator');
+    if (statusEl) statusEl.textContent = "● Saved " + timeStr;
+
+    if (showNotice) {
+      showToastNotice("💾 Game saved to MacEwan Database (" + loggedStints.length + " stints)");
+    }
+  }
+
+  function endGameAndSaveToTracker() {
+    if (currentStintVals.length > 0 || stintSecondsElapsed > 0) {
+      if (confirm("Log current active stint before ending game?")) {
+        logSubstitutionAndNewStint();
+      }
+    }
+
+    if (loggedStints.length === 0) {
+      alert("No stints logged for this game yet!");
+      return;
+    }
+
+    if (!confirm("🏁 Are you sure you want to end this game and push " + loggedStints.length + " stints to your MacEwan Database?")) {
+      return;
+    }
+
+    var gameId = getActiveGameId();
+
+    var savedGames = [];
+    var local = localStorage.getItem('macewan_lineup_games');
+    if (local) {
+      try { savedGames = JSON.parse(local); } catch(e) {}
+    }
+
+    var gameObj = {
+      gameId: gameId,
+      opponent: gameSetup.opponent || "Opponent",
+      date: gameSetup.date || new Date().toISOString().split('T')[0],
+      gameType: gameSetup.gameType || "Regular Season",
+      location: "MacEwan Gym",
+      stints: loggedStints.slice(),
+      lastSaved: new Date().toISOString(),
+      isFinal: true
+    };
+
+    // DEDUPLICATION: Replace existing entry in place
+    var existingIdx = savedGames.findIndex(function(g) {
+      return g.gameId === gameId || (g.date === gameObj.date && g.opponent && g.opponent.toLowerCase() === gameObj.opponent.toLowerCase());
+    });
+
+    if (existingIdx >= 0) {
+      gameObj.gameId = savedGames[existingIdx].gameId || gameId;
+      savedGames[existingIdx] = gameObj;
+    } else {
+      savedGames.push(gameObj);
+    }
+
+    localStorage.setItem('macewan_lineup_games', JSON.stringify(savedGames));
+    syncLineupGamesToNetlify(savedGames);
+
+    if (confirm("✅ Game finalized and pushed to MacEwan Database!\n\nWould you like to view the analytics now in MacEwan Database?")) {
+      window.location.href = "lineup-tracker.html";
+    }
+  }
+
+  window.onload = initApp;
+</script>
+
+</body>
+</html>

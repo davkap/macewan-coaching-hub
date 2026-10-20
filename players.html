@@ -1,0 +1,1177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script>
+    // Access Control: Redirect immediately if not authorized as Admin
+    if (sessionStorage.getItem('griffin_hub_admin') !== 'true') {
+      alert("Access Denied: Admin session required.");
+      window.location.href = "index.html";
+    }
+  </script>
+  <script src="offseason-sc-app/tracking-config.js"></script>
+  <script src="site-tracking.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Roster & Accounts Manager | MacEwan Griffins Coaching Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --maroon: #98002e;
+      --gold: #d1ad7d;
+      --black: #141418;
+      --gray: #5c6470;
+      --bg: #f4f5f7;
+      --border-color: #e1e3e6;
+      --radius: 12px;
+      --success: #2e7d32;
+      --danger: #d32f2f;
+      --shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: var(--maroon);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Grid Layout */
+    .layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Navigation */
+    nav.side {
+      position: sticky;
+      top: 0;
+      align-self: start;
+      height: 100vh;
+      overflow-y: auto;
+      background: #000000;
+      color: #ffffff;
+      padding: 24px 20px;
+      font-size: 0.9em;
+      border-right: 3px solid var(--maroon);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    nav.side h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      margin: 20px 0 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--gold);
+      font-weight: 800;
+    }
+
+    nav.side ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    nav.side li a {
+      display: block;
+      padding: 10px 12px;
+      color: #e6e7e9;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+
+    nav.side li a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+    nav.side .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    nav.side .brand img {
+      width: 36px;
+      height: 36px;
+      background: white;
+      border-radius: 4px;
+      padding: 2px;
+    }
+
+    nav.side .brand h1 {
+      font-size: 15px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      color: white;
+      line-height: 1.2;
+    }
+
+    nav.side .brand h1 small {
+      display: block;
+      color: var(--gold);
+      font-weight: normal;
+      font-size: 11px;
+    }
+
+    /* Main Container */
+    main {
+      padding: 30px 40px;
+      max-width: 1280px;
+      width: 100%;
+    }
+
+    /* Header Cover */
+    .header-cover {
+      background: linear-gradient(135deg, var(--maroon) 0%, #760020 100%);
+      color: white;
+      padding: 32px;
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      border-left: 5px solid var(--gold);
+    }
+
+    .header-cover h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 2em;
+      margin-bottom: 6px;
+    }
+
+    .header-cover p {
+      opacity: 0.9;
+      font-size: 0.95em;
+    }
+
+    /* Admin Action bar */
+    .action-bar {
+      background: #ffffff;
+      padding: 16px 24px;
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .action-bar .left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-grow: 1;
+    }
+
+    .search-input {
+      padding: 10px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 14px;
+      max-width: 300px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--maroon);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--maroon);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.1s ease;
+    }
+
+    .btn:hover {
+      background: #7a0024;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-accent {
+      background: var(--gold);
+      color: var(--black);
+    }
+
+    .btn-accent:hover {
+      background: #c39f70;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--gray);
+    }
+
+    .btn-outline:hover {
+      background: #f1f2f4;
+      color: var(--black);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+    }
+    .btn-danger:hover {
+      background: #b71c1c;
+    }
+
+    /* Roster Cards Grid */
+    .roster-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .player-card {
+      background: #ffffff;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .player-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+      border-color: var(--gold);
+    }
+
+    /* Jersey Number Badge */
+    .player-badge {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: #f0f1f3;
+      color: var(--maroon);
+      font-size: 14px;
+      font-weight: 800;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-color);
+    }
+
+    .player-header {
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px dashed var(--border-color);
+      padding-right: 36px;
+    }
+
+    .player-name {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--maroon);
+      margin-bottom: 4px;
+    }
+
+    .player-meta {
+      font-size: 12px;
+      color: var(--gray);
+      font-weight: 600;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .player-meta span {
+      background: #f4f5f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #e1e3e6;
+    }
+
+    .player-body {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 13px;
+      color: #2c3e50;
+      margin-bottom: 16px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #fafafa;
+      padding-bottom: 4px;
+    }
+
+    .info-row span.label {
+      color: var(--gray);
+      font-weight: 500;
+    }
+
+    .info-row span.value {
+      font-weight: 600;
+      color: var(--black);
+    }
+
+    .badge-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .pill-hypertrophy { background: #e3f2fd; color: #1565c0; }
+    .pill-strength { background: #ede7f6; color: #5e35b1; }
+    .pill-conditioning { background: #f3e5f5; color: #8e24aa; }
+
+    .card-actions {
+      display: flex;
+      gap: 10px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 14px;
+    }
+
+    .card-actions .btn {
+      flex: 1;
+      justify-content: center;
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+
+    /* Modal Styling */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 20, 24, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+      max-width: 500px;
+      width: 100%;
+      padding: 30px;
+      transform: translateY(-20px);
+      transition: transform 0.25s ease;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+    }
+
+    .modal-header h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--maroon);
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--gray);
+      line-height: 1;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      outline: none;
+      background: #ffffff;
+      transition: border-color 0.15s ease;
+    }
+
+    .form-control:focus {
+      border-color: var(--maroon);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 6px 0;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 14px 24px;
+      background: #323232;
+      color: white;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 10100;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toast.active {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast.success { border-left: 4px solid var(--success); }
+    .toast.error { border-left: 4px solid var(--danger); }
+
+    /* Mobile Header & Side drawer */
+    #mobile-header {
+      display: none;
+      background: #000;
+      color: #fff;
+      padding: 10px 16px;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 2px solid var(--maroon);
+    }
+
+    .menu-toggle {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px;
+      line-height: 1;
+    }
+
+    .drawer-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1005;
+      backdrop-filter: blur(2px);
+    }
+
+    .close-drawer {
+      display: none;
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      background: transparent;
+      border: none;
+      color: var(--gold);
+      font-size: 28px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    @media(max-width: 850px) {
+      .layout { grid-template-columns: 1fr; }
+      #mobile-header { display: flex; }
+      nav.side {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 280px;
+        height: 100vh;
+        z-index: 1010;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+      }
+      .side-open nav.side { left: 0; }
+      .side-open .drawer-backdrop { display: block; }
+      .close-drawer { display: block; }
+      main { padding: 20px 16px 60px; }
+      .roster-grid { grid-template-columns: 1fr; gap: 16px; }
+      .action-bar { flex-direction: column; align-items: stretch; }
+      .search-input { max-width: none; }
+      .btn-group { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="mobile-header">
+  <div style="display:flex; align-items:center; gap:8px;">
+    <img src="macewan-logo.png" alt="MacEwan" style="width:32px; height:32px; background:#fff; border-radius:4px; padding:2px;">
+    <span style="font-weight:700; font-size:0.9em; letter-spacing:0.3px; color:#fff;">Griffins Hoops</span>
+  </div>
+  <button class="menu-toggle" onclick="toggleDrawer(true)">☰</button>
+</div>
+<div class="drawer-backdrop" id="backdrop" onclick="toggleDrawer(false)"></div>
+
+<div class="layout">
+  <nav class="side">
+    <button class="close-drawer" onclick="toggleDrawer(false)">×</button>
+    <div class="brand">
+      <img src="macewan-logo.png" alt="MacEwan">
+      <h1>Griffins Hoops<small>Coaching Hub</small></h1>
+    </div>
+    <h2>Quick nav</h2>
+    <ul>
+      <li><a href="index.html">🏠 Dashboard</a></li>
+      <li><a href="canadawest-scout-2026-27.html" style="background:rgba(152,0,46,0.1);color:#98002e;font-weight:700;border-left:3px solid #98002e;padding-left:7px">CW Scouting Hub ➔</a></li>
+      <li><a href="lineup-tracker.html" style="background:rgba(152,0,46,0.15);color:#d1ad7d;font-weight:700;border-left:3px solid #d1ad7d;padding-left:7px">MacEwan Database 📊</a></li>
+      <li><a href="lineup-logger.html" style="background:rgba(152,0,46,0.25);color:#fff;font-weight:700;border-left:3px solid #2ecc71;padding-left:7px">Live Lineup Logger 📱</a></li>
+      <li><a href="offense-logger.html" style="background:rgba(152,0,46,0.2);color:#ff9f43;font-weight:700;border-left:3px solid #ff9f43;padding-left:7px">🏀 Offense Logger</a></li>
+      <li><a href="defense-logger.html" style="background:rgba(41,128,185,0.2);color:#70a1ff;font-weight:700;border-left:3px solid #70a1ff;padding-left:7px">🛡️ Defense Logger</a></li>
+      <li><a href="drills.html" style="background:rgba(209,173,125,0.1);color:#d1ad7d;font-weight:700;border-left:3px solid #d1ad7d;padding-left:7px">Animated Drill Bank ➔</a></li>
+      <li><a href="griffin-concepts.html" style="background:rgba(152,0,46,0.15);color:#fff;font-weight:700;border-left:3px solid var(--gold);padding-left:7px">Griffin Concepts ➔</a></li>
+      <li><a href="playbook.html" style="background:rgba(152,0,46,0.05);color:#98002e;font-weight:600;border-left:3px solid #d1ad7d;padding-left:7px">Playbook Links ➔</a></li>
+      <li><a href="players.html" style="background:rgba(209,173,125,0.2);color:#d1ad7d;font-weight:700;border-left:3px solid #d1ad7d;padding-left:7px">Roster Manager ➔</a></li>
+      <li><a href="offseason-sc-app/index.html">S&amp;C app</a></li>
+      <li><a href="#" onclick="logoutHub(); return false;" style="color:#ff5e5e; font-weight:600; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">🔒 Log Out</a></li>
+    </ul>
+    <h2>Library</h2>
+    <ul>
+      <li><a href="systems/">Systems</a></li>
+      <li><a href="templates/">Templates</a></li>
+      <li><a href="practice-plans/">Practice plans</a></li>
+      <li><a href="sources/foundation.md">Foundation</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <div class="header-cover">
+      <h1>Roster &amp; Accounts Manager</h1>
+      <p>Manage the team roster database, player offseason credentials, and Strength &amp; Conditioning profiles. Updates are synced instantly to Google Sheets.</p>
+    </div>
+
+    <div class="action-bar">
+      <div class="left">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search by name, position, year..." oninput="handleSearch()">
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-accent" style="background:#1565c0; color:#ffffff;" onclick="updateUSportsWeeklyStats()">🏀 Update Weekly USports Stats</button>
+<div class="stats-updated-label" style="font-size:0.75em; opacity:0.75; margin-top:6px;"></div>
+        <button class="btn btn-accent" onclick="openAddModal()">➕ Add Player</button>
+        <button class="btn btn-outline" onclick="fetchRoster(true)">🔄 Sync Sheets</button>
+        <button class="btn btn-danger btn-outline" style="color:var(--danger)" onclick="resetRosterDefaults()">⚠️ Reset Defaults</button>
+      </div>
+    </div>
+
+    <div class="roster-grid" id="rosterGrid">
+      <!-- Player cards will load dynamically -->
+      <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray)">
+        Loading roster from Google Sheets...
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Add / Edit Modal Overlay -->
+<div class="modal-overlay" id="playerModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="modalTitle">Add Roster Player</h3>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <form id="playerForm" onsubmit="savePlayer(event)">
+      <input type="hidden" id="playerSlug">
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="pNumber">Jersey Number (#)</label>
+          <input type="number" id="pNumber" class="form-control" placeholder="0" min="0" max="99" required>
+        </div>
+        <div class="form-group">
+          <label for="pName">Full Name</label>
+          <input type="text" id="pName" class="form-control" placeholder="Marcus Love-Moore" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="pPosition">Position</label>
+          <select id="pPosition" class="form-control" required>
+            <option value="G">Guard (G)</option>
+            <option value="W">Wing (W)</option>
+            <option value="F">Forward (F)</option>
+            <option value="C">Center (C)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="pHeight">Height</label>
+          <input type="text" id="pHeight" class="form-control" placeholder="6-3" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="pYear">Eligibility Year</label>
+          <input type="number" id="pYear" class="form-control" placeholder="1" min="1" max="5" required>
+        </div>
+        <div class="form-group">
+          <label for="pHometown">Hometown / Prev School</label>
+          <input type="text" id="pHometown" class="form-control" placeholder="Scarborough, ON" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="pPin">Login PIN Code</label>
+          <input type="text" id="pPin" class="form-control" placeholder="1234" maxlength="6" pattern="[0-9]*" inputmode="numeric" required>
+        </div>
+        <div class="form-group">
+          <label for="pGoal">Offseason Goal</label>
+          <select id="pGoal" class="form-control" required>
+            <option value="hypertrophy">Mass Gain (Hypertrophy)</option>
+            <option value="strength">Strength &amp; Power</option>
+            <option value="conditioning">Conditioning / Trim</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Injury Modifications</label>
+        <div class="checkbox-group">
+          <label class="checkbox-label"><input type="checkbox" id="injKnee"> Knee Modification</label>
+          <label class="checkbox-label"><input type="checkbox" id="injShoulder"> Shoulder Modification</label>
+          <label class="checkbox-label"><input type="checkbox" id="injBack"> Back Modification</label>
+          <label class="checkbox-label"><input type="checkbox" id="injAnkle"> Ankle Modification</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="pCardio">Cardio Preference</label>
+        <select id="pCardio" class="form-control" required>
+          <option value="court">Court Running (Suicides, 17s)</option>
+          <option value="lowImpact">Low Impact (Air Bike, Rower)</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-accent" style="width:100%; justify-content:center; margin-top:10px;" id="modalSubmitBtn">Save Player to Cloud</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let activeRoster = [];
+
+  const DEFAULT_OFFICIAL_ROSTER = [
+    { number: "0", name: "Owen Hickey", position: "G", height: "6-3", year: 3, hometown: "Edmonton, AB", slug: "owen-hickey" },
+    { number: "1", name: "Jojo Muyo", position: "G", height: "5-10", year: 3, hometown: "Calgary, AB", slug: "jojo-muyo" },
+    { number: "2", name: "Khushal Shukla", position: "G", height: "6-3", year: 2, hometown: "Calgary, AB", slug: "khushal-shukla" },
+    { number: "3", name: "Joel Seke", position: "F", height: "6-5", year: 3, hometown: "Edmonton, AB", slug: "joel-seke" },
+    { number: "4", name: "Elisha Ampofo", position: "G", height: "6-2", year: 5, hometown: "Milton, ON", slug: "elisha-ampofo" },
+    { number: "5", name: "Diego Presingular", position: "G", height: "5-10", year: 3, hometown: "Winnipeg, MB", slug: "diego-presingular" },
+    { number: "6", name: "Noah Simon", position: "F", height: "6-5", year: 2, hometown: "Calgary, AB", slug: "noah-simon" },
+    { number: "7", name: "Judson Weir", position: "F", height: "6-5", year: 3, hometown: "Regina, SK", slug: "judson-weir" },
+    { number: "8", name: "Dele Osuma", position: "F", height: "6-3", year: 4, hometown: "Calgary, AB", slug: "dele-osuma" },
+    { number: "9", name: "Ryan Ziolkowski", position: "F", height: "6-6", year: 3, hometown: "Regina, SK", slug: "ryan-ziolkowski" },
+    { number: "10", name: "Wol Wol", position: "F", height: "6-7", year: 2, hometown: "Edmonton, AB", slug: "wol-wol" },
+    { number: "11", name: "Favour Igbinyemi", position: "C", height: "6-7", year: 5, hometown: "Surrey, BC", slug: "favour-igbinyemi" },
+    { number: "12", name: "Abdi Musse", position: "G", height: "6-5", year: 1, hometown: "Edmonton, AB", slug: "abdi-musse" },
+    { number: "13", name: "Nathan Lefevre", position: "G", height: "6-8", year: 1, hometown: "Metz, France", slug: "nathan-lefevre" },
+    { number: "14", name: "David Wilmes", position: "F", height: "6-9", year: 2, hometown: "Munich, Germany", slug: "david-wilmes" },
+    { number: "15", name: "Otis Onink", position: "F", height: "6-10", year: 1, hometown: "Amsterdam, Netherlands", slug: "otis-onink" },
+    { number: "17", name: "Peter-Aluk Deng", position: "F", height: "6-4", year: 2, hometown: "Edmonton, AB", slug: "peter-aluk-deng" },
+    { number: "18", name: "Freddy Kapinga", position: "G", height: "6-3", year: 3, hometown: "Calgary, AB", slug: "freddy-kapinga" }
+  ];
+
+  // Toggle mobile navigation drawer
+  function toggleDrawer(open) {
+    if (open) {
+      document.body.classList.add('side-open');
+    } else {
+      document.body.classList.remove('side-open');
+    }
+  }
+
+  // Log Out Hub session
+  function logoutHub() {
+    sessionStorage.removeItem('griffin_hub_authorized');
+    sessionStorage.removeItem('griffin_hub_admin');
+    window.location.href = "index.html";
+  }
+
+  // Fetch Roster players from Sheets
+  function fetchRoster(showToastMsg = false) {
+    if (showToastMsg) showToast("Syncing roster database with Google Sheets...", "success");
+    
+    const apiURL = (typeof window !== 'undefined' && window.TRACKING_API_URL) ? window.TRACKING_API_URL : (typeof TRACKING_API_URL !== 'undefined' ? TRACKING_API_URL : '');
+    if (!apiURL) {
+      loadFromLocalCache();
+      return;
+    }
+
+    fetch(apiURL + "?action=getRoster&isAdmin=true")
+      .then(res => res.json())
+      .then(data => {
+        if (data && Array.isArray(data) && data.length > 0) {
+          activeRoster = data;
+          const publicRoster = data.map(p => ({
+            number: p.number,
+            name: p.name,
+            position: p.position,
+            height: p.height,
+            year: p.year,
+            hometown: p.hometown,
+            slug: p.slug
+          }));
+          localStorage.setItem('hoops-hub:cached-roster', JSON.stringify(publicRoster));
+          
+          renderRoster(data);
+          if (showToastMsg) showToast("Roster synced successfully!", "success");
+        } else {
+          loadFromLocalCache();
+        }
+      })
+      .catch(err => {
+        console.error("Roster fetch error:", err);
+        loadFromLocalCache();
+      });
+  }
+
+  function loadFromLocalCache() {
+    try {
+      let cached = JSON.parse(localStorage.getItem('hoops-hub:cached-roster') || '[]');
+      if (!cached || !Array.isArray(cached) || cached.length === 0) {
+        cached = DEFAULT_OFFICIAL_ROSTER;
+        localStorage.setItem('hoops-hub:cached-roster', JSON.stringify(DEFAULT_OFFICIAL_ROSTER));
+      }
+      activeRoster = cached;
+      renderRoster(cached);
+    } catch (e) {
+      activeRoster = DEFAULT_OFFICIAL_ROSTER;
+      renderRoster(DEFAULT_OFFICIAL_ROSTER);
+    }
+  }
+
+  // Render Roster cards list
+  function renderRoster(players) {
+    const grid = document.getElementById("rosterGrid");
+    grid.innerHTML = "";
+
+    if (players.length === 0) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray)">No roster players found matching filters.</div>';
+      return;
+    }
+
+    players.forEach(p => {
+      const slug = p.slug || toSlug(p.name);
+      const pin = p.pin || "1234";
+      const goal = p.goal || "hypertrophy";
+      const injuries = p.injuries || { knee: false, shoulder: false, back: false, ankle: false };
+      const cardio = p.cardioPref || "court";
+
+      const card = document.createElement("div");
+      card.className = "player-card";
+      card.id = `player-${slug}`;
+
+      // Goal badge display
+      let goalBadge = '<span class="badge-pill pill-hypertrophy">Mass Gain</span>';
+      if (goal === 'strength') goalBadge = '<span class="badge-pill pill-strength">Strength</span>';
+      if (goal === 'conditioning') goalBadge = '<span class="badge-pill pill-conditioning">Cardio</span>';
+
+      // Active injuries list
+      let activeInjuries = [];
+      if (injuries.knee) activeInjuries.push("Knee");
+      if (injuries.shoulder) activeInjuries.push("Shoulder");
+      if (injuries.back) activeInjuries.push("Back");
+      if (injuries.ankle) activeInjuries.push("Ankle");
+      const injuryText = activeInjuries.length > 0 ? activeInjuries.join(", ") : "None";
+
+      card.innerHTML = `
+        <div class="player-badge">${p.number || '0'}</div>
+        <div class="player-header">
+          <div class="player-name">${p.name}</div>
+          <div class="player-meta">
+            <span>${p.position || '—'}</span>
+            <span>Yr: ${p.year || '—'}</span>
+            <span>Ht: ${p.height || '—'}</span>
+          </div>
+        </div>
+        <div class="player-body">
+          <div class="info-row">
+            <span class="label">Hometown:</span>
+            <span class="value">${p.hometown || '—'}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Login PIN:</span>
+            <span class="value" style="font-family:monospace; font-size:14px; color:var(--maroon); letter-spacing:1px;">${pin}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">S&amp;C Offseason Goal:</span>
+            <span class="value">${goalBadge}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Active Injuries:</span>
+            <span class="value" style="color:${activeInjuries.length > 0 ? 'var(--danger)' : 'var(--success)'}; font-weight:700;">${injuryText}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Cardio Pref:</span>
+            <span class="value">${cardio === 'court' ? 'Court Running' : 'Low Impact'}</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-outline" onclick="openEditModal('${slug}')">✏️ Edit</button>
+          <button class="btn btn-danger" onclick="deletePlayer('${slug}', '${p.name}')">🗑️ Delete</button>
+        </div>
+      `;
+
+      grid.appendChild(card);
+    });
+  }
+
+  // Handle Search Input
+  function handleSearch() {
+    const query = document.getElementById("searchInput").value.toLowerCase().trim();
+    if (!query) {
+      renderRoster(activeRoster);
+      return;
+    }
+    const filtered = activeRoster.filter(p => 
+      p.name.toLowerCase().includes(query) ||
+      (p.position && p.position.toLowerCase().includes(query)) ||
+      (p.number && p.number.toString().includes(query)) ||
+      (p.hometown && p.hometown.toLowerCase().includes(query))
+    );
+    renderRoster(filtered);
+  }
+
+  // Modal actions
+  function openAddModal() {
+    document.getElementById("modalTitle").innerText = "Add Roster Player";
+    document.getElementById("playerForm").reset();
+    document.getElementById("playerSlug").value = "";
+    document.getElementById("pName").readOnly = false;
+    document.getElementById("playerModal").classList.add("active");
+  }
+
+  function openEditModal(slug) {
+    const player = activeRoster.find(p => p.slug === slug);
+    if (!player) return;
+
+    document.getElementById("modalTitle").innerText = "Edit Roster Player";
+    document.getElementById("playerSlug").value = slug;
+    document.getElementById("pName").value = player.name;
+    document.getElementById("pName").readOnly = true; // Name slug represents ID
+    document.getElementById("pNumber").value = player.number || "0";
+    document.getElementById("pPosition").value = player.position || "G";
+    document.getElementById("pHeight").value = player.height || "";
+    document.getElementById("pYear").value = player.year || "1";
+    document.getElementById("pHometown").value = player.hometown || "";
+    document.getElementById("pPin").value = player.pin || "1234";
+    document.getElementById("pGoal").value = player.goal || "hypertrophy";
+    document.getElementById("pCardio").value = player.cardioPref || "court";
+
+    const injuries = player.injuries || { knee: false, shoulder: false, back: false, ankle: false };
+    document.getElementById("injKnee").checked = !!injuries.knee;
+    document.getElementById("injShoulder").checked = !!injuries.shoulder;
+    document.getElementById("injBack").checked = !!injuries.back;
+    document.getElementById("injAnkle").checked = !!injuries.ankle;
+
+    document.getElementById("playerModal").classList.add("active");
+  }
+
+  function closeModal() {
+    document.getElementById("playerModal").classList.remove("active");
+  }
+
+  // Save Player POST Action
+  function savePlayer(e) {
+    e.preventDefault();
+
+    const slug = document.getElementById("playerSlug").value;
+    const name = document.getElementById("pName").value.trim();
+    const playerSlug = slug || toSlug(name);
+    
+    const payload = {
+      number: document.getElementById("pNumber").value.toString(),
+      name: name,
+      position: document.getElementById("pPosition").value,
+      height: document.getElementById("pHeight").value.trim(),
+      year: document.getElementById("pYear").value.toString(),
+      hometown: document.getElementById("pHometown").value.trim(),
+      slug: playerSlug,
+      pin: document.getElementById("pPin").value.toString(),
+      goal: document.getElementById("pGoal").value,
+      injuries: {
+        knee: document.getElementById("injKnee").checked,
+        shoulder: document.getElementById("injShoulder").checked,
+        back: document.getElementById("injBack").checked,
+        ankle: document.getElementById("injAnkle").checked
+      },
+      cardioPref: document.getElementById("pCardio").value
+    };
+
+    const submitBtn = document.getElementById("modalSubmitBtn");
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Saving to Google Sheets...";
+
+    const apiURL = typeof window.TRACKING_API_URL !== 'undefined' ? window.TRACKING_API_URL : '';
+    fetch(apiURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        action: 'saveRosterPlayer',
+        player: payload
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Save Player to Cloud";
+      if (data.status === "success") {
+        showToast(slug ? "Player account updated successfully!" : "Player registered to cloud roster!", "success");
+        closeModal();
+        fetchRoster();
+      } else {
+        throw new Error(data.message || "Failed to save");
+      }
+    })
+    .catch(err => {
+      console.error("Save error:", err);
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Save Player to Cloud";
+      showToast("Error saving player to database.", "error");
+    });
+  }
+
+  // Delete Player POST Action
+  function deletePlayer(slug, name) {
+    if (!confirm(`Are you sure you want to permanently delete player "${name}" from the roster and S&C database?`)) return;
+
+    showToast(`Deleting ${name}...`, "success");
+
+    const apiURL = typeof window.TRACKING_API_URL !== 'undefined' ? window.TRACKING_API_URL : '';
+    fetch(apiURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        action: 'deleteRosterPlayer',
+        slug: slug
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success") {
+        showToast("Player deleted from spreadsheet database.", "success");
+        fetchRoster();
+      } else {
+        throw new Error(data.message || "Failed to delete");
+      }
+    })
+    .catch(err => {
+      console.error("Delete error:", err);
+      showToast("Error deleting player from Sheets.", "error");
+    });
+  }
+
+  // Reset Roster to Code Defaults
+  function resetRosterDefaults() {
+    if (!confirm("⚠️ WARNING: This will delete ALL player accounts in the spreadsheet and restore the 17 default team players with PIN '1234'. ALL custom PINs and offseason logs will remain, but profiles will be reset. Proceed?")) return;
+
+    showToast("Resetting database to default roster...", "success");
+
+    const apiURL = typeof window.TRACKING_API_URL !== 'undefined' ? window.TRACKING_API_URL : '';
+    fetch(apiURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        action: 'resetRosterToDefault'
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success") {
+        showToast("Database successfully restored to default roster!", "success");
+        fetchRoster();
+      } else {
+        throw new Error(data.message || "Failed to reset");
+      }
+    })
+    .catch(err => {
+      console.error("Reset error:", err);
+      showToast("Error resetting spreadsheet database.", "error");
+    });
+  }
+
+  // Helper Slugifier
+  function toSlug(str) {
+    return str.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
+  }
+
+  // Toast alert messaging
+  function showToast(msg, type) {
+    const toast = document.getElementById("toast");
+    toast.className = `toast ${type}`;
+    toast.innerHTML = msg;
+    toast.classList.add("active");
+    setTimeout(() => {
+      toast.classList.remove("active");
+    }, 4000);
+  }
+
+  // Close drawer links click handler
+  document.querySelectorAll('nav.side a').forEach(link => {
+    link.addEventListener('click', () => {
+      toggleDrawer(false);
+    });
+  });
+
+  // Stats refresh button logic lives in /stats-refresh.js
+
+  // Run on page load
+  fetchRoster();
+</script>
+
+<script src="/stats-refresh.js"></script>
+<!-- Non-Blocking Weekly Update Floating Corner Popup (Requires pressing × to dismiss) -->
+<div id="weekly-update-modal" style="display:none; position:fixed; bottom:24px; right:24px; z-index:999999; width:380px; max-width:calc(100vw - 32px); background:#151822; border:2px solid #d1ad7d; border-radius:12px; box-shadow:0 12px 40px rgba(0,0,0,0.85); overflow:hidden; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color:#eee; pointer-events:auto; animation:weeklySlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+  <div style="background:linear-gradient(135deg, #1c0f1b 0%, #151822 100%); padding:12px 16px; border-bottom:1px solid #2a2d3c; display:flex; justify-content:space-between; align-items:center;">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span style="font-size:20px;" id="weekly-modal-icon">🔄</span>
+      <h3 style="margin:0; font-size:14px; color:#fff; font-weight:800;" id="weekly-modal-title">Syncing USports Stats...</h3>
+    </div>
+    <button onclick="closeWeeklyUpdateModal()" style="background:none; border:none; color:#d1ad7d; font-size:24px; cursor:pointer; line-height:1; padding:0 4px; font-weight:bold;" title="Close popup" aria-label="Close notification">×</button>
+  </div>
+  <div style="padding:14px 16px;">
+    <p style="margin:0 0 10px; font-size:12.5px; line-height:1.45; color:#ddd;" id="weekly-modal-msg">
+      Syncing 2026-27 rosters and Canada West statistics in background... You can freely browse and navigate the website.
+    </p>
+    <div id="weekly-modal-loader" style="display:flex; align-items:center; gap:8px; color:#d1ad7d; font-size:12px; margin-bottom:10px;">
+      <span style="display:inline-block; width:14px; height:14px; border:2px solid #d1ad7d; border-top-color:transparent; border-radius:50%; animation:weeklySpin 0.8s linear infinite;"></span>
+      <span>Contacting Netlify...</span>
+    </div>
+    <div id="weekly-modal-details" style="display:none; background:#0c0d12; border:1px solid #272a3b; border-radius:8px; padding:10px; font-size:11.5px; color:#bbb; margin-bottom:12px; line-height:1.45;"></div>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:11px; color:#888;">💡 Press × to dismiss</span>
+      <button onclick="closeWeeklyUpdateModal()" style="background:#d1ad7d; color:#000; font-weight:800; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-size:12px;">✕ Close</button>
+    </div>
+  </div>
+</div>
+<style>
+  @keyframes weeklySpin { to { transform: rotate(360deg); } }
+  @keyframes weeklySlideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  @media (max-width: 600px) {
+    #weekly-update-modal {
+      bottom: 12px !important;
+      right: 12px !important;
+      left: 12px !important;
+      width: auto !important;
+      max-width: none !important;
+    }
+  }
+</style>
+</body>
+</html>

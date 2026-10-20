@@ -1,0 +1,419 @@
+[
+  {
+    "id": "d-trans",
+    "title": "D-TRANS",
+    "slogan": "NO KEY, FREE, 3s IN FIRST 6 SECONDS",
+    "pillars": [
+      "★TAG—> REBOUNDING SPOTS",
+      "★SPRINT —> BALL LEVEL",
+      "★RIM —> WIN AT RIM WITH VERTICALITY",
+      "★BALL —> LATEST POINT OF PICKUP = 4 PT LINE OR HIGHER",
+      "★WALL —> LOAD & LOCATE THREATS"
+    ],
+    "terms": [
+      {
+        "name": "2  BACK",
+        "description": "2 guards get back (through elbows if in corner) during shot attemps to stop leak outs and head mens."
+      },
+      {
+        "name": "2  BASKET",
+        "description": "2 Bigs go rebound shot. If no Oreb then must sprint back while locating match up."
+      },
+      {
+        "name": "Shooter",
+        "description": "Can follow his shot (help rebound) or pick up ball"
+      },
+      {
+        "name": "SCRAM",
+        "description": "Pulling player out from mismatch"
+      }
+    ],
+    "playLink": "https://thehoopsgeek.com/play/NOgtxqP2s2"
+  },
+  {
+    "id": "kyp-closeouts",
+    "title": "KYP CLOSEOUTS",
+    "slogan": "KNOW YOU PERSONEL",
+    "pillars": [
+      "★ Stick Hand",
+      "★ No Strong Hand",
+      "★ No Paint",
+      "★ Square Feet",
+      "★ High Hands But Gap The Drive and Absorb the First Dribble",
+      "★ Show Hands"
+    ],
+    "terms": [
+      {
+        "name": "GRIF (Blake Griffin) - SQUARE",
+        "description": "Shooter & Driver, C/O arm length away"
+      },
+      {
+        "name": "KAT - BODY",
+        "description": "Shooter - Close Out To the Body of Designated Shooters"
+      },
+      {
+        "name": "KLAY - FLYBY",
+        "description": "Run at the Shooting Shoulder With Shooting Hand (Right on Right) - Come back and Rear View Contest the pull up jumper."
+      },
+      {
+        "name": "SHAQ",
+        "description": "Driver - Absorb the Drive"
+      }
+    ]
+  },
+  {
+    "id": "1-on-1",
+    "title": "1-ON-1",
+    "slogan": "PRESSURE, GUARD THE SHELL, STAY IN FRONT W/O FOULING",
+    "pillars": [],
+    "terms": [
+      {
+        "name": "GUARD SHELL - Strong Hand Attack CHEST, Weak Hand Attack Run",
+        "description": "Force “Flat Drives” Outside the Blocks and Elbows."
+      },
+      {
+        "name": "STICK HAND",
+        "description": "Early stick hand with inside hand on every closeout."
+      },
+      {
+        "name": "CHEST",
+        "description": "Chest up to describe the act of absorbing the physical contact with your chest once you’re square. SHOW HANDS to avoid fouls."
+      },
+      {
+        "name": "TRACE",
+        "description": "Keeping an active hand above the ball at all times to create ball pressure and reduce vision."
+      },
+      {
+        "name": "VERTICALITY",
+        "description": "When helping from RIM on rotation, must stay vertical and show hands. Must jump when inside the RA. Stand ground outside  the RA."
+      }
+    ]
+  },
+  {
+    "id": "shell-defense",
+    "title": "SHELL DEFENSE",
+    "slogan": "FORCE TOUGH 2s - ONE & DONE",
+    "pillars": [
+      "★ ORGANIZED HELP",
+      "★ SHRINK",
+      "★ APPROPRIATE HELP",
+      "★ ELC TALK",
+      "★ KYP CLOSEOUTS",
+      "★ SHOW HANDS",
+      "★ MULTIPLE EFFORTS",
+      "★ GANG REBOUND"
+    ],
+    "terms": [
+      {
+        "name": "BALL",
+        "description": "Must point and declare ball on every catch."
+      },
+      {
+        "name": "STRONG",
+        "description": "Defender guarding player next to ball ( not \"NAIL\" though) - Responsible for shrinking and stunting"
+      },
+      {
+        "name": "RIM",
+        "description": "Defender responsible for RIM HELP on attacks - Needs to learn how to stunt for help to make E2 decision harder"
+      },
+      {
+        "name": "LOW",
+        "description": "Bottom weak side defender - Responsible for Top Foot help on Rim Offensive Player on paint attack - Has 2nd Pass on \"X\" rotation - Low Hole defender responsible for “FIRE” help"
+      },
+      {
+        "name": "NAIL",
+        "description": "The top weak side defender — who is at the Nail- Ball Foot Up - The person who sinks on a baseline or slot drive— has 1st pass out to weak side. Stand outside paint near elbow to influence corner pass and  take away slot cuts with butt to baseline for vision of ball and cutters-----when ball gets behind you on attack, move away from mid line to prepare c/o on 1st pass"
+      },
+      {
+        "name": "SHRINK",
+        "description": "Show bodies in driving lanes and in the paint - make offensive players finish and make plays in thru multiple defenders. SHOW A CROWD by using srhinking to \"BEN\" (Blocks, Elbows, Nail)"
+      },
+      {
+        "name": "BE IN TO GET OUT",
+        "description": "Your BODY is pulled “IN” to help so that you can SHRINK THE FLOOR — but your MIND is intent on getting OUT to 3-point  threats."
+      },
+      {
+        "name": "PIVOT & SPRINT",
+        "description": "When the ball moves, you sprint to help position on the ball’s airtime. Be in proper position on the catch."
+      },
+      {
+        "name": "B.E.N",
+        "description": "Our shrink spots are the Blocks, Elbows and Nail. If you are not guarding the ball, you should be shrinking the floor."
+      },
+      {
+        "name": "STUNT",
+        "description": "Hand and foot fake by a help defender to fake help but get back to a shooter. Stunt Up The Line."
+      },
+      {
+        "name": "FIRE",
+        "description": "When we Rotate from “RIM” to trap the box on a baseline or slot drive outside the paint."
+      },
+      {
+        "name": "SINK",
+        "description": "weakside NAIL sinks to centerfield on a N-S drive."
+      },
+      {
+        "name": "X",
+        "description": "Any time we are X-ing out and doing a full rotation. When we X from the elbow to corner, we close out to the high shoulder to take away swing  pass."
+      },
+      {
+        "name": "PEEL",
+        "description": "When a man is beat, and his hips are open below the recovery line (around free throw line), the next help defender calls \"PEEL\" signaling a jump or “switch."
+      },
+      {
+        "name": "HIT-FIND-GET",
+        "description": "Our D-rebounding technique. When shot goes up, HIT (your man with a forearm), FIND (Turn, Seal & Find Ball), Get (Pursue Ball)."
+      },
+      {
+        "name": "SANDWICH",
+        "description": "When we send an extra guard defender to double team the weak side offensive rebounder. Guards - check your man — If he gets back  - then sprint to weakside."
+      }
+    ],
+    "playLink": "https://thehoopsgeek.com/play/5hGWGgqAZC"
+  },
+  {
+    "id": "pick-and-roll-defense",
+    "title": "PICK AND ROLL DEFENSE",
+    "slogan": "THE 5 Ts",
+    "pillars": [
+      "TALK",
+      "★ BIG CALLS SCREEN AND COVERAGE  EARLY, LOUD, CONTINUOUS (3X)",
+      "★ “WEAK-WEAK-WEAK” OR “ICE-ICE ICE”",
+      "TOUCH",
+      "★ GUARD IMPACT BALL & FORCE BALL  INTO COVERAGE",
+      "★ BIG UP TO TOUCH ON SHOOTER  BASED ON THREAT LEVEL",
+      "TRACE",
+      "★ BIG TAKES AWAY LOW POCKET PASS",
+      "★ GUARD TAKES AWAY HIGH POCKET &  HOOK PASS",
+      "TAKE (BACK YOUR MAN)",
+      "★ GUARD CALLS “BACK”",
+      "★ BIG RECOVERS TO HIS MAN",
+      "TAG",
+      "★ WEAKSIDE NAIL IN BUT FANS OUT",
+      "★ WEAKSIDE BASE IS ULTIMATE TAG AT  THE RIM"
+    ],
+    "terms": [
+      {
+        "name": "DROP",
+        "description": "MIDDLE P/R (MPR) BASE DEFENSE. Big calls “LEFT” or “RIGHT” to tell on-ball defender which shoulder the screen is targeting. Big plays centerfield in MPR (level of drop changes based on KYP). Big stabs at ball while remaining square between ball and basket. Guard forces  into the screen and works to get “BACK” in front to “SQUARE”. On flat middle ballscreens, we will force to weak hand."
+      },
+      {
+        "name": "DROP",
+        "description": "Big zones and drops toward basket. Level of drop depends on KYP of the Big and the player on offense. First step is backwards  toward the rim. No Roller Behind. Our base level of Drop Coverage."
+      },
+      {
+        "name": "FLAT",
+        "description": "Big at the Level - Soft Show - Stab at the ball and stay for a second. Low Hole Activated for rolls. Used against Elite 3 Point Threats."
+      },
+      {
+        "name": "HOT",
+        "description": "Blitz = Hard double team on ball — Stay until dribble is picked up or retreat dribble. Guard forces into screen. Big traps and sprints  back to paint to find one."
+      },
+      {
+        "name": "ICE",
+        "description": "SPR OUTER 1/3 OF FLOOR — Guard prevents ball from going middle- Chest on Shoulder. Big drops keeping BALL-YOU-RIM  relationship. If ball gets to middle, then it becomes a Drop."
+      },
+      {
+        "name": "UNDER",
+        "description": "Get to the body, force into the screen direction, whip under and sprint ahead to get back to SQUARE."
+      },
+      {
+        "name": "UPHILL UNDER",
+        "description": "Get to the body, force into the screen direction, whip under and sprint ahead to get back to SQUARE."
+      },
+      {
+        "name": "RED",
+        "description": "TALK: Screener’s man calls “RED” to indicate switch. Force ball into screen to eliminate rejection TOUCH: Steer with Chest on Shoulder  TAKE: Switch up & Switch Under."
+      },
+      {
+        "name": "PEEL",
+        "description": "Late Switch used in P/R situations when the guard cannot get back in front—takes place below PEEL Line. Also used for emergency paint switches off pins & staggers."
+      },
+      {
+        "name": "PEEL VS PICK N POP",
+        "description": "PEEL after the ball crosses the 3 point line threshold. Guard take the popping big and big defends the ballhandler."
+      },
+      {
+        "name": "SHOW",
+        "description": "Hard Hedge — Guard Over- Big 2 Hard Pumps and then recover with HIgh Hands. To preserve matchup. On-ball defender over or  under show based on KYP."
+      },
+      {
+        "name": "SQUARE TO RED",
+        "description": "Used for like-size screening actions. “SQUARE” to tell the on-ball defender to square his feet. “RED” on contact. Chest on Shoulder to eliminate slips."
+      },
+      {
+        "name": "SQUEEZE",
+        "description": "Big stays attached - Guard Under vs Pick n Pop Big & Non Shooting Guard. Used to preserve matchups when guarding pistol  throw ahead as well."
+      },
+      {
+        "name": "PASS INTERFERENCE",
+        "description": "Making a play at the rim against a lob— meeting the player at the rim - Foul him while in the air to foul on the ground.  No open dunks or layups."
+      },
+      {
+        "name": "SHADOW",
+        "description": "Used to explain how defender follows outside hip of Offensive Player through screens until he can get back to \"SQUARE\" or \"PEEL"
+      },
+      {
+        "name": "BULLY",
+        "description": "Ball defender uses his strength to move O and blow up the screen."
+      },
+      {
+        "name": "STAY",
+        "description": "Ball defender uses stays guarding his check."
+      },
+      {
+        "name": "SWITCH",
+        "description": "Ball defender and screen defender switch checks."
+      },
+      {
+        "name": "GAP",
+        "description": "Big Gaps. Person guarding the receiver whips under late and gets back to SQUARE with a high hand."
+      },
+      {
+        "name": "CHASE",
+        "description": "Big in KYP Drop. Person guarding the cutter BUSTS OVER the handoff and stays attached. Force everything UPHILL & 1-WAY."
+      },
+      {
+        "name": "RED",
+        "description": "Switch - Talk- Touch- Take with a high hand on Switch"
+      },
+      {
+        "name": "HOT",
+        "description": "Big Up to Touch - Guard and Big Trap - Low hole responsible for Dive- Big Sprints Back to Paint with high hands"
+      }
+    ]
+  },
+  {
+    "id": "off-ball-screen-defense",
+    "title": "OFF BALL SCREEN DEFENSE",
+    "slogan": "PRESS UP - ONE WAY - DEFEAT  SCREENS",
+    "pillars": [],
+    "terms": [
+      {
+        "name": "CUTTER DEFENDER",
+        "description": "PRESS UP - ONE WAY (FORCE UPHILL) - GET THRU - GET BACK"
+      },
+      {
+        "name": "SCREENER DEFENDER",
+        "description": "OPEN UP - GET FAT- DROP - READ"
+      },
+      {
+        "name": "GAP",
+        "description": "Shoot the GAP vs Drivers ON PINDOWNS"
+      },
+      {
+        "name": "CHASE",
+        "description": "Attach and BUST OVER vs Shooters"
+      },
+      {
+        "name": "TOP LOCK",
+        "description": "Defender stays on high side and forces everything toward baseline"
+      },
+      {
+        "name": "RED",
+        "description": "Contact Switch - Talk- Touch- Take"
+      },
+      {
+        "name": "VEER",
+        "description": "Late paint switch on a bad beat."
+      },
+      {
+        "name": "SHADOW",
+        "description": "Used to explain how defender follows outside hip of Offensive Player through screens until he can get back to \"SQUARE"
+      }
+    ]
+  },
+  {
+    "id": "iso-defense",
+    "title": "ISO DEFENSE",
+    "slogan": "SHADE- SHRINK- SHIFT- SHOW  BODIES",
+    "pillars": [],
+    "terms": [
+      {
+        "name": "WEAK",
+        "description": "Shade ball handler to weak hand when ball is in middle 1/3 of the floor. Away from ball, SHRINK THE FLOOR."
+      },
+      {
+        "name": "SHIFT",
+        "description": "LOW and weak side loads to the ball early and pre-rotates to show bodies. If ball is in the outer 1/3, then on-ball defender presses up  and forces baseline to loaded D."
+      },
+      {
+        "name": "HIT",
+        "description": "Late run and jump double team when we want to get the ball out of the hand of a perimeter player. Double comes from the loaded side— recover to paint. If in the middle of the floor, the double comes from the player’s weak hand. Recover on dribble pickup."
+      },
+      {
+        "name": "SHRINK",
+        "description": "Show bodies in driving lanes and in the paint - make offensive players finish and make plays in thru multiple defenders. SHOW A CROWD by using srhinking to \"BEN\" (Blocks, Elbows, Nail)"
+      }
+    ]
+  },
+  {
+    "id": "post-defense",
+    "title": "POST DEFENSE",
+    "slogan": "DO YOUR WORK EARLY",
+    "pillars": [
+      "★ PREVENT THE CATCH",
+      "★ PUSH OFF SPOTS",
+      "★ SHRINK ON CATCH",
+      "★ KYP & NO MIDDLE"
+    ],
+    "terms": [
+      {
+        "name": "GOLD",
+        "description": "3/4 Top Denial —Base Post Defense. Slide behind on the pass. Wall off the shot and show hands to avoid fouls."
+      },
+      {
+        "name": "NO MIDDLE - Sit on inside shoulder",
+        "description": "to take away middle 1-on-1 in the post— Feet pointed to the sideline but square."
+      },
+      {
+        "name": "DIG HELP",
+        "description": "Shrink on the catch - Dig with closest man on the bounce. Butt to the baseline."
+      },
+      {
+        "name": "WHITE TO FIRE",
+        "description": "Front the Post with Weakside Shift & Ball Pressure. Fronting defender yells “WHITE-WHITE-WHITE” 3 times to alert help side."
+      },
+      {
+        "name": "WHITE- SCRAM",
+        "description": "SCRAM” switch with big on weakside. Big yells “SCRAM” telling the fronting guard to release to weakside corner."
+      },
+      {
+        "name": "DIG TO HIT",
+        "description": "Trap on the first dribble with the nearest defender in the scoring area."
+      },
+      {
+        "name": "BLACK",
+        "description": "3/4 Top side Deny with an immediate base trap on ball’s air time into the post."
+      }
+    ]
+  },
+  {
+    "id": "special-situations",
+    "title": "SPECIAL SITUATIONS",
+    "slogan": "ASSIGNMENT EXCELLENCE",
+    "pillars": [],
+    "terms": [
+      {
+        "name": "HIT",
+        "description": "EOQ double team hot player"
+      },
+      {
+        "name": "CHOP - INTENTIONAL FOUL",
+        "description": "we will foul when up by 3. Or at the end of a quarter when there is a foul to give."
+      },
+      {
+        "name": "EOG UP 2",
+        "description": "STAY BEFORE- SWITCH AFTER” No switches before inbound (to eliminate slips and early mismatches). Switch everything after  inbounded."
+      },
+      {
+        "name": "EOG UP 3",
+        "description": "SWITCH BEFORE AND AFTER” Switch all screens before inbound and after inbounded. Chop when possible to avoid allowing the 3  point shot."
+      },
+      {
+        "name": "UOB DEFENSE",
+        "description": "Inbound defender PROTECTS BASKET & TRACKS for 2 seconds at basket and then 2 seconds to strong side corner. With butt  to baseline and vision of ball - Force everything uphill. Everyone gets to the body and wars over all screens- no switches."
+      }
+    ]
+  }
+]

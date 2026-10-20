@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="auth-lock.js"></script>
+  <script src="offseason-sc-app/tracking-config.js"></script>
+  <script src="site-tracking.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Opponent Profile & Scout Editor | MacEwan Griffins</title>
+  <style>
+    :root {
+      --maroon: #98002e;
+      --tan: #d1ad7d;
+      --black: #111111;
+      --dark-gray: #1a1a1a;
+      --light-gray: #f4f5f7;
+      --border-color: #e1e3e6;
+      --text-color: #1c1c1c;
+      --radius: 8px;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text-color);
+      background: var(--light-gray);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+    
+    /* Topbar styling */
+    .topbar {
+      background: var(--black);
+      color: white;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid var(--maroon);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: white;
+    }
+    
+    .brand img {
+      width: 36px;
+      height: 36px;
+      background: white;
+      border-radius: 4px;
+      padding: 2px;
+    }
+    
+    .brand h1 {
+      font-size: 16px;
+      line-height: 1.2;
+    }
+    
+    .brand h1 small {
+      display: block;
+      color: var(--tan);
+      font-weight: normal;
+      font-size: 11px;
+    }
+    
+    .nav-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    
+    .btn {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: white;
+    }
+    
+    .btn-primary {
+      background: var(--maroon);
+      border-color: var(--maroon);
+    }
+    
+    .btn-primary:hover {
+      background: #b30036;
+      border-color: #b30036;
+    }
+    
+    .btn-accent {
+      background: var(--tan);
+      color: var(--black);
+      border-color: var(--tan);
+    }
+    
+    .btn-accent:hover {
+      background: #dfbe91;
+      border-color: #dfbe91;
+    }
+    
+    .btn-danger {
+      background: #c0392b;
+      border-color: #c0392b;
+    }
+    
+    .btn-danger:hover {
+      background: #e74c3c;
+      border-color: #e74c3c;
+    }
+    
+    /* Main Content Layout */
+    .container {
+      max-width: 1100px;
+      margin: 24px auto;
+      padding: 0 20px;
+    }
+    
+    .card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+    }
+    
+    .card-header {
+      background: #ffffff;
+      padding: 20px 24px;
+      border-bottom: 2px solid var(--light-gray);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    
+    .card-header h2 {
+      font-size: 22px;
+      color: var(--maroon);
+      text-transform: capitalize;
+    }
+    
+    .card-header .subtitle {
+      font-size: 13px;
+      color: #666;
+      margin-top: 4px;
+    }
+    
+    .card-actions {
+      display: flex;
+      gap: 10px;
+    }
+    
+    /* Editor Split Pane Layout */
+    .view-pane {
+      padding: 30px 40px;
+    }
+    
+    .editor-pane {
+      display: none;
+      grid-template-columns: 1fr 1fr;
+      height: calc(100vh - 200px);
+      min-height: 500px;
+    }
+    
+    .editor-textarea-wrap {
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .editor-textarea-header {
+      background: #f8f9fa;
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 12px;
+      font-weight: bold;
+      color: #555;
+    }
+    
+    .editor-textarea {
+      flex: 1;
+      width: 100%;
+      border: none;
+      padding: 16px;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      resize: none;
+      outline: none;
+    }
+    
+    .editor-preview-wrap {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    .editor-preview-header {
+      background: #f8f9fa;
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 12px;
+      font-weight: bold;
+      color: #555;
+    }
+    
+    .editor-preview {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 32px;
+      background: white;
+    }
+    
+    /* Rendered Markdown CSS System */
+    .markdown-body {
+      font-size: 15px;
+      color: #2c3e50;
+    }
+    
+    .markdown-body h1, .markdown-body h2, .markdown-body h3 {
+      color: var(--maroon);
+      margin-top: 24px;
+      margin-bottom: 12px;
+      font-weight: 700;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 6px;
+    }
+    
+    .markdown-body h1 { font-size: 24px; }
+    .markdown-body h2 { font-size: 20px; }
+    .markdown-body h3 { font-size: 17px; }
+    
+    .markdown-body p {
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+    
+    .markdown-body ul, .markdown-body ol {
+      margin-bottom: 16px;
+      padding-left: 20px;
+    }
+    
+    .markdown-body li {
+      margin-bottom: 6px;
+    }
+    
+    .markdown-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    
+    .markdown-body th, .markdown-body td {
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      text-align: left;
+    }
+    
+    .markdown-body th {
+      background: var(--light-gray);
+      font-weight: bold;
+      color: var(--black);
+      border-bottom: 2px solid var(--maroon);
+    }
+    
+    .markdown-body tr:nth-child(even) {
+      background: #fcfcfd;
+    }
+    
+    .markdown-body a {
+      color: var(--maroon);
+      text-decoration: underline;
+    }
+    
+    .markdown-body a:hover {
+      color: var(--tan);
+    }
+    
+    .info-banner {
+      background: rgba(152, 0, 46, 0.05);
+      border-left: 4px solid var(--maroon);
+      padding: 12px 18px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: #555;
+    }
+    
+    /* Toast success alert */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #2ecc71;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      font-weight: 600;
+      transform: translateY(150%);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 1000;
+    }
+    
+    .mobile-editor-tab-bar {
+      display: none;
+    }
+    
+    .toast.show {
+      transform: translateY(0);
+    }
+    
+    @media (max-width: 768px) {
+      .editor-pane {
+        display: flex !important;
+        flex-direction: column;
+        height: calc(100vh - 240px);
+        min-height: 450px;
+      }
+      .mobile-editor-tab-bar {
+        display: flex;
+        background: #f1f2f4;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .mobile-editor-tab-bar button {
+        flex: 1;
+        padding: 12px;
+        background: transparent;
+        border: none;
+        font-size: 13px;
+        font-weight: 600;
+        color: #666;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        outline: none;
+      }
+      .mobile-editor-tab-bar button.active {
+        color: var(--maroon);
+        border-bottom-color: var(--maroon);
+        background: white;
+      }
+      
+      .editor-textarea-wrap {
+        display: flex !important;
+        flex: 1;
+        border-right: none;
+      }
+      .editor-preview-wrap {
+        display: none !important;
+        flex: 1;
+      }
+      
+      .editor-pane.show-preview .editor-textarea-wrap {
+        display: none !important;
+      }
+      .editor-pane.show-preview .editor-preview-wrap {
+        display: flex !important;
+      }
+      .view-pane {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .topbar {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+        text-align: center;
+        padding: 12px 16px;
+      }
+      .brand {
+        flex-direction: column;
+        gap: 4px;
+        align-items: center;
+      }
+      .brand h1 {
+        font-size: 15px;
+      }
+      .nav-actions {
+        width: 100%;
+        justify-content: center;
+        gap: 8px;
+      }
+      .nav-actions .btn {
+        flex: 1;
+        justify-content: center;
+        font-size: 12px;
+        padding: 6px 8px;
+      }
+      .card-header {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+        gap: 12px;
+        padding: 16px 20px;
+      }
+      .card-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+      }
+      .card-actions .btn {
+        width: 100%;
+        justify-content: center;
+      }
+      .view-pane {
+        padding: 16px 20px;
+      }
+      .container {
+        margin: 12px auto;
+        padding: 0 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <a href="index.html" class="brand">
+      <img src="macewan-logo.png" alt="MacEwan logo">
+      <div>
+        <h1>Coaching Hub<small>Opponent Files</small></h1>
+      </div>
+    </a>
+    <div class="nav-actions">
+      <a href="index.html" class="btn">🏠 Home Dashboard</a>
+      <a href="canadawest-scout-2026-27.html" class="btn">🏀 Scouting Hub</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 id="page-title">Loading Opponent File...</h2>
+          <div class="subtitle" id="page-subtitle">Canada West MBB Roster &amp; Scouting Resource</div>
+        </div>
+        
+        <div class="card-actions">
+          <!-- Normal View Buttons -->
+          <button id="btn-edit" class="btn btn-accent" style="display:none;">✏️ Edit Report</button>
+          
+          <!-- Editing Mode Buttons -->
+          <button id="btn-save" class="btn btn-primary" style="display:none;">💾 Save Changes</button>
+          <button id="btn-cancel" class="btn" style="display:none;">❌ Cancel</button>
+          <button id="btn-reset" class="btn btn-danger" style="display:none;">🔄 Reset to Default</button>
+          
+          <!-- Download Button -->
+          <button id="btn-download" class="btn btn-primary" style="display:none;">📥 Download File</button>
+        </div>
+      </div>
+      
+      <!-- Text Display Pane -->
+      <div class="view-pane" id="view-container">
+        <div class="info-banner" id="storage-status" style="display:none;">
+          <strong>Device Persistence active:</strong> Showing locally edited version. Click "Reset to Default" to restore the original repository version.
+        </div>
+        <div class="markdown-body" id="rendered-content">
+          Loading report content...
+        </div>
+      </div>
+      
+      <!-- Editor Split Pane -->
+      <div class="editor-pane" id="editor-container">
+        <div class="mobile-editor-tab-bar" id="mobile-editor-tabs">
+          <button class="mobile-tab-btn active" id="editor-tab-write" onclick="switchEditorTab('write')">✏️ Write</button>
+          <button class="mobile-tab-btn" id="editor-tab-preview" onclick="switchEditorTab('preview')">👁️ Preview</button>
+        </div>
+        <div class="editor-textarea-wrap">
+          <div class="editor-textarea-header">EDIT RAW MARKDOWN CONTENT</div>
+          <textarea id="markdown-textarea" class="editor-textarea" placeholder="Type markdown here..."></textarea>
+        </div>
+        <div class="editor-preview-wrap">
+          <div class="editor-preview-header">LIVE HTML PREVIEW</div>
+          <div class="editor-preview markdown-body" id="live-preview-content"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast-msg">Changes saved successfully!</div>
+
+  <script>
+    // Get query parameters
+    const params = new URLSearchParams(window.location.search);
+    const teamSlug = params.get('team');
+    const fileType = params.get('type') || 'profile'; // 'profile' or 'scout'
+
+    if (!teamSlug) {
+      document.getElementById('rendered-content').innerHTML = '<p class="btn-danger" style="padding: 15px; border-radius: 4px; color: white;">Error: No opponent team specified in URL query. Go back to Home Dashboard.</p>';
+    }
+
+    // Storage Keys
+    const storageKey = `scout_${fileType}_${teamSlug}`;
+    
+    // File Paths
+    const teamNameFormatted = teamSlug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    const fileLabel = fileType === 'profile' ? 'Profile Summary' : 'Scouting Report';
+    
+    const defaultFilePath = fileType === 'profile' 
+      ? `opponents/${teamSlug}/profile.md`
+      : `opponents/${teamSlug}/scouts/2025-26-scout.md`;
+
+    // Elements
+    const pageTitle = document.getElementById('page-title');
+    const pageSubtitle = document.getElementById('page-subtitle');
+    const viewContainer = document.getElementById('view-container');
+    const editorContainer = document.getElementById('editor-container');
+    const renderedContent = document.getElementById('rendered-content');
+    const livePreviewContent = document.getElementById('live-preview-content');
+    const markdownTextarea = document.getElementById('markdown-textarea');
+    const storageStatus = document.getElementById('storage-status');
+    
+    // Buttons
+    const btnEdit = document.getElementById('btn-edit');
+    const btnSave = document.getElementById('btn-save');
+    const btnCancel = document.getElementById('btn-cancel');
+    const btnReset = document.getElementById('btn-reset');
+    const btnDownload = document.getElementById('btn-download');
+    
+    let rawContent = '';
+    let isEdited = false;
+
+    // Load original contents and check cloud + local storage
+    async function loadContent() {
+      pageTitle.innerText = `${teamNameFormatted}: ${fileLabel}`;
+      pageSubtitle.innerText = `File: ${defaultFilePath}`;
+
+      const savedLocal = localStorage.getItem(storageKey);
+      
+      if (savedLocal !== null) {
+        rawContent = savedLocal;
+        isEdited = true;
+        storageStatus.style.display = 'block';
+        btnReset.style.display = 'inline-flex';
+        renderView();
+      } else {
+        storageStatus.style.display = 'none';
+        btnReset.style.display = 'none';
+        try {
+          const res = await fetch(defaultFilePath);
+          if (res.ok) {
+            rawContent = await res.text();
+            renderView();
+          }
+        } catch (err) {
+          renderedContent.innerHTML = `<p style="color:#c0392b;">Failed to load original file template. You can type a new report below.</p>`;
+          rawContent = `# ${teamNameFormatted} ${fileLabel}\n\nType report contents here...`;
+          renderView();
+        }
+      }
+
+      // Fetch live cloud version so all coaches & players see Admin's edits
+      fetch(`/.netlify/functions/get-content?key=${encodeURIComponent(storageKey)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.success && data.content) {
+            rawContent = data.content;
+            localStorage.setItem(storageKey, data.content);
+            isEdited = true;
+            storageStatus.style.display = 'block';
+            btnReset.style.display = 'inline-flex';
+            renderView();
+          }
+        })
+        .catch(err => console.log('Cloud sync fetch notice:', err));
+      
+      btnEdit.style.display = 'inline-flex';
+      btnDownload.style.display = 'inline-flex';
+    }
+
+    function syncReportToCloud(key, content) {
+      fetch('/.netlify/functions/save-content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key, content })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.success) {
+          showToast('Saved & synced live to all coaches & players!');
+        }
+      })
+      .catch(err => console.error('Cloud sync error:', err));
+    }
+
+    // Render markdown to output container
+    function renderView() {
+      renderedContent.innerHTML = parseMarkdown(rawContent);
+    }
+
+    // Switch between write and preview modes on mobile editor
+    function switchEditorTab(mode) {
+      const container = document.getElementById("editor-container");
+      const writeTab = document.getElementById("editor-tab-write");
+      const previewTab = document.getElementById("editor-tab-preview");
+      if (!container || !writeTab || !previewTab) return;
+      
+      if (mode === 'write') {
+        container.classList.remove("show-preview");
+        writeTab.classList.add("active");
+        previewTab.classList.remove("active");
+      } else {
+        container.classList.add("show-preview");
+        previewTab.classList.add("active");
+        writeTab.classList.remove("active");
+      }
+    }
+
+    // Editor preview update
+    markdownTextarea.addEventListener('input', () => {
+      livePreviewContent.innerHTML = parseMarkdown(markdownTextarea.value);
+    });
+
+    // Button actions
+    btnEdit.addEventListener('click', () => {
+      viewContainer.style.display = 'none';
+      editorContainer.style.display = 'grid';
+      markdownTextarea.value = rawContent;
+      livePreviewContent.innerHTML = parseMarkdown(rawContent);
+      
+      btnEdit.style.display = 'none';
+      btnDownload.style.display = 'none';
+      btnSave.style.display = 'inline-flex';
+      btnCancel.style.display = 'inline-flex';
+      if (isEdited) btnReset.style.display = 'inline-flex';
+
+      // Reset editor mobile tabs view
+      switchEditorTab('write');
+    });
+
+    btnCancel.addEventListener('click', () => {
+      viewContainer.style.display = 'block';
+      editorContainer.style.display = 'none';
+      
+      btnSave.style.display = 'none';
+      btnCancel.style.display = 'none';
+      btnEdit.style.display = 'inline-flex';
+      btnDownload.style.display = 'inline-flex';
+      if (isEdited) {
+        btnReset.style.display = 'inline-flex';
+      } else {
+        btnReset.style.display = 'none';
+      }
+    });
+
+    btnSave.addEventListener('click', () => {
+      rawContent = markdownTextarea.value;
+      localStorage.setItem(storageKey, rawContent);
+      isEdited = true;
+      syncReportToCloud(storageKey, rawContent);
+      
+      renderView();
+      storageStatus.style.display = 'block';
+      
+      viewContainer.style.display = 'block';
+      editorContainer.style.display = 'none';
+      
+      btnSave.style.display = 'none';
+      btnCancel.style.display = 'none';
+      btnEdit.style.display = 'inline-flex';
+      btnDownload.style.display = 'inline-flex';
+      btnReset.style.display = 'inline-flex';
+      
+      showToast('Changes saved & syncing live...');
+    });
+
+    btnReset.addEventListener('click', () => {
+      if (confirm('Are you sure you want to discard your edits and revert to the original repository file for all users?')) {
+        localStorage.removeItem(storageKey);
+        syncReportToCloud(storageKey, '');
+        isEdited = false;
+        loadContent().then(() => {
+          viewContainer.style.display = 'block';
+          editorContainer.style.display = 'none';
+          btnSave.style.display = 'none';
+          btnCancel.style.display = 'none';
+          showToast('Reverted to default!');
+        });
+      }
+    });
+
+    btnDownload.addEventListener('click', () => {
+      const fileName = fileType === 'profile' 
+        ? 'profile.md'
+        : '2025-26-scout.md';
+        
+      const blob = new Blob([rawContent], { type: 'text/markdown;charset=utf-8;' });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", fileName);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('Downloading Markdown file...');
+    });
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    // Markdown Parser implementation
+    function parseMarkdown(md) {
+      if (!md) return '';
+      let html = md
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      // Headings
+      html = html.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
+      html = html.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
+      html = html.replace(/^### (.*?)$/gm, '<h3>$1</h3>');
+      html = html.replace(/^#### (.*?)$/gm, '<h4>$1</h4>');
+
+      // Bold and italics
+      html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+      // Unordered lists
+      html = html.replace(/^\s*-\s+(.*?)$/gm, '<li>$1</li>');
+      // Wrap sequential <li> blocks in <ul>
+      html = html.replace(/(<li>.*?<\/li>\s*)+/gs, function(match) {
+        return '<ul>' + match + '</ul>';
+      });
+
+      // Table parsing
+      let lines = html.split('\n');
+      let inTable = false;
+      let tableLines = [];
+      for (let i = 0; i < lines.length; i++) {
+        let line = lines[i].trim();
+        if (line.startsWith('|') && line.endsWith('|')) {
+          if (!inTable) {
+            inTable = true;
+            tableLines = [];
+          }
+          tableLines.push(line);
+        } else {
+          if (inTable) {
+            let tableHtml = parseTableLines(tableLines);
+            lines[i - tableLines.length] = tableHtml;
+            for (let j = 1; j < tableLines.length; j++) {
+              lines[i - tableLines.length + j] = '';
+            }
+            inTable = false;
+          }
+        }
+      }
+      if (inTable) {
+        let tableHtml = parseTableLines(tableLines);
+        lines[lines.length - tableLines.length] = tableHtml;
+        for (let j = 1; j < tableLines.length; j++) {
+          lines[lines.length - tableLines.length + j] = '';
+        }
+      }
+      html = lines.filter(l => l !== '').join('\n');
+
+      // Links
+      html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
+
+      // Paragraph conversion
+      let blocks = html.split(/\n\n+/);
+      html = blocks.map(block => {
+        block = block.trim();
+        if (!block) return '';
+        if (block.startsWith('<h') || block.startsWith('<ul') || block.startsWith('<table') || block.startsWith('<div')) {
+          return block;
+        }
+        return '<p>' + block.replace(/\n/g, '<br>') + '</p>';
+      }).join('\n');
+
+      return html;
+    }
+
+    function parseTableLines(lines) {
+      let html = '<table>';
+      let rows = lines.map(line => {
+        let parts = line.split('|').map(p => p.trim());
+        if (parts[0] === '') parts.shift();
+        if (parts[parts.length - 1] === '') parts.pop();
+        return parts;
+      });
+
+      // Filter alignment row
+      rows = rows.filter(row => !row.every(cell => /^:?-+:?$/.test(cell)));
+
+      rows.forEach((row, rowIndex) => {
+        html += '<tr>';
+        row.forEach(cell => {
+          let tag = rowIndex === 0 ? 'th' : 'td';
+          html += `<${tag}>${cell}</${tag}>`;
+        });
+        html += '</tr>';
+      });
+      html += '</table>';
+      return html;
+    }
+
+    // Trigger initial load
+    if (teamSlug) loadContent();
+  </script>
+</body>
+</html>

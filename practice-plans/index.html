@@ -1,0 +1,3454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="../auth-lock.js"></script>
+  <script src="../offseason-sc-app/tracking-config.js"></script>
+  <script src="../site-tracking.js"></script>
+  <script src="coaches-lock.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MacEwan Griffins — Practice Plan Builder</title>
+  <link rel="icon" href="../macewan-logo.png" />
+  <link rel="apple-touch-icon" href="../macewan-logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0c;
+      --bg2: #141418;
+      --card: #1c1c22;
+      --line: #2e2e38;
+      --txt: #f3f4f6;
+      --mute: #9ca3af;
+      --accent: #98002e;
+      --accent-hover: #b30037;
+      --accent2: #d1ad7d;
+      --accent2-hover: #e0be90;
+      --good: #10b981;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --radius: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--txt);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.4;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+
+    /* TOP BAR Styling */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 10, 12, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 2px solid var(--accent);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .brand-logo {
+      height: 40px;
+      width: auto;
+      background: #000;
+      border-radius: 4px;
+      padding: 2px;
+    }
+
+    .brand h1 {
+      font-size: 18px;
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .sub {
+      color: var(--accent2);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .btn {
+      background: var(--line);
+      color: var(--txt);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: #3e3e4a;
+      border-color: #4e4e5b;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background: var(--accent2);
+      border-color: var(--accent2);
+      color: #000;
+    }
+
+    .btn-secondary:hover {
+      background: var(--accent2-hover);
+      border-color: var(--accent2-hover);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+    }
+
+    .btn-danger:hover {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    /* MAIN Split-screen view */
+    .app-container {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+      width: 100vw;
+      overflow: hidden;
+    }
+
+    /* Left pane - editor */
+    .editor-pane {
+      flex: 1;
+      height: 100%;
+      overflow-y: auto;
+      padding: 24px;
+      border-right: 1px solid var(--line);
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding-bottom: 60px;
+    }
+
+    /* Right pane - document preview */
+    .preview-pane {
+      flex: 1.2;
+      height: 100%;
+      overflow-y: auto;
+      padding: 30px;
+      background: #2b2b35;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .preview-controls {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 800px;
+      background: var(--card);
+      padding: 12px 18px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      align-items: center;
+    }
+
+    .preview-controls h3 {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent2);
+    }
+
+    /* Cards / Forms Styling */
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .section-card h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-group.span-2 {
+      grid-column: span 2;
+    }
+
+    label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--mute);
+      font-weight: 600;
+    }
+
+    input[type="text"], input[type="date"], select, textarea {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 13px;
+      width: 100%;
+      transition: border-color 0.15s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent2);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 50px;
+    }
+
+    /* Roster Interactive Tool */
+    .roster-actions {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .roster-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding: 4px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      border-radius: 6px;
+    }
+
+    .player-chip {
+      background: var(--bg2);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 6px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+    }
+
+    .player-chip.unavailable {
+      opacity: 0.5;
+      border-style: dashed;
+    }
+
+    .player-chip .player-name {
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .player-chip .player-meta {
+      font-size: 10px;
+      color: var(--mute);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .player-chip.team-a { border-color: #3b82f6; background: rgba(59, 130, 246, 0.1); }
+    .player-chip.team-b { border-color: #10b981; background: rgba(16, 185, 129, 0.1); }
+    .player-chip.team-c { border-color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
+
+    .team-badge {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 1px 4px;
+      border-radius: 3px;
+      align-self: flex-start;
+      margin-top: 2px;
+    }
+    .player-chip.team-a .team-badge { background: #3b82f6; color: #fff; }
+    .player-chip.team-b .team-badge { background: #10b981; color: #fff; }
+    .player-chip.team-c .team-badge { background: #f59e0b; color: #fff; }
+
+    .player-actions-menu {
+      margin-top: 10px;
+      padding: 10px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .player-actions-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent2);
+    }
+
+    .player-action-buttons {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .player-btn-toggle {
+      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--line);
+      background: var(--bg2);
+      color: var(--txt);
+      cursor: pointer;
+    }
+
+    .player-btn-toggle.active {
+      background: var(--line);
+      font-weight: 700;
+    }
+
+    /* Drill/Activity Grid Styling */
+    .drill-item {
+      background: var(--bg2);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+    }
+
+    .drill-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .drill-title-row {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+      align-items: center;
+    }
+
+    .drill-duration {
+      width: 55px !important;
+      flex: 0 0 55px !important;
+      min-width: 55px !important;
+      text-align: center;
+    }
+
+    .drill-activity-input {
+      flex: 1 1 auto !important;
+      width: 100% !important;
+    }
+
+    .drill-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .drill-notes {
+      font-size: 12px;
+    }
+
+    /* Saved Plans list style */
+    .plan-list-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      max-height: 150px;
+      overflow-y: auto;
+      padding: 4px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      border-radius: 6px;
+    }
+
+    .plan-list-item {
+      background: var(--bg2);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .plan-list-item:hover {
+      border-color: var(--accent2);
+    }
+
+    .plan-list-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .plan-list-title {
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .plan-list-date {
+      font-size: 10px;
+      color: var(--mute);
+    }
+
+    /* THE DOCUMENT PREVIEW PAGE LAYOUT (PAPER STYLE) */
+    .paper-scaler {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      overflow: visible;
+      flex-shrink: 0;
+    }
+
+    .paper-document {
+      background: #ffffff;
+      color: #000000;
+      width: 100%;
+      max-width: 800px;
+      min-height: 1030px; /* Typical ratio for Letter/A4 */
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border: 4px solid var(--accent2); /* Gold frame border on-screen */
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 12px;
+      position: relative;
+      flex-shrink: 0;
+      transition: transform 0.15s ease;
+    }
+
+    .doc-header {
+      border: 2px solid var(--accent);
+      padding: 12px;
+      text-align: center;
+      background: #ffffff;
+      position: relative;
+      border-radius: 4px;
+    }
+
+    .doc-header-top {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 10px;
+    }
+
+    .doc-logo {
+      height: 48px;
+      width: auto;
+      object-fit: contain;
+      background: #000000;
+      border-radius: 4px;
+      padding: 3px;
+      border: 1px solid var(--accent2);
+    }
+
+    .doc-title-area {
+      text-align: left;
+    }
+
+    .doc-title-area h1 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0;
+      line-height: 1.1;
+    }
+
+    .doc-title-area h2 {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent2);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 2px 0 0 0;
+    }
+
+    .doc-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border-top: 2px solid var(--accent);
+      padding-top: 8px;
+      margin-top: 4px;
+      font-size: 11px;
+      gap: 6px;
+    }
+
+    .doc-meta-item {
+      text-align: center;
+      background: #fbf7f1; /* Light gold background tint */
+      border: 1px solid rgba(209, 173, 125, 0.3);
+      border-radius: 4px;
+      padding: 4px;
+    }
+
+    .doc-meta-item strong {
+      text-transform: uppercase;
+      font-size: 9px;
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .doc-meta-item span {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #000;
+    }
+
+    /* Key-Value Tables for Roster & Info */
+    .doc-section-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 4px;
+      border: 1.5px solid var(--accent);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .doc-section-table td {
+      border: 1px solid #e5d5da; /* Faint maroon border */
+      padding: 6px 10px;
+      vertical-align: middle;
+      font-size: 11.5px;
+    }
+
+    .doc-section-table td.label-col {
+      width: 110px;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 9.5px;
+      background: var(--accent); /* MacEwan Maroon */
+      color: #ffffff;
+      letter-spacing: 0.5px;
+      text-align: center;
+      border: 1px solid var(--accent);
+    }
+
+    /* Key terms side-by-side */
+    .doc-terms-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1.5px solid var(--accent);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 4px;
+      background: #ffffff;
+    }
+
+    .doc-terms-col {
+      padding: 8px 12px;
+    }
+
+    .doc-terms-col:first-child {
+      border-right: 1px solid #e5d5da;
+    }
+
+    .doc-terms-col h3 {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 5px;
+      border-bottom: 2px solid var(--accent2); /* Gold underline */
+      padding-bottom: 3px;
+      letter-spacing: 0.5px;
+    }
+
+    .doc-terms-text {
+      font-size: 11px;
+      line-height: 1.4;
+      white-space: pre-line;
+      color: #222;
+    }
+
+    /* Main activity grid table */
+    .doc-grid-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 4px;
+      border: 1.5px solid var(--accent);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .doc-grid-table th, .doc-grid-table td {
+      border: 1px solid #e5d5da;
+      padding: 6px 10px;
+      vertical-align: top;
+    }
+
+    .doc-grid-table th {
+      background: var(--accent);
+      color: #ffffff;
+      text-transform: uppercase;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      border: 1px solid var(--accent);
+    }
+
+    .doc-grid-table th.time-col, .doc-grid-table td.time-col {
+      width: 85px;
+      font-weight: 700;
+      color: var(--accent);
+      text-align: center;
+    }
+
+    .doc-grid-table th.time-col {
+      color: #ffffff;
+    }
+
+    .doc-grid-table th.act-col, .doc-grid-table td.act-col {
+      width: 320px;
+      font-weight: 700;
+      color: #000000;
+    }
+
+    .doc-grid-table th.act-col {
+      color: #ffffff;
+    }
+
+    .doc-grid-table td.notes-col {
+      font-size: 11px;
+      white-space: pre-line;
+      line-height: 1.35;
+      color: #222;
+    }
+
+    /* Zebra striping for activity table */
+    .doc-grid-table tbody tr:nth-child(even) {
+      background: #faf5f6; /* Very faint maroon tint */
+    }
+
+    .doc-footer {
+      margin-top: auto;
+      border-top: 2px solid var(--accent);
+      padding-top: 8px;
+      text-align: center;
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--accent);
+      letter-spacing: 1px;
+    }
+
+    /* TABS control on mobile */
+    .mobile-tab-bar {
+      display: none;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .mobile-tab-btn {
+      flex: 1;
+      padding: 12px;
+      background: transparent;
+      border: none;
+      color: var(--mute);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      border-bottom: 2px solid transparent;
+    }
+
+    .mobile-tab-btn.active {
+      color: var(--accent2);
+      border-bottom-color: var(--accent2);
+      background: rgba(209, 173, 125, 0.05);
+    }
+
+    /* POPUP Modal for copying markdown/json */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+    }
+
+    .modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      max-width: 640px;
+      width: 100%;
+      padding: 20px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .modal-card h3 {
+      font-size: 16px;
+      color: #fff;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: transparent;
+      border: none;
+      color: var(--txt);
+      font-size: 24px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-content-area {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #fff;
+      max-height: 350px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .topbar {
+        padding: 10px 16px;
+      }
+      .mobile-tab-bar {
+        display: flex;
+      }
+      .app-container {
+        flex-direction: column;
+        height: auto;
+        flex: 1;
+        min-height: 0;
+      }
+      .editor-pane, .preview-pane {
+        flex: 1;
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+      }
+      .editor-pane.hidden-mobile, .preview-pane.hidden-mobile {
+        display: none !important;
+      }
+      .preview-controls {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+      }
+      .preview-controls div {
+        display: flex;
+        gap: 6px;
+      }
+      .preview-controls button {
+        flex: 1;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .topbar {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+        text-align: center;
+      }
+      .brand {
+        flex-direction: column;
+        gap: 4px;
+        align-items: center;
+      }
+      .brand h1 {
+        font-size: 16px;
+      }
+      .topbar .sub {
+        display: none;
+      }
+      .nav-links {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+      }
+      .nav-links .btn {
+        flex: 1;
+        text-align: center;
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      .form-group.span-2 {
+        grid-column: span 1;
+      }
+    }
+
+    /* PRINT LAYOUT SPECIFICS */
+    @media print {
+      body, html {
+        background: #fff !important;
+        color: #000 !important;
+        height: auto !important;
+        width: auto !important;
+        overflow: visible !important;
+        display: block !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .topbar, .mobile-tab-bar, .editor-pane, .preview-controls, .modal, .preview-pane > button {
+        display: none !important;
+      }
+      .app-container {
+        display: block !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+      .paper-scaler {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        transform: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      .preview-pane, .preview-pane.hidden-mobile {
+        display: block !important;
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+      .paper-document {
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        border: none !important;
+        min-height: auto !important;
+        page-break-after: avoid;
+      }
+    }
+
+    /* DRILL BANK UI STYLES */
+    .drill-bank-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .drill-bank-list::-webkit-scrollbar-track {
+      background: var(--bg2);
+    }
+    .drill-bank-list::-webkit-scrollbar-thumb {
+      background: var(--line);
+      border-radius: 3px;
+    }
+    .drill-bank-item {
+      background: var(--bg2);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: border-color 0.2s;
+    }
+    .drill-bank-item:hover {
+      border-color: var(--accent2);
+    }
+    .drill-bank-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .drill-bank-title {
+      font-weight: 600;
+      color: #fff;
+      font-size: 13px;
+    }
+    .drill-bank-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .drill-badge-cat {
+      background: var(--accent);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .drill-badge-dur {
+      background: var(--line);
+      color: var(--txt);
+      font-size: 9px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .drill-bank-desc {
+      font-size: 11px;
+      color: var(--mute);
+      line-height: 1.35;
+      margin: 0;
+    }
+    .drill-bank-points {
+      margin: 2px 0 0 0;
+      padding-left: 16px;
+      font-size: 10.5px;
+      color: #bbb;
+      line-height: 1.35;
+      list-style-type: disc;
+    }
+    .drill-bank-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding-top: 6px;
+    }
+    .drill-video-link {
+      font-size: 10.5px;
+      color: var(--accent2);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 500;
+    }
+    .drill-video-link:hover {
+      text-decoration: underline;
+    }
+    .btn-add-drill {
+      background: var(--accent);
+      color: #fff;
+      border: 1px solid var(--accent);
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-add-drill:hover {
+      background: #b50037;
+      border-color: #b50037;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <a href="../index.html" class="brand">
+      <img class="brand-logo" src="../macewan-logo.png" alt="MacEwan logo">
+      <div>
+        <h1>Practice Plan Builder</h1>
+        <p class="sub">MacEwan Griffins Men's Basketball</p>
+      </div>
+    </a>
+    <div class="nav-links" style="display:flex; align-items:center; gap:6px;">
+      <button class="btn" id="btnUndo" onclick="undoState()" title="Undo (Ctrl+Z / Cmd+Z)" disabled style="font-weight:700; background:#f0f1f4; border:1px solid #c5c8d0; color:#1c1c1c; padding:5px 12px;">↩️ Undo</button>
+      <button class="btn" id="btnRedo" onclick="redoState()" title="Redo (Ctrl+Y / Cmd+Shift+Z)" disabled style="font-weight:700; background:#f0f1f4; border:1px solid #c5c8d0; color:#1c1c1c; padding:5px 12px;">↪️ Redo</button>
+      <a href="../canadawest-scout-2026-27.html" class="btn">Scouting Hub</a>
+      <a href="../griffin-concepts.html" class="btn" style="border:1px solid var(--accent); color:var(--accent)">Griffin Concepts</a>
+      <a id="rosterManagerNav" href="../players.html" class="btn" style="display:none; border:1px solid var(--accent); color:var(--accent)">Roster Manager</a>
+      <a href="../index.html" class="btn">Home</a>
+    </div>
+  </header>
+
+  <!-- Mobile Tab Toggles -->
+  <div class="mobile-tab-bar">
+    <button class="mobile-tab-btn active" id="tabBtnEdit" onclick="switchMobileTab('edit')">Editor</button>
+    <button class="mobile-tab-btn" id="tabBtnPrev" onclick="switchMobileTab('prev')">Document View</button>
+  </div>
+
+  <div class="app-container">
+    <!-- EDITOR PANEL -->
+    <div class="editor-pane" id="editorPane">
+      
+      <!-- Saved & Published Plans Tabbed Card -->
+      <div class="section-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--line);">
+          <h2 style="margin:0; border:none; padding:0;">Practice Plan Explorer</h2>
+        </div>
+        <!-- Sub-tabs for plans library -->
+        <div style="display:flex; gap:4px; margin-bottom:10px;">
+          <button class="player-btn-toggle active" id="btnLibPublished" style="font-size:11px;" onclick="switchLibTab('published')">Published (Repo)</button>
+          <button class="player-btn-toggle" id="btnLibDrafts" style="font-size:11px;" onclick="switchLibTab('drafts')">Drafts (Local)</button>
+          <button class="player-btn-toggle" id="btnLibTemplates" style="font-size:11px;" onclick="switchLibTab('templates')">Templates</button>
+        </div>
+        <div class="plan-list-grid" id="planExplorerList">
+          <!-- Dynamically populated list depending on selected library tab -->
+        </div>
+      </div>
+
+      <!-- General Info Card -->
+      <div class="section-card">
+        <h2>Practice Information</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="inputSeason">Season</label>
+            <input type="text" id="inputSeason" value="2025-26" oninput="updatePlan()">
+          </div>
+          <div class="form-group">
+            <label for="inputWeek">Week</label>
+            <input type="text" id="inputWeek" value="9" oninput="updatePlan()">
+          </div>
+          <div class="form-group">
+            <label for="inputDay">Day</label>
+            <input type="text" id="inputDay" value="Monday" oninput="updatePlan()">
+          </div>
+          <div class="form-group">
+            <label for="inputDate">Date</label>
+            <input type="date" id="inputDate" value="2026-05-19" oninput="updatePlan('date')">
+          </div>
+          <div class="form-group">
+            <label for="inputStartTime">Start Time</label>
+            <input type="text" id="inputStartTime" value="04:00 PM" placeholder="e.g. 04:00 PM" oninput="updatePlan('startTime')">
+          </div>
+          <div class="form-group">
+            <label for="inputTimeRange">Display Time Range</label>
+            <input type="text" id="inputTimeRange" value="4:00 PM - 9:00 PM" placeholder="e.g. 4:00 PM - 9:00 PM" oninput="updatePlan('displayTime')">
+          </div>
+          <div class="form-group span-2">
+            <label for="inputObjective">Session Objective</label>
+            <textarea id="inputObjective" rows="2" oninput="updatePlan()"></textarea>
+          </div>
+          <div class="form-group span-2">
+            <label for="inputNews">News & Announcements</label>
+            <textarea id="inputNews" rows="2" oninput="updatePlan()"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Roster Availability & Team Picker Card -->
+      <div class="section-card">
+        <h2>Roster & Team Maker</h2>
+        <div style="margin-bottom:12px; display:flex; gap:6px; align-items:center;">
+          <input type="text" id="inputNewPlayer" placeholder="Add custom player (e.g. recruit)" style="flex:1;">
+          <button class="btn btn-secondary" onclick="addCustomPlayer()">Add</button>
+          <button class="btn" style="background:transparent; border:1px solid #d1ad7d; color:#d1ad7d; font-size:11px; padding:6px 10px;" onclick="resetRosterMemory()" title="Reset roster overrides to match official team database">Reset</button>
+        </div>
+        <div class="roster-grid" id="rosterGrid">
+          <!-- Dynamically populated roster chips -->
+        </div>
+
+        <!-- Selected Player Action Panel (Hidden by default, shown when player is clicked) -->
+        <div class="player-actions-menu" id="playerActionsPanel" style="display:none;">
+          <div class="player-actions-title" id="playerActionsTitle">Player: Name</div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <label>Availability</label>
+            <div class="player-action-buttons">
+              <button class="player-btn-toggle" id="btnStatusAvailable" onclick="setPlayerStatus(true)">Available</button>
+              <button class="player-btn-toggle" id="btnStatusUnavailable" onclick="setPlayerStatus(false)">Unavailable</button>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
+            <label>Assign to Team</label>
+            <div class="player-action-buttons">
+              <button class="player-btn-toggle" id="btnTeamNone" onclick="setPlayerTeam('none')">None</button>
+              <button class="player-btn-toggle" id="btnTeamA" onclick="setPlayerTeam('A')">Team A</button>
+              <button class="player-btn-toggle" id="btnTeamB" onclick="setPlayerTeam('B')">Team B</button>
+              <button class="player-btn-toggle" id="btnTeamC" onclick="setPlayerTeam('C')">Team C</button>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
+            <label>Category</label>
+            <div class="player-action-buttons">
+              <button class="player-btn-toggle" id="btnCategoryRoster" onclick="setPlayerCategory('roster')">Roster</button>
+              <button class="player-btn-toggle" id="btnCategoryRecruit" onclick="setPlayerCategory('recruit')">Recruit</button>
+            </div>
+          </div>
+          <div style="margin-top:12px; border-top:1px solid var(--line); padding-top:10px;">
+            <button class="btn btn-danger" onclick="deletePlayer()" style="width:100%; justify-content:center;">Delete Player</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key Terms Card -->
+      <div class="section-card">
+        <h2>Key Terms</h2>
+        <div class="form-group">
+          <label for="inputDefTerms">Defensive Key Terms</label>
+          <textarea id="inputDefTerms" rows="4" style="font-family:monospace;" oninput="updatePlan()"></textarea>
+        </div>
+        <div class="form-group" style="margin-top:12px;">
+          <label for="inputOffTerms">Offensive Key Terms</label>
+          <textarea id="inputOffTerms" rows="4" style="font-family:monospace;" oninput="updatePlan()"></textarea>
+        </div>
+      </div>
+
+      <!-- Drill Bank Card -->
+      <div class="section-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--line);">
+          <h2 style="margin:0; border:none; padding:0;">Drill Bank</h2>
+          <div style="display:flex; gap:6px;">
+            <button class="player-btn-toggle" id="btnToggleAddDrill" style="font-size:11px; padding: 2px 6px; background-color: var(--accent2); color: #000;" onclick="toggleAddDrillForm()">+ Add Drill</button>
+            <button class="player-btn-toggle" id="btnToggleDrillBank" style="font-size:11px; padding: 2px 6px;" onclick="toggleDrillBankCollapse()">Collapse</button>
+          </div>
+        </div>
+        
+        <!-- Add Drill Form (Hidden by default) -->
+        <div id="addDrillFormContainer" style="display:none; border:1px solid var(--line); padding:12px; border-radius:6px; margin-bottom:12px; background: rgba(255,255,255,0.02);">
+          <h3 style="margin-top:0; margin-bottom:10px; font-size:13px; color:var(--accent);">Add Custom Drill to Bank</h3>
+          
+          <div style="display:flex; flex-direction:column; gap:8px; font-size:12px;">
+            <div style="display:flex; gap:8px;">
+              <div style="flex:2; display:flex; flex-direction:column; gap:4px;">
+                <label style="font-weight:600;">Drill Name *</label>
+                <input type="text" id="newDrillName" placeholder="e.g. 3-Cone Dribbling" style="font-size:12px; padding:4px 8px; background:var(--bg); color:var(--text); border:1px solid var(--line); border-radius:4px;">
+              </div>
+              <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
+                <label style="font-weight:600;">Category *</label>
+                <select id="newDrillCategory" style="font-size:12px; padding:4px; background:var(--bg); color:var(--text); border:1px solid var(--line); border-radius:4px; height: 26px;">
+                  <option value="Shooting">Shooting</option>
+                  <option value="Transition">Transition</option>
+                  <option value="Defense">Defense</option>
+                  <option value="Scrimmage">Scrimmage</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+            
+            <div style="display:flex; gap:8px;">
+              <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
+                <label style="font-weight:600;">Default Duration (Min) *</label>
+                <input type="number" id="newDrillDuration" value="10" min="1" max="90" style="font-size:12px; padding:4px 8px; background:var(--bg); color:var(--text); border:1px solid var(--line); border-radius:4px;">
+              </div>
+              <div style="flex:2; display:flex; flex-direction:column; gap:4px;">
+                <label style="font-weight:600;">Video URL</label>
+                <input type="url" id="newDrillVideo" placeholder="https://www.youtube.com/watch?v=..." style="font-size:12px; padding:4px 8px; background:var(--bg); color:var(--text); border:1px solid var(--line); border-radius:4px;">
+              </div>
+            </div>
+            
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <label style="font-weight:600;">Description *</label>
+              <textarea id="newDrillDesc" rows="2" placeholder="Brief explanation of the drill flow and rules..." style="font-size:12px; padding:4px 8px; background:var(--bg); color:var(--text); border:1px solid var(--line); border-radius:4px; resize:vertical;"></textarea>
+            </div>
+            
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <label style="font-weight:600;">Coaching Points (one per line)</label>
+              <textarea id="newDrillPoints" rows="2" placeholder="e.g.&#10;Keep eyes up&#10;Stay low in stance" style="font-size:12px; padding:4px 8px; background:var(--bg); color:var(--text); border:1px solid var(--line); border-radius:4px; resize:vertical;"></textarea>
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+              <span id="addDrillStatus" style="font-size:11px; font-style:italic;"></span>
+              <div style="display:flex; gap:6px;">
+                <button class="btn btn-secondary" style="padding: 4px 10px; font-size:11px;" onclick="toggleAddDrillForm()">Cancel</button>
+                <button class="btn btn-primary" style="padding: 4px 10px; font-size:11px;" onclick="saveCustomDrill()">Save Drill</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="drillBankBody">
+          <!-- Search & Filters -->
+          <div style="display:flex; gap:6px; margin-bottom:10px;">
+            <input type="text" id="drillBankSearch" placeholder="Search drills by name or description..." style="flex:1; font-size:12px;" oninput="renderDrillBank()">
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:12px;" id="drillBankFilters">
+            <button class="player-btn-toggle active" onclick="filterDrillBankCategory('All', this)">All</button>
+            <button class="player-btn-toggle" onclick="filterDrillBankCategory('Shooting', this)">Shooting</button>
+            <button class="player-btn-toggle" onclick="filterDrillBankCategory('Transition', this)">Transition</button>
+            <button class="player-btn-toggle" onclick="filterDrillBankCategory('Defense', this)">Defense</button>
+            <button class="player-btn-toggle" onclick="filterDrillBankCategory('Scrimmage', this)">Scrimmage</button>
+          </div>
+          <!-- Drill List -->
+          <div class="drill-bank-list" id="drillBankList" style="display:flex; flex-direction:column; gap:10px; max-height: 280px; overflow-y: auto; padding-right:4px;">
+            <!-- Dynamically populated drills -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Practice Grid (Timeline) Card -->
+      <div class="section-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--line);">
+          <h2 style="margin:0; border:none; padding:0;">Practice Activities (Grid)</h2>
+          <button class="btn btn-secondary" style="padding: 4px 8px; font-size:11px;" onclick="addDrillItem()">+ Add Row</button>
+        </div>
+        <div id="drillListContainer">
+          <!-- Dynamically populated drill inputs -->
+        </div>
+      </div>
+
+      <!-- Save & Tools Actions -->
+      <div class="section-card">
+        <h2>Actions & Data Tools</h2>
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+          <button class="btn btn-primary" onclick="savePlanToStorage()">Save as Draft</button>
+          <button class="btn btn-secondary" style="background:var(--accent2); color:#000; border-color:var(--accent2);" onclick="saveAsTemplate()">Save as Template</button>
+          <button class="btn" onclick="exportJSON()">Export JSON</button>
+          <button class="btn" onclick="triggerImportFile()">Import JSON</button>
+          <input type="file" id="importFile" style="display:none;" accept=".json" onchange="importJSON(event)">
+          <button class="btn btn-secondary" onclick="exportMarkdown()">Copy Markdown</button>
+          <button class="btn btn-danger" onclick="resetToSample()">Reset to Sample</button>
+        </div>
+        <div style="margin-top: 14px; padding: 10px 12px; background: rgba(209, 173, 125, 0.08); border-left: 3px solid var(--accent2); border-radius: 4px; font-size: 11px; color: var(--mute); line-height: 1.4;">
+          <strong>💡 How to Publish this Plan:</strong>
+          <ul style="margin: 4px 0 0 16px; padding: 0;">
+            <li>Click <strong>Export JSON</strong> to download the practice plan file to your computer.</li>
+            <li>Place the downloaded <code>.json</code> file into the project folder under <code>practice-plans/plans/</code>.</li>
+            <li>Rebuild and deploy the site (the build script will index it automatically for the Hub).</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- DOCUMENT PREVIEW PANEL -->
+    <div class="preview-pane hidden-mobile" id="previewPane">
+      
+      <!-- Action panel above paper sheet -->
+      <div class="preview-controls">
+        <h3>Live Document Preview</h3>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-primary" onclick="window.print()">Print Plan</button>
+        </div>
+      </div>
+
+      <!-- The Printable Document Container -->
+      <div class="paper-scaler" id="paperScaler">
+        <div class="paper-document" id="paperDoc">
+        <div class="doc-header">
+          <div class="doc-header-top">
+            <img src="../macewan-logo.png" class="doc-logo" alt="MacEwan Logo">
+            <div class="doc-title-area">
+              <h1>MacEwan University</h1>
+              <h2>Men's Basketball &bull; Practice Plan</h2>
+            </div>
+          </div>
+          <div class="doc-meta-grid">
+            <div class="doc-meta-item">
+              <strong>Season</strong><br>
+              <span id="docSeason">2025-26</span>
+            </div>
+            <div class="doc-meta-item">
+              <strong>Week</strong><br>
+              <span id="docWeek">9</span>
+            </div>
+            <div class="doc-meta-item">
+              <strong>Day</strong><br>
+              <span id="docDay">Monday</span>
+            </div>
+            <div class="doc-meta-item">
+              <strong>Date</strong><br>
+              <span id="docDate">2026-05-19</span>
+            </div>
+            <div class="doc-meta-item">
+              <strong>Time</strong><br>
+              <span id="docTimeRange">4:00 PM - 9:00 PM</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Roster Availability Rows -->
+        <table class="doc-section-table">
+          <tr>
+            <td class="label-col">Available</td>
+            <td id="docAvailable">Owen Hickey, Jojo Muyo, Khushal Shukla, Joel Seke, Elisha Ampofo, Diego Presingular, Noah Simon, Judson Weir, Dele Osuma, Ryan Ziolkowski, Wol Wol, Favour Igbinyemi, Abdi Musse, Nathan Lefevre, David Wilmes, Otis Onink, Peter-Aluk Deng, Freddy Kapinga</td>
+          </tr>
+          <tr>
+            <td class="label-col">Unavailable</td>
+            <td id="docUnavailable">None</td>
+          </tr>
+        </table>
+
+        <!-- Team Assignments Row -->
+        <table class="doc-section-table" style="margin-top: 0px; border-top: none;">
+          <tr>
+            <td class="label-col" style="border-top: none;">Team A</td>
+            <td id="docTeamA" style="border-top: none;">Diego Presingular, Noah Simon, Judson Weir, Dele Osuma, Ryan Ziolkowski, Wol Wol</td>
+          </tr>
+          <tr>
+            <td class="label-col" style="border-top: none;">Team B</td>
+            <td id="docTeamB" style="border-top: none;">Khushal Shukla, Jojo Muyo, Owen Hickey, Elisha Ampofo, Joel Seke, Abdi Musse</td>
+          </tr>
+          <tr>
+            <td class="label-col" style="border-top: none;">Team C</td>
+            <td id="docTeamC" style="border-top: none;">Favour Igbinyemi, Nathan Lefevre, David Wilmes, Otis Onink, Peter-Aluk Deng, Freddy Kapinga</td>
+          </tr>
+        </table>
+
+        <!-- Objective & News Row -->
+        <table class="doc-section-table" style="margin-top: 0px; border-top: none;">
+          <tr>
+            <td class="label-col" style="border-top: none;">Objective</td>
+            <td id="docObjective" style="border-top: none;">Review: Adv vs Neutral, Catch N Go, Go-Yo-Flow, Snap, Split (You, Me, Sling, Straight)</td>
+          </tr>
+          <tr>
+            <td class="label-col" style="border-top: none;">News</td>
+            <td id="docNews" style="border-top: none;">Nutrition meeting in room 8-203<br>Tomorrow 11-1pm at Milwood Christian School</td>
+          </tr>
+        </table>
+
+        <!-- Side-by-side key terms -->
+        <div class="doc-terms-grid">
+          <div class="doc-terms-col">
+            <h3>Defensive Key Terms</h3>
+            <div class="doc-terms-text" id="docDefTerms">
+              Neutral → Coverage → Rotation → Shot Quality < 1 PPP
+              - Shell D: Ball, Nail, Strong, Rim, Low, Wall
+            </div>
+          </div>
+          <div class="doc-terms-col">
+            <h3>Offensive Key Terms</h3>
+            <div class="doc-terms-text" id="docOffTerms">
+              Neutral → Trigger → Advantage → Shot Quality ≥ 1 PPP
+              - Split (You, Me, Sling, Straight)
+              - Catch: Go(Right/Left), Shoot, Pass
+              - TranO: 1-3-7, Go-Yo-Flow
+            </div>
+          </div>
+        </div>
+
+        <!-- The main activity grid table -->
+        <table class="doc-grid-table" id="docGridTable">
+          <thead>
+            <tr>
+              <th class="time-col">Time</th>
+              <th class="act-col">Activity</th>
+              <th class="notes-col">Notes / Details / Instructions</th>
+            </tr>
+          </thead>
+          <tbody id="docGridBody">
+            <!-- Dynamically populated activities -->
+          </tbody>
+        </table>
+
+        <!-- Footer -->
+        <div class="doc-footer">
+          MacEwan Griffins Basketball • Offseason / Pre-Season Staff Sheet
+        </div>
+      </div>
+      </div> <!-- .paper-scaler -->
+
+    </div>
+  </div>
+
+  <!-- POPUP MODAL FOR EXPORTING CODE -->
+  <div class="modal" id="modal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <h3 id="modalTitle">Exported Code</h3>
+      <p id="modalInstructions" style="font-size:12px; color:var(--mute);"></p>
+      <div class="modal-content-area" id="modalContent"></div>
+      <div style="display:flex; justify-content:flex-end;">
+        <button class="btn btn-primary" onclick="copyModalContent()">Copy to Clipboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // State storage
+    let currentPlan = {
+      season: "2025-26",
+      week: "9",
+      day: "Monday",
+      date: "2026-05-19",
+      startTime: "04:00 PM",
+      timeRange: "4:00 PM - 9:00 PM",
+      objective: "Review: Adv vs Neutral, Catch N Go, Go-Yo-Flow, Snap, Split (You, Me, Sling, Straight)",
+      news: "Nutrition meeting in room 8-203\nTomorrow 11-1pm at Milwood Christian School",
+      defTerms: "Neutral → Coverage → Rotation → Shot Quality < 1 PPP\n- Shell D: Ball, Nail, Strong, Rim, Low, Wall",
+      offTerms: "Neutral → Trigger → Advantage → Shot Quality ≥ 1 PPP\n- Split (You, Me, Sling, Straight)\n- Catch: Go(Right/Left), Shoot, Pass\n- TranO: 1-3-7, Go-Yo-Flow",
+      roster: [
+        // Official Roster 2026-27
+        { name: "Owen Hickey", available: true, team: "none", custom: false },
+        { name: "Jojo Muyo", available: true, team: "none", custom: false },
+        { name: "Khushal Shukla", available: true, team: "none", custom: false },
+        { name: "Joel Seke", available: true, team: "none", custom: false },
+        { name: "Elisha Ampofo", available: true, team: "none", custom: false },
+        { name: "Diego Presingular", available: true, team: "none", custom: false },
+        { name: "Noah Simon", available: true, team: "none", custom: false },
+        { name: "Judson Weir", available: true, team: "none", custom: false },
+        { name: "Dele Osuma", available: true, team: "none", custom: false },
+        { name: "Ryan Ziolkowski", available: true, team: "none", custom: false },
+        { name: "Wol Wol", available: true, team: "none", custom: false },
+        { name: "Favour Igbinyemi", available: true, team: "none", custom: false },
+        { name: "Abdi Musse", available: true, team: "none", custom: false },
+        { name: "Nathan Lefevre", available: true, team: "none", custom: false },
+        { name: "David Wilmes", available: true, team: "none", custom: false },
+        { name: "Otis Onink", available: true, team: "none", custom: false },
+        { name: "Peter-Aluk Deng", available: true, team: "none", custom: false },
+        { name: "Freddy Kapinga", available: true, team: "none", custom: false }
+      ],
+      activities: [
+        { duration: 10, activity: "Warm up - Intro", notes: "" },
+        { duration: 5, activity: "Catch game", notes: "Ball handling to pass to catch" },
+        { duration: 5, activity: "Catch N Go", notes: "Attack middle, pass, Catch N Go" },
+        { duration: 5, activity: "Break / Transition", notes: "implied / fluid" },
+        { duration: 10, activity: "Catch N Go 1s (Keeps)", notes: "3pts CS3, 2pts paint score, 1pt anything else" },
+        { duration: 5, activity: "Teach Snap", notes: "Set screen if you want the switch, Ghost if you want confusion" },
+        { duration: 10, activity: "Snap Shooting (both lines w/ ball)", notes: "" },
+        { duration: 10, activity: "Snap shooting 2s (Keeps)", notes: "3pts CS3, 2pts paint score, 1pt anything else" },
+        { duration: 10, activity: "4v4 (Keeps)", notes: "3pts CS3, 2pts paint score, 1pt anything else\n*Team A/B on Court 1, Team C drills*" },
+        { duration: 10, activity: "Teach Go-Yo-Flow", notes: "Anyone inbounds, Run sideline (wide) then baseline (long)" },
+        { duration: 10, activity: "5v5(midcourt circle) Keeps", notes: "3pts CS3, 2pts paint score, 1pt anything else" },
+        { duration: 90, activity: "Nutrition / Break", notes: "Meeting in room 8-203" },
+        { duration: 15, activity: "Warm up - intro", notes: "Part 2" },
+        { duration: 5, activity: "Teach Split", notes: "(You, Me, Sling, Straight)" },
+        { duration: 5, activity: "5 line shooting", notes: "" },
+        { duration: 20, activity: "Split shooting", notes: "(You, Me, Sling, Straight)" },
+        { duration: 75, activity: "2min games (Keeps)", notes: "3pts CS3, 2pts paint score, 1pt anything else" }
+      ]
+    };
+
+    // Pre-populate actual official team assignments
+    const defaultTeams = {
+      "Diego Presingular": "A", "Noah Simon": "A", "Judson Weir": "A", "Dele Osuma": "A", "Ryan Ziolkowski": "A", "Wol Wol": "A",
+      "Khushal Shukla": "B", "Jojo Muyo": "B", "Owen Hickey": "B", "Elisha Ampofo": "B", "Joel Seke": "B", "Abdi Musse": "B",
+      "Favour Igbinyemi": "C", "Nathan Lefevre": "C", "David Wilmes": "C", "Otis Onink": "C", "Peter-Aluk Deng": "C", "Freddy Kapinga": "C"
+    };
+
+    let selectedPlayerIndex = null;
+    let savedPlans = [];
+    let savedTemplates = [];
+    let publishedPlans = [];
+    let activeLibTab = 'published';
+
+    function getDayOfWeekFromDate(dateInput) {
+      if (!dateInput) return "";
+      const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      if (dateInput instanceof Date) {
+        return days[dateInput.getDay()] || "";
+      }
+      if (typeof dateInput === 'string') {
+        const cleanDate = dateInput.split('T')[0];
+        const parts = cleanDate.split('-');
+        if (parts.length === 3) {
+          const year = parseInt(parts[0], 10);
+          const month = parseInt(parts[1], 10) - 1;
+          const day = parseInt(parts[2], 10);
+          const d = new Date(year, month, day);
+          return days[d.getDay()] || "";
+        }
+        const d = new Date(dateInput);
+        if (!isNaN(d.getTime())) {
+          return days[d.getDay()] || "";
+        }
+      }
+      return "";
+    }
+
+    // Initialize the app
+    window.addEventListener("DOMContentLoaded", () => {
+      // Set initial plan date & day of week to present day
+      const today = new Date().toISOString().split('T')[0];
+      currentPlan.date = today;
+      currentPlan.day = getDayOfWeekFromDate(today);
+
+      // Sync roster and set team defaults
+      syncPlanRosterWithOfficialRoster();
+      currentPlan.roster.forEach(p => {
+        if (defaultTeams[p.name]) {
+          p.team = defaultTeams[p.name];
+        }
+      });
+
+      // Show Roster Manager link if Admin
+      const isAdmin = sessionStorage.getItem('griffin_hub_admin') === 'true';
+      if (isAdmin) {
+        const rNav = document.getElementById('rosterManagerNav');
+        if (rNav) rNav.style.display = 'inline-block';
+      }
+
+      // Background fetch to update cached roster
+      const apiURL = (typeof window !== 'undefined' && window.TRACKING_API_URL) ? window.TRACKING_API_URL : (typeof TRACKING_API_URL !== 'undefined' ? TRACKING_API_URL : '');
+      if (apiURL) {
+        fetch(apiURL + "?action=getRoster")
+          .then(res => res.json())
+          .then(data => {
+            if (data && Array.isArray(data) && data.length > 0) {
+              localStorage.setItem('hoops-hub:cached-roster', JSON.stringify(data));
+              syncPlanRosterWithOfficialRoster();
+              renderRoster();
+            }
+          })
+          .catch(err => console.error("Roster sync failed in practice plans:", err));
+      }
+
+      // Load plans from local storage
+      loadPlansFromStorage();
+      loadTemplatesFromStorage();
+      fetchPublishedPlans();
+
+      // Set input values to current plan state
+      document.getElementById("inputSeason").value = currentPlan.season;
+      document.getElementById("inputWeek").value = currentPlan.week;
+      document.getElementById("inputDay").value = currentPlan.day;
+      document.getElementById("inputDate").value = currentPlan.date;
+      document.getElementById("inputStartTime").value = currentPlan.startTime;
+      document.getElementById("inputTimeRange").value = currentPlan.timeRange;
+      document.getElementById("inputObjective").value = currentPlan.objective;
+      document.getElementById("inputNews").value = currentPlan.news;
+      document.getElementById("inputDefTerms").value = currentPlan.defTerms;
+      document.getElementById("inputOffTerms").value = currentPlan.offTerms;
+
+      // Render UI
+      renderRoster();
+      renderDrillList();
+      renderPreview();
+      renderDrillBank();
+      checkPlayerReadOnlyMode();
+
+      // Listen for window resize to fit the paper document
+      window.addEventListener("resize", fitPaperDocument);
+    });
+
+    function checkPlayerReadOnlyMode() {
+      const isCoachOrAdmin = typeof window.isCoachOrAdmin === 'function' ? window.isCoachOrAdmin() : (sessionStorage.getItem('griffin_hub_admin') === 'true' || sessionStorage.getItem('griffin_coaches_authorized') === 'true' || sessionStorage.getItem('griffin_hub_role') === 'coach' || sessionStorage.getItem('griffin_hub_role') === 'admin');
+
+      if (!isCoachOrAdmin) {
+        document.body.classList.add('player-read-only');
+
+        // Disable input fields except plan selection dropdowns
+        const inputs = document.querySelectorAll('input, textarea, select');
+        inputs.forEach(el => {
+          if (el.id !== 'savedPlansSelect' && el.id !== 'libPlanSelect' && !el.classList.contains('no-disable')) {
+            el.readOnly = true;
+            el.disabled = true;
+          }
+        });
+
+        // Hide editing button controls
+        const hideIds = [
+          'btnAddActivity', 'btnSavePlan', 'btnSaveTemplate', 'btnPublishPlan',
+          'btnClearPlan', 'btnUndo', 'btnRedo', 'btnEditRoster', 'btnToggleAddDrill',
+          'rosterManagerNav'
+        ];
+        hideIds.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.style.display = 'none';
+        });
+
+        document.querySelectorAll('.drag-handle, .btn-delete-activity, #customPlayerForm, #rosterMemoryActions').forEach(el => {
+          if (el) el.style.display = 'none';
+        });
+      }
+    }
+
+    // Switch between mobile views
+    function switchMobileTab(tab) {
+      const editBtn = document.getElementById("tabBtnEdit");
+      const prevBtn = document.getElementById("tabBtnPrev");
+      const editPane = document.getElementById("editorPane");
+      const prevPane = document.getElementById("previewPane");
+
+      if (tab === 'edit') {
+        editBtn.classList.add("active");
+        prevBtn.classList.remove("active");
+        editPane.classList.remove("hidden-mobile");
+        prevPane.classList.add("hidden-mobile");
+      } else {
+        prevBtn.classList.add("active");
+        editBtn.classList.remove("active");
+        prevPane.classList.remove("hidden-mobile");
+        editPane.classList.add("hidden-mobile");
+        // Recalculate scaling after display toggle
+        setTimeout(fitPaperDocument, 50);
+      }
+    }
+
+    // Dynamic scaling of printable paper document preview on mobile
+    function fitPaperDocument() {
+      const scaler = document.getElementById("paperScaler");
+      const paper = document.getElementById("paperDoc");
+      if (!scaler || !paper) return;
+
+      const containerWidth = scaler.clientWidth || scaler.parentElement.clientWidth;
+      if (!containerWidth) return;
+
+      const targetWidth = 800; // design width of .paper-document
+      
+      if (containerWidth < targetWidth) {
+        const scale = containerWidth / targetWidth;
+        paper.style.transform = `scale(${scale})`;
+        paper.style.transformOrigin = "top center";
+        
+        const unscaledHeight = paper.offsetHeight;
+        const scaledHeight = unscaledHeight * scale;
+        const heightDifference = unscaledHeight - scaledHeight;
+        paper.style.marginBottom = `-${heightDifference}px`;
+      } else {
+        paper.style.transform = "none";
+        paper.style.marginBottom = "0px";
+      }
+    }
+
+    // --- Undo / Redo State History Engine ---
+    let historyStack = [];
+    let redoStack = [];
+    let isUndoRedoAction = false;
+
+    function saveStateHistory() {
+      if (isUndoRedoAction) return;
+      const snapshot = JSON.stringify(currentPlan);
+      if (historyStack.length > 0 && historyStack[historyStack.length - 1] === snapshot) {
+        return;
+      }
+      historyStack.push(snapshot);
+      if (historyStack.length > 50) historyStack.shift();
+      redoStack = [];
+      updateUndoRedoButtons();
+    }
+
+    function updateUndoRedoButtons() {
+      const btnUndo = document.getElementById("btnUndo");
+      const btnRedo = document.getElementById("btnRedo");
+      if (btnUndo) btnUndo.disabled = (historyStack.length <= 1);
+      if (btnRedo) btnRedo.disabled = (redoStack.length === 0);
+    }
+
+    function undoState() {
+      if (historyStack.length <= 1) return;
+      isUndoRedoAction = true;
+      const currentSnapshot = historyStack.pop();
+      redoStack.push(currentSnapshot);
+
+      const prevSnapshot = historyStack[historyStack.length - 1];
+      currentPlan = JSON.parse(prevSnapshot);
+
+      applyStateToUI();
+      isUndoRedoAction = false;
+      updateUndoRedoButtons();
+      showToast("↩️ Undid last change");
+    }
+
+    function redoState() {
+      if (redoStack.length === 0) return;
+      isUndoRedoAction = true;
+      const nextSnapshot = redoStack.pop();
+      historyStack.push(nextSnapshot);
+
+      currentPlan = JSON.parse(nextSnapshot);
+
+      applyStateToUI();
+      isUndoRedoAction = false;
+      updateUndoRedoButtons();
+      showToast("↪️ Redid change");
+    }
+
+    function applyStateToUI() {
+      document.getElementById("inputSeason").value = currentPlan.season || "2026-27";
+      document.getElementById("inputWeek").value = currentPlan.week || "";
+      document.getElementById("inputDay").value = currentPlan.day || "";
+      document.getElementById("inputDate").value = currentPlan.date || "";
+      document.getElementById("inputStartTime").value = currentPlan.startTime || "";
+      document.getElementById("inputTimeRange").value = currentPlan.timeRange || "";
+      document.getElementById("inputObjective").value = currentPlan.objective || "";
+      document.getElementById("inputNews").value = currentPlan.news || "";
+      document.getElementById("inputDefTerms").value = currentPlan.defTerms || "";
+      document.getElementById("inputOffTerms").value = currentPlan.offTerms || "";
+
+      selectedPlayerIndex = null;
+      const panel = document.getElementById("playerActionsPanel");
+      if (panel) panel.style.display = "none";
+
+      renderRoster();
+      renderDrillList();
+      renderPreview();
+    }
+
+    function showToast(msg) {
+      let toast = document.getElementById("historyToast");
+      if (!toast) {
+        toast = document.createElement("div");
+        toast.id = "historyToast";
+        toast.style.cssText = "position:fixed; bottom:20px; left:20px; background:#141418; color:#fff; border-left:4px solid var(--accent2); padding:10px 16px; border-radius:6px; font-size:12px; font-weight:600; z-index:9999; box-shadow:0 4px 12px rgba(0,0,0,0.3); transition:opacity 0.2s;";
+        document.body.appendChild(toast);
+      }
+      toast.innerText = msg;
+      toast.style.opacity = "1";
+      clearTimeout(toast.timer);
+      toast.timer = setTimeout(() => { toast.style.opacity = "0"; }, 2000);
+    }
+
+    window.addEventListener('keydown', function(e) {
+      const isCmdOrCtrl = e.metaKey || e.ctrlKey;
+      if (isCmdOrCtrl && e.key.toLowerCase() === 'z') {
+        if (e.shiftKey) {
+          e.preventDefault();
+          redoState();
+        } else {
+          e.preventDefault();
+          undoState();
+        }
+      } else if (isCmdOrCtrl && e.key.toLowerCase() === 'y') {
+        e.preventDefault();
+        redoState();
+      }
+    });
+
+    function extractFirstTime(str) {
+      if (!str) return null;
+      const match = str.match(/(\d{1,2}:\d{2}\s*(?:AM|PM)?)/i);
+      return match ? match[1].trim() : null;
+    }
+
+    // Load data from input forms to local state and update preview
+    function updatePlan(source) {
+      currentPlan.season = document.getElementById("inputSeason").value;
+      currentPlan.week = document.getElementById("inputWeek").value;
+      currentPlan.date = document.getElementById("inputDate").value;
+
+      if (source === 'date' && currentPlan.date) {
+        const autoDay = getDayOfWeekFromDate(currentPlan.date);
+        if (autoDay) {
+          currentPlan.day = autoDay;
+          document.getElementById("inputDay").value = autoDay;
+        }
+      } else {
+        currentPlan.day = document.getElementById("inputDay").value;
+      }
+
+      const rawDisplayTime = document.getElementById("inputTimeRange").value;
+      const rawStartTime = document.getElementById("inputStartTime").value;
+
+      if (source === 'displayTime') {
+        const extracted = extractFirstTime(rawDisplayTime);
+        if (extracted) {
+          currentPlan.startTime = extracted;
+          document.getElementById("inputStartTime").value = extracted;
+        } else {
+          currentPlan.startTime = rawStartTime;
+        }
+        currentPlan.timeRange = rawDisplayTime;
+      } else if (source === 'startTime') {
+        currentPlan.startTime = rawStartTime;
+        const firstInDisplay = extractFirstTime(rawDisplayTime);
+        if (firstInDisplay && rawStartTime) {
+          currentPlan.timeRange = rawDisplayTime.replace(firstInDisplay, rawStartTime);
+          document.getElementById("inputTimeRange").value = currentPlan.timeRange;
+        } else {
+          currentPlan.timeRange = rawDisplayTime;
+        }
+      } else {
+        const extracted = extractFirstTime(rawDisplayTime);
+        if (extracted && !rawStartTime) {
+          currentPlan.startTime = extracted;
+          document.getElementById("inputStartTime").value = extracted;
+        } else {
+          currentPlan.startTime = rawStartTime;
+        }
+        currentPlan.timeRange = rawDisplayTime;
+      }
+
+      currentPlan.objective = document.getElementById("inputObjective").value;
+      currentPlan.news = document.getElementById("inputNews").value;
+      currentPlan.defTerms = document.getElementById("inputDefTerms").value;
+      currentPlan.offTerms = document.getElementById("inputOffTerms").value;
+
+      saveStateHistory();
+      renderPreview();
+    }
+
+    // Helper: Load Practice Roster Memory Bank
+    function loadRosterMemory() {
+      try {
+        const mem = localStorage.getItem('hoops-hub:practice-roster-memory');
+        if (mem) return JSON.parse(mem);
+      } catch (e) {}
+      return { hidden: [], custom: [] };
+    }
+
+    // Reset practice roster overrides to default
+    function resetRosterMemory() {
+      if (confirm("Restore all hidden players and delete saved custom recruits from your practice plan memory bank?")) {
+        localStorage.removeItem('hoops-hub:practice-roster-memory');
+        syncPlanRosterWithOfficialRoster();
+        renderRoster();
+        renderPreview();
+        alert("Roster memory bank reset to official database defaults!");
+      }
+    }
+
+    const OFFICIAL_2026_27_ROSTER = [
+      "Owen Hickey", "Jojo Muyo", "Khushal Shukla", "Joel Seke", "Elisha Ampofo",
+      "Diego Presingular", "Noah Simon", "Judson Weir", "Dele Osuma", "Ryan Ziolkowski",
+      "Wol Wol", "Favour Igbinyemi", "Abdi Musse", "Nathan Lefevre", "David Wilmes",
+      "Otis Onink", "Peter-Aluk Deng", "Freddy Kapinga"
+    ];
+
+    // Synchronize practice plan's roster with official cached roster and memory bank overrides
+    function syncPlanRosterWithOfficialRoster() {
+      try {
+        let cached = JSON.parse(localStorage.getItem('hoops-hub:cached-roster') || '[]');
+        if (!cached || !Array.isArray(cached) || cached.length === 0) {
+          cached = OFFICIAL_2026_27_ROSTER.map(n => ({ name: n }));
+        }
+
+        const memory = loadRosterMemory();
+
+        // 1. Exclude officially deleted/hidden players recorded in the memory bank
+        const activeOfficial = cached.filter(p => !memory.hidden.includes(p.name.trim().toLowerCase()));
+
+        // 2. Filter out legacy recruit names from custom players
+        const legacyRecruits = ['cynan', 'chris', 'gomes', 'ayudo', 'cache', 'peter'];
+        const allCustomNames = new Set();
+        const customPlayers = [];
+        
+        currentPlan.roster = currentPlan.roster.filter(p => !p.custom || !legacyRecruits.includes(p.name.trim().toLowerCase()));
+        
+        currentPlan.roster.forEach(p => {
+          if (p.custom) {
+            allCustomNames.add(p.name.trim().toLowerCase());
+            customPlayers.push(p);
+          }
+        });
+        
+        memory.custom.forEach(p => {
+          const norm = p.name.trim().toLowerCase();
+          if (!legacyRecruits.includes(norm) && !allCustomNames.has(norm)) {
+            allCustomNames.add(norm);
+            customPlayers.push({
+              name: p.name,
+              available: p.available !== undefined ? p.available : true,
+              team: p.team || "none",
+              custom: true
+            });
+          }
+        });
+
+        // 3. Build active official list preserving user state (availability, team assignments)
+        const officialPlayers = activeOfficial.map(p => {
+          const existing = currentPlan.roster.find(ep => ep.name.trim().toLowerCase() === p.name.trim().toLowerCase());
+          if (existing) {
+            return {
+              name: p.name,
+              available: existing.available,
+              team: existing.team,
+              custom: false
+            };
+          } else {
+            return {
+              name: p.name,
+              available: true,
+              team: defaultTeams[p.name] || "none",
+              custom: false
+            };
+          }
+        });
+        
+        currentPlan.roster = [...officialPlayers, ...customPlayers];
+      } catch (e) {
+        console.error("Roster sync failed in practice plans:", e);
+      }
+    }
+
+    // Render roster grid chips in editor
+    function renderRoster() {
+      const grid = document.getElementById("rosterGrid");
+      grid.innerHTML = "";
+
+      currentPlan.roster.forEach((player, index) => {
+        const chip = document.createElement("div");
+        chip.className = "player-chip";
+        if (!player.available) chip.classList.add("unavailable");
+        if (player.team !== "none") chip.classList.add(`team-${player.team.toLowerCase()}`);
+        if (index === selectedPlayerIndex) chip.style.borderColor = "var(--accent2)";
+
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "player-name";
+        nameSpan.innerText = player.name;
+        chip.appendChild(nameSpan);
+
+        const metaDiv = document.createElement("div");
+        metaDiv.className = "player-meta";
+        metaDiv.innerHTML = `<span>${player.custom ? 'Recruit' : 'Roster'}</span>`;
+        
+        if (player.team !== "none") {
+          metaDiv.innerHTML += `<span class="team-badge">Team ${player.team}</span>`;
+        } else if (!player.available) {
+          metaDiv.innerHTML += `<span style="color:var(--danger)">OUT</span>`;
+        }
+        chip.appendChild(metaDiv);
+
+        chip.onclick = () => selectPlayer(index);
+        grid.appendChild(chip);
+      });
+    }
+
+    // Select player to show settings panel
+    function selectPlayer(index) {
+      selectedPlayerIndex = index;
+      const player = currentPlan.roster[index];
+      const panel = document.getElementById("playerActionsPanel");
+      const title = document.getElementById("playerActionsTitle");
+
+      title.innerText = `Edit: ${player.name} (${player.custom ? 'Recruit' : 'Roster'})`;
+      
+      // Update toggle buttons active state
+      document.getElementById("btnStatusAvailable").className = player.available ? "player-btn-toggle active" : "player-btn-toggle";
+      document.getElementById("btnStatusUnavailable").className = !player.available ? "player-btn-toggle active" : "player-btn-toggle";
+
+      const teams = ['None', 'A', 'B', 'C'];
+      teams.forEach(t => {
+        const tVal = t === 'None' ? 'none' : t;
+        document.getElementById(`btnTeam${t}`).className = player.team === tVal ? "player-btn-toggle active" : "player-btn-toggle";
+      });
+
+      // Update category toggle buttons active state
+      document.getElementById("btnCategoryRoster").className = !player.custom ? "player-btn-toggle active" : "player-btn-toggle";
+      document.getElementById("btnCategoryRecruit").className = player.custom ? "player-btn-toggle active" : "player-btn-toggle";
+
+      panel.style.display = "block";
+      renderRoster();
+    }
+
+    // Toggle player status
+    function setPlayerStatus(available) {
+      if (selectedPlayerIndex === null) return;
+      saveStateHistory();
+      currentPlan.roster[selectedPlayerIndex].available = available;
+      if (!available) {
+        currentPlan.roster[selectedPlayerIndex].team = "none";
+      }
+      selectPlayer(selectedPlayerIndex);
+      renderPreview();
+      saveStateHistory();
+    }
+
+    // Set player team
+    function setPlayerTeam(team) {
+      if (selectedPlayerIndex === null) return;
+      saveStateHistory();
+      if (team !== 'none' && !currentPlan.roster[selectedPlayerIndex].available) {
+        currentPlan.roster[selectedPlayerIndex].available = true;
+      }
+      currentPlan.roster[selectedPlayerIndex].team = team;
+      selectPlayer(selectedPlayerIndex);
+      renderPreview();
+      saveStateHistory();
+    }
+
+    // Set player category (Roster vs Recruit)
+    function setPlayerCategory(category) {
+      if (selectedPlayerIndex === null) return;
+      saveStateHistory();
+      currentPlan.roster[selectedPlayerIndex].custom = (category === 'recruit');
+      selectPlayer(selectedPlayerIndex);
+      renderPreview();
+      saveStateHistory();
+    }
+
+    // Delete player from roster (with Memory Bank updates to prevent reverting on refresh)
+    function deletePlayer() {
+      if (selectedPlayerIndex === null) return;
+      const player = currentPlan.roster[selectedPlayerIndex];
+      if (confirm(`Are you sure you want to remove ${player.name} from your roster memory bank?`)) {
+        saveStateHistory();
+        const memory = loadRosterMemory();
+        if (player.custom) {
+          // Remove from saved recruits in memory bank
+          memory.custom = memory.custom.filter(p => p.name.trim().toLowerCase() !== player.name.trim().toLowerCase());
+        } else {
+          // Exclude this official player from future roster synchronizations
+          const lowerName = player.name.trim().toLowerCase();
+          if (!memory.hidden.includes(lowerName)) {
+            memory.hidden.push(lowerName);
+          }
+        }
+        localStorage.setItem('hoops-hub:practice-roster-memory', JSON.stringify(memory));
+
+        currentPlan.roster.splice(selectedPlayerIndex, 1);
+        selectedPlayerIndex = null;
+        document.getElementById("playerActionsPanel").style.display = "none";
+        renderRoster();
+        renderPreview();
+        saveStateHistory();
+      }
+    }
+
+    // Add custom player to plan roster list (with Memory Bank updates)
+    function addCustomPlayer() {
+      const input = document.getElementById("inputNewPlayer");
+      const name = input.value.trim();
+      if (!name) return;
+
+      // Avoid duplicates
+      if (currentPlan.roster.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+        alert("Player already exists!");
+        return;
+      }
+
+      saveStateHistory();
+
+      const newPlayer = {
+        name: name,
+        available: true,
+        team: "none",
+        custom: true
+      };
+
+      // Save recruit to memory bank to persist across page reloads
+      const memory = loadRosterMemory();
+      if (!memory.custom.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+        memory.custom.push(newPlayer);
+        localStorage.setItem('hoops-hub:practice-roster-memory', JSON.stringify(memory));
+      }
+
+      currentPlan.roster.push(newPlayer);
+
+      input.value = "";
+      renderRoster();
+      renderPreview();
+      selectPlayer(currentPlan.roster.length - 1);
+      saveStateHistory();
+    }
+
+    // Helper: Parse time string (e.g. "04:00 PM") to minutes from midnight
+    function parseTimeToMinutes(timeStr) {
+      try {
+        const parts = timeStr.trim().match(/^(\d+):(\d+)\s*(AM|PM)$/i);
+        if (!parts) return 0;
+        let hours = parseInt(parts[1], 10);
+        const minutes = parseInt(parts[2], 10);
+        const ampm = parts[3].toUpperCase();
+
+        if (ampm === "PM" && hours < 12) hours += 12;
+        if (ampm === "AM" && hours === 12) hours = 0;
+
+        return hours * 60 + minutes;
+      } catch (e) {
+        return 0;
+      }
+    }
+
+    // Helper: Format minutes from midnight to "11:00 AM" style
+    function formatMinutesToTime(totalMin) {
+      const hours24 = Math.floor(totalMin / 60) % 24;
+      const minutes = totalMin % 60;
+      const ampm = hours24 >= 12 ? "PM" : "AM";
+      let hours12 = hours24 % 12;
+      if (hours12 === 0) hours12 = 12;
+
+      const minStr = minutes < 10 ? "0" + minutes : minutes;
+      return `${hours12}:${minStr} ${ampm}`;
+    }
+
+    // Render activity list in editor
+    function renderDrillList() {
+      const container = document.getElementById("drillListContainer");
+      container.innerHTML = "";
+
+      currentPlan.activities.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "drill-item";
+
+        // Main input row
+        const row = document.createElement("div");
+        row.className = "drill-title-row";
+
+        // Duration Input
+        const durInput = document.createElement("input");
+        durInput.type = "text";
+        durInput.className = "drill-duration";
+        durInput.placeholder = "Min";
+        durInput.value = item.duration;
+        durInput.onchange = () => saveStateHistory();
+        durInput.oninput = (e) => {
+          currentPlan.activities[index].duration = parseInt(e.target.value) || 0;
+          renderPreview();
+        };
+
+        // Title Input
+        const titleInput = document.createElement("input");
+        titleInput.type = "text";
+        titleInput.className = "drill-activity-input";
+        titleInput.placeholder = "Drill or Activity Name";
+        titleInput.style.flex = "1";
+        titleInput.value = item.activity;
+        titleInput.onchange = () => saveStateHistory();
+        titleInput.oninput = (e) => {
+          currentPlan.activities[index].activity = e.target.value;
+          renderPreview();
+        };
+
+        // Actions
+        const actionsDiv = document.createElement("div");
+        actionsDiv.className = "drill-actions";
+
+        const btnUp = document.createElement("button");
+        btnUp.className = "btn";
+        btnUp.style.padding = "4px 8px";
+        btnUp.innerText = "▲";
+        btnUp.onclick = () => moveDrill(index, -1);
+
+        const btnDown = document.createElement("button");
+        btnDown.className = "btn";
+        btnDown.style.padding = "4px 8px";
+        btnDown.innerText = "▼";
+        btnDown.onclick = () => moveDrill(index, 1);
+
+        const btnDel = document.createElement("button");
+        btnDel.className = "btn btn-danger";
+        btnDel.style.padding = "4px 8px";
+        btnDel.innerText = "×";
+        btnDel.onclick = () => deleteDrill(index);
+
+        actionsDiv.appendChild(btnUp);
+        actionsDiv.appendChild(btnDown);
+        actionsDiv.appendChild(btnDel);
+
+        row.appendChild(durInput);
+        row.appendChild(titleInput);
+        row.appendChild(actionsDiv);
+        card.appendChild(row);
+
+        // Notes Input
+        const notesInput = document.createElement("textarea");
+        notesInput.className = "drill-notes";
+        notesInput.placeholder = "Details, instructions, scores, parameters...";
+        notesInput.rows = 2;
+        notesInput.value = item.notes || "";
+        notesInput.onchange = () => saveStateHistory();
+        notesInput.oninput = (e) => {
+          currentPlan.activities[index].notes = e.target.value;
+          renderPreview();
+        };
+
+        card.appendChild(notesInput);
+        container.appendChild(card);
+      });
+      checkPlayerReadOnlyMode();
+    }
+
+    // Move drill up/down
+    function moveDrill(index, offset) {
+      const newIndex = index + offset;
+      if (newIndex < 0 || newIndex >= currentPlan.activities.length) return;
+
+      saveStateHistory();
+      // Swap
+      const temp = currentPlan.activities[index];
+      currentPlan.activities[index] = currentPlan.activities[newIndex];
+      currentPlan.activities[newIndex] = temp;
+
+      renderDrillList();
+      renderPreview();
+      saveStateHistory();
+    }
+
+    // Delete drill
+    function deleteDrill(index) {
+      saveStateHistory();
+      currentPlan.activities.splice(index, 1);
+      renderDrillList();
+      renderPreview();
+      saveStateHistory();
+    }
+
+    // Add empty drill row
+    function addDrillItem() {
+      saveStateHistory();
+      currentPlan.activities.push({
+        duration: 10,
+        activity: "",
+        notes: ""
+      });
+      renderDrillList();
+      renderPreview();
+      saveStateHistory();
+    }
+
+    // Render printable preview on the right
+    function renderPreview() {
+      // 1. Text headers
+      document.getElementById("docSeason").innerText = currentPlan.season;
+      document.getElementById("docWeek").innerText = currentPlan.week;
+      document.getElementById("docDay").innerText = currentPlan.day;
+      document.getElementById("docDate").innerText = currentPlan.date;
+      document.getElementById("docTimeRange").innerText = currentPlan.timeRange;
+      document.getElementById("docObjective").innerText = currentPlan.objective;
+      document.getElementById("docNews").innerHTML = currentPlan.news.replace(/\n/g, "<br>");
+      document.getElementById("docDefTerms").innerText = currentPlan.defTerms;
+      document.getElementById("docOffTerms").innerText = currentPlan.offTerms;
+
+      // 2. Available / Unavailable lists
+      const formatTeamPlayerName = p => p.custom ? `${p.name} (R)` : p.name;
+
+      const availRoster = currentPlan.roster.filter(p => p.available && !p.custom).map(p => p.name);
+      const availRecruits = currentPlan.roster.filter(p => p.available && p.custom).map(p => p.name);
+      let availHtml = "";
+      if (availRoster.length > 0) availHtml += `<strong>Roster:</strong> ${availRoster.join(", ")}`;
+      if (availRecruits.length > 0) {
+        if (availHtml) availHtml += " | ";
+        availHtml += `<strong>Recruits:</strong> ${availRecruits.join(", ")}`;
+      }
+      document.getElementById("docAvailable").innerHTML = availHtml || "None";
+
+      const unavailRoster = currentPlan.roster.filter(p => !p.available && !p.custom).map(p => p.name);
+      const unavailRecruits = currentPlan.roster.filter(p => !p.available && p.custom).map(p => p.name);
+      let unavailHtml = "";
+      if (unavailRoster.length > 0) unavailHtml += `<strong>Roster:</strong> ${unavailRoster.join(", ")}`;
+      if (unavailRecruits.length > 0) {
+        if (unavailHtml) unavailHtml += " | ";
+        unavailHtml += `<strong>Recruits:</strong> ${unavailRecruits.join(", ")}`;
+      }
+      document.getElementById("docUnavailable").innerHTML = unavailHtml || "None";
+
+      // 3. Teams lists
+      const teamA = currentPlan.roster.filter(p => p.available && p.team === "A").map(formatTeamPlayerName).join(", ");
+      const teamB = currentPlan.roster.filter(p => p.available && p.team === "B").map(formatTeamPlayerName).join(", ");
+      const teamC = currentPlan.roster.filter(p => p.available && p.team === "C").map(formatTeamPlayerName).join(", ");
+
+      document.getElementById("docTeamA").innerText = teamA || "None";
+      document.getElementById("docTeamB").innerText = teamB || "None";
+      document.getElementById("docTeamC").innerText = teamC || "None";
+
+      // 4. Timeline list
+      const body = document.getElementById("docGridBody");
+      body.innerHTML = "";
+
+      let currentMin = parseTimeToMinutes(currentPlan.startTime);
+
+      currentPlan.activities.forEach(item => {
+        const row = document.createElement("tr");
+
+        const startStr = formatMinutesToTime(currentMin);
+        currentMin += item.duration;
+        const endStr = formatMinutesToTime(currentMin);
+
+        // Time column cell
+        const timeCell = document.createElement("td");
+        timeCell.className = "time-col";
+        timeCell.innerHTML = `<strong>${startStr}-${endStr.split(' ')[0]}</strong><br><span style="color:#555;font-size:9px;text-transform:uppercase;">(${item.duration} MIN)</span>`;
+        row.appendChild(timeCell);
+
+        // Activity cell
+        const actCell = document.createElement("td");
+        actCell.className = "act-col";
+        actCell.innerText = item.activity || "—";
+        row.appendChild(actCell);
+
+        // Notes cell
+        const notesCell = document.createElement("td");
+        notesCell.className = "notes-col";
+        
+        // Escape HTML to prevent layout breaks and convert URLs to links
+        const escaped = (item.notes || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+        
+        const linkified = escaped.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:#98002e; text-decoration:underline;">$1</a>');
+        notesCell.innerHTML = linkified.replace(/\n/g, "<br>");
+        row.appendChild(notesCell);
+
+        body.appendChild(row);
+      });
+
+      // Recalculate scaling to match new content height
+      fitPaperDocument();
+    }
+
+    // Reset current plan to David's Week 9 Monday PDF values
+    function resetToSample() {
+      if(!confirm("Are you sure you want to discard your changes and reload the sample?")) return;
+
+      currentPlan = {
+        season: "2025-26",
+        week: "9",
+        day: "Monday",
+        date: "2026-05-19",
+        startTime: "04:00 PM",
+        timeRange: "4:00 PM - 9:00 PM",
+        objective: "Review: Adv vs Neutral, Catch N Go, Go-Yo-Flow, Snap, Split (You, Me, Sling, Straight)",
+        news: "Nutrition meeting in room 8-203\nTomorrow 11-1pm at Milwood Christian School",
+        defTerms: "Neutral → Coverage → Rotation → Shot Quality < 1 PPP\n- Shell D: Ball, Nail, Strong, Rim, Low, Wall",
+        offTerms: "Neutral → Trigger → Advantage → Shot Quality ≥ 1 PPP\n- Split (You, Me, Sling, Straight)\n- Catch: Go(Right/Left), Shoot, Pass\n- TranO: 1-3-7, Go-Yo-Flow",
+        roster: [
+          { name: "Owen Hickey", available: true, team: "B", custom: false },
+          { name: "Jojo Muyo", available: true, team: "B", custom: false },
+          { name: "Khushal Shukla", available: true, team: "B", custom: false },
+          { name: "Joel Seke", available: true, team: "B", custom: false },
+          { name: "Elisha Ampofo", available: true, team: "B", custom: false },
+          { name: "Diego Presingular", available: true, team: "A", custom: false },
+          { name: "Noah Simon", available: true, team: "A", custom: false },
+          { name: "Judson Weir", available: true, team: "A", custom: false },
+          { name: "Dele Osuma", available: true, team: "A", custom: false },
+          { name: "Ryan Ziolkowski", available: true, team: "A", custom: false },
+          { name: "Wol Wol", available: true, team: "A", custom: false },
+          { name: "Favour Igbinyemi", available: true, team: "C", custom: false },
+          { name: "Abdi Musse", available: true, team: "B", custom: false },
+          { name: "Nathan Lefevre", available: true, team: "C", custom: false },
+          { name: "David Wilmes", available: true, team: "C", custom: false },
+          { name: "Otis Onink", available: true, team: "C", custom: false },
+          { name: "Peter-Aluk Deng", available: true, team: "C", custom: false },
+          { name: "Freddy Kapinga", available: true, team: "C", custom: false }
+        ],
+        activities: [
+          { duration: 10, activity: "Warm up - Intro", notes: "" },
+          { duration: 5, activity: "Catch game", notes: "Ball handling to pass to catch" },
+          { duration: 5, activity: "Catch N Go", notes: "Attack middle, pass, Catch N Go" },
+          { duration: 5, activity: "Break / Transition", notes: "implied / fluid" },
+          { duration: 10, activity: "Catch N Go 1s (Keeps)", notes: "3pts CS3, 2pts paint score, 1pt anything else" },
+          { duration: 5, activity: "Teach Snap", notes: "Set screen if you want the switch, Ghost if you want confusion" },
+          { duration: 10, activity: "Snap Shooting (both lines w/ ball)", notes: "" },
+          { duration: 10, activity: "Snap shooting 2s (Keeps)", notes: "3pts CS3, 2pts paint score, 1pt anything else" },
+          { duration: 10, activity: "4v4 (Keeps)", notes: "3pts CS3, 2pts paint score, 1pt anything else\n*Team A/B on Court 1, Team C drills*" },
+          { duration: 10, activity: "Teach Go-Yo-Flow", notes: "Anyone inbounds, Run sideline (wide) then baseline (long)" },
+          { duration: 10, activity: "5v5(midcourt circle) Keeps", notes: "3pts CS3, 2pts paint score, 1pt anything else" },
+          { duration: 90, activity: "Nutrition / Break", notes: "Meeting in room 8-203" },
+          { duration: 15, activity: "Warm up - intro", notes: "Part 2" },
+          { duration: 5, activity: "Teach Split", notes: "(You, Me, Sling, Straight)" },
+          { duration: 5, activity: "5 line shooting", notes: "" },
+          { duration: 20, activity: "Split shooting", notes: "(You, Me, Sling, Straight)" },
+          { duration: 75, activity: "2min games (Keeps)", notes: "3pts CS3, 2pts paint score, 1pt anything else" }
+        ]
+      };
+
+      // Sync roster and set team defaults
+      syncPlanRosterWithOfficialRoster();
+      currentPlan.roster.forEach(p => {
+        if (defaultTeams[p.name]) {
+          p.team = defaultTeams[p.name];
+        }
+      });
+
+      // Update forms
+      document.getElementById("inputSeason").value = currentPlan.season;
+      document.getElementById("inputWeek").value = currentPlan.week;
+      document.getElementById("inputDay").value = currentPlan.day;
+      document.getElementById("inputDate").value = currentPlan.date;
+      document.getElementById("inputStartTime").value = currentPlan.startTime;
+      document.getElementById("inputTimeRange").value = currentPlan.timeRange;
+      document.getElementById("inputObjective").value = currentPlan.objective;
+      document.getElementById("inputNews").value = currentPlan.news;
+      document.getElementById("inputDefTerms").value = currentPlan.defTerms;
+      document.getElementById("inputOffTerms").value = currentPlan.offTerms;
+
+      selectedPlayerIndex = null;
+      document.getElementById("playerActionsPanel").style.display = "none";
+
+      renderRoster();
+      renderDrillList();
+      renderPreview();
+    }
+
+    // Fetch published practice plans from repo listing
+    function fetchPublishedPlans() {
+      fetch('./list.json')
+        .then(res => res.json())
+        .then(data => {
+          publishedPlans = data || [];
+          renderPlanExplorerList();
+        })
+        .catch(err => {
+          console.warn("Could not load published plans. Server may not have list.json yet:", err);
+          publishedPlans = [];
+          renderPlanExplorerList();
+        });
+    }
+
+    // Load saved plans list from storage
+    function loadPlansFromStorage() {
+      const raw = localStorage.getItem("mbb_saved_practice_plans");
+      if (raw) {
+        try {
+          savedPlans = JSON.parse(raw);
+        } catch(e) {
+          savedPlans = [];
+        }
+      } else {
+        savedPlans = [];
+      }
+    }
+
+    // Load templates list from storage
+    function loadTemplatesFromStorage() {
+      const raw = localStorage.getItem("mbb_saved_practice_templates");
+      if (raw) {
+        try {
+          savedTemplates = JSON.parse(raw);
+        } catch(e) {
+          savedTemplates = [];
+        }
+      } else {
+        savedTemplates = [];
+      }
+    }
+
+    // Switch active plans library tab
+    function switchLibTab(tab) {
+      activeLibTab = tab;
+      
+      // Update UI active tab styles
+      document.getElementById("btnLibPublished").className = tab === 'published' ? "player-btn-toggle active" : "player-btn-toggle";
+      document.getElementById("btnLibDrafts").className = tab === 'drafts' ? "player-btn-toggle active" : "player-btn-toggle";
+      document.getElementById("btnLibTemplates").className = tab === 'templates' ? "player-btn-toggle active" : "player-btn-toggle";
+
+      renderPlanExplorerList();
+    }
+
+    // Render list based on active tab
+    function renderPlanExplorerList() {
+      const container = document.getElementById("planExplorerList");
+      container.innerHTML = "";
+
+      if (activeLibTab === 'published') {
+        if (publishedPlans.length === 0) {
+          container.innerHTML = `<div style="font-size:11px;color:var(--mute);padding:8px;text-align:center;">No published plans found in the repository.</div>`;
+          return;
+        }
+
+        publishedPlans.forEach((plan, index) => {
+          const item = document.createElement("div");
+          item.className = "plan-list-item";
+          
+          const info = document.createElement("div");
+          info.className = "plan-list-info";
+          
+          const title = document.createElement("span");
+          title.className = "plan-list-title";
+          title.innerText = `${plan.date} - Week ${plan.week} ${plan.day}`;
+          
+          const objective = document.createElement("span");
+          objective.className = "plan-list-date";
+          objective.innerText = plan.objective ? plan.objective.substring(0, 50) + "..." : "No objective";
+
+          info.appendChild(title);
+          info.appendChild(objective);
+          item.appendChild(info);
+
+          item.onclick = () => loadPublishedPlan(plan.filename);
+          container.appendChild(item);
+        });
+      } else if (activeLibTab === 'drafts') {
+        if (savedPlans.length === 0) {
+          container.innerHTML = `<div style="font-size:11px;color:var(--mute);padding:8px;text-align:center;">No local drafts in browser storage. Click "Save as Draft" below to create one.</div>`;
+          return;
+        }
+
+        savedPlans.forEach((plan, index) => {
+          const item = document.createElement("div");
+          item.className = "plan-list-item";
+          
+          const info = document.createElement("div");
+          info.className = "plan-list-info";
+          
+          const title = document.createElement("span");
+          title.className = "plan-list-title";
+          title.innerText = plan.title;
+          
+          const date = document.createElement("span");
+          date.className = "plan-list-date";
+          date.innerText = plan.date;
+
+          info.appendChild(title);
+          info.appendChild(date);
+          item.appendChild(info);
+
+          // Delete button
+          const delBtn = document.createElement("button");
+          delBtn.className = "btn btn-danger";
+          delBtn.style.padding = "4px 8px";
+          delBtn.style.fontSize = "10px";
+          delBtn.innerText = "Delete";
+          delBtn.onclick = (e) => {
+            e.stopPropagation();
+            deleteSavedPlan(index);
+          };
+          item.appendChild(delBtn);
+
+          item.onclick = () => loadSavedPlan(index);
+          container.appendChild(item);
+        });
+      } else if (activeLibTab === 'templates') {
+        if (savedTemplates.length === 0) {
+          container.innerHTML = `<div style="font-size:11px;color:var(--mute);padding:8px;text-align:center;">No custom templates in browser storage. Click "Save as Template" below to create one.</div>`;
+          return;
+        }
+
+        savedTemplates.forEach((tpl, index) => {
+          const item = document.createElement("div");
+          item.className = "plan-list-item";
+          
+          const info = document.createElement("div");
+          info.className = "plan-list-info";
+          
+          const title = document.createElement("span");
+          title.className = "plan-list-title";
+          title.innerText = tpl.title;
+          
+          const blocks = document.createElement("span");
+          blocks.className = "plan-list-date";
+          blocks.innerText = `${tpl.blocksCount} activity blocks`;
+
+          info.appendChild(title);
+          info.appendChild(blocks);
+          item.appendChild(info);
+
+          // Delete button
+          const delBtn = document.createElement("button");
+          delBtn.className = "btn btn-danger";
+          delBtn.style.padding = "4px 8px";
+          delBtn.style.fontSize = "10px";
+          delBtn.innerText = "Delete";
+          delBtn.onclick = (e) => {
+            e.stopPropagation();
+            deleteTemplate(index);
+          };
+          item.appendChild(delBtn);
+
+          item.onclick = () => loadTemplate(index);
+          container.appendChild(item);
+        });
+      }
+    }
+
+    // Save plans to local storage drafts
+    function savePlanToStorage() {
+      const planName = `${currentPlan.date} - Week ${currentPlan.week} ${currentPlan.day}`;
+      
+      const existingIndex = savedPlans.findIndex(p => p.title === planName || (p.date === currentPlan.date && p.day === currentPlan.day));
+      
+      const planToSave = {
+        title: planName,
+        date: currentPlan.date,
+        day: currentPlan.day,
+        data: JSON.stringify(currentPlan)
+      };
+
+      if (existingIndex > -1) {
+        savedPlans[existingIndex] = planToSave;
+      } else {
+        savedPlans.push(planToSave);
+      }
+
+      localStorage.setItem("mbb_saved_practice_plans", JSON.stringify(savedPlans));
+      loadPlansFromStorage();
+      activeLibTab = 'drafts';
+      switchLibTab('drafts');
+      alert(`Draft "${planName}" successfully saved to browser local storage!`);
+    }
+
+    // Load specific saved plan (draft)
+    function loadSavedPlan(index) {
+      const plan = savedPlans[index];
+      if (!plan) return;
+
+      try {
+        saveStateHistory();
+
+        let planObj = null;
+        if (typeof plan.data === 'string') {
+          planObj = JSON.parse(plan.data);
+        } else if (typeof plan.data === 'object' && plan.data !== null) {
+          planObj = plan.data;
+        } else {
+          planObj = plan;
+        }
+
+        if (!planObj) return;
+
+        currentPlan = planObj;
+        syncPlanRosterWithOfficialRoster();
+
+        // Automatically update date and day of week to present day (today)
+        const today = new Date().toISOString().split('T')[0];
+        currentPlan.date = today;
+        currentPlan.day = getDayOfWeekFromDate(today);
+        
+        // Refresh forms
+        document.getElementById("inputSeason").value = currentPlan.season || "2025-26";
+        document.getElementById("inputWeek").value = currentPlan.week || "1";
+        document.getElementById("inputDay").value = currentPlan.day;
+        document.getElementById("inputDate").value = currentPlan.date;
+        document.getElementById("inputStartTime").value = currentPlan.startTime || "04:00 PM";
+        document.getElementById("inputTimeRange").value = currentPlan.timeRange || "4:00 PM - 9:00 PM";
+        document.getElementById("inputObjective").value = currentPlan.objective || "";
+        document.getElementById("inputNews").value = currentPlan.news || "";
+        document.getElementById("inputDefTerms").value = currentPlan.defTerms || "";
+        document.getElementById("inputOffTerms").value = currentPlan.offTerms || "";
+
+        selectedPlayerIndex = null;
+        document.getElementById("playerActionsPanel").style.display = "none";
+
+        renderRoster();
+        renderDrillList();
+        renderPreview();
+        saveStateHistory();
+      } catch(e) {
+        alert("Failed to load plan: " + e.message);
+      }
+    }
+
+    // Delete a saved plan
+    function deleteSavedPlan(index) {
+      if(!confirm("Delete this saved plan draft from browser?")) return;
+      savedPlans.splice(index, 1);
+      localStorage.setItem("mbb_saved_practice_plans", JSON.stringify(savedPlans));
+      renderPlanExplorerList();
+    }
+
+    // Save current plan structure as a reusable Template
+    function saveAsTemplate() {
+      const tplName = prompt("Enter a name for this practice plan template (e.g. 'Scrimmage Day', 'Transition Focus'):");
+      if (!tplName || !tplName.trim()) return;
+
+      // Extract template-friendly structure including roster team assignments & status
+      const tplData = {
+        season: currentPlan.season,
+        objective: currentPlan.objective,
+        defTerms: currentPlan.defTerms,
+        offTerms: currentPlan.offTerms,
+        roster: currentPlan.roster.map(p => ({
+          name: p.name,
+          available: p.available,
+          team: p.team,
+          custom: p.custom
+        })),
+        activities: currentPlan.activities.map(a => ({
+          duration: a.duration,
+          activity: a.activity,
+          notes: a.notes
+        }))
+      };
+
+      const existingIndex = savedTemplates.findIndex(t => t.title.toLowerCase() === tplName.toLowerCase());
+      const itemToSave = {
+        title: tplName.trim(),
+        blocksCount: currentPlan.activities.length,
+        data: JSON.stringify(tplData)
+      };
+
+      if (existingIndex > -1) {
+        if (!confirm(`A template named "${tplName}" already exists. Overwrite it?`)) return;
+        savedTemplates[existingIndex] = itemToSave;
+      } else {
+        savedTemplates.push(itemToSave);
+      }
+
+      localStorage.setItem("mbb_saved_practice_templates", JSON.stringify(savedTemplates));
+      loadTemplatesFromStorage();
+      activeLibTab = 'templates';
+      switchLibTab('templates');
+      alert(`Template "${tplName}" successfully saved to browser local storage!`);
+    }
+
+    // Load template
+    function loadTemplate(index) {
+      const tpl = savedTemplates[index];
+      if (!tpl) return;
+
+      try {
+        saveStateHistory();
+        const tplData = JSON.parse(tpl.data);
+        
+        syncPlanRosterWithOfficialRoster();
+        currentPlan.season = tplData.season || "2026-27";
+        currentPlan.objective = tplData.objective || "";
+        currentPlan.defTerms = tplData.defTerms || "";
+        currentPlan.offTerms = tplData.offTerms || "";
+        currentPlan.activities = tplData.activities || [];
+        
+        // Restore saved roster teams & statuses from template if present
+        if (tplData.roster && Array.isArray(tplData.roster) && tplData.roster.length > 0) {
+          tplData.roster.forEach(savedP => {
+            const match = currentPlan.roster.find(p => p.name.trim().toLowerCase() === savedP.name.trim().toLowerCase());
+            if (match) {
+              match.available = savedP.available;
+              match.team = savedP.team;
+              if (savedP.custom !== undefined) match.custom = savedP.custom;
+            } else {
+              currentPlan.roster.push(savedP);
+            }
+          });
+        }
+        
+        // Reset date & day of week to today
+        const today = new Date().toISOString().split('T')[0];
+        currentPlan.date = today;
+        currentPlan.day = getDayOfWeekFromDate(today);
+
+        // Update inputs
+        document.getElementById("inputSeason").value = currentPlan.season;
+        document.getElementById("inputWeek").value = currentPlan.week;
+        document.getElementById("inputDay").value = currentPlan.day;
+        document.getElementById("inputDate").value = currentPlan.date;
+        document.getElementById("inputObjective").value = currentPlan.objective;
+        document.getElementById("inputDefTerms").value = currentPlan.defTerms;
+        document.getElementById("inputOffTerms").value = currentPlan.offTerms;
+
+        selectedPlayerIndex = null;
+        document.getElementById("playerActionsPanel").style.display = "none";
+
+        renderRoster();
+        renderDrillList();
+        renderPreview();
+        saveStateHistory();
+        alert(`Loaded template "${tpl.title}" with saved roster team assignments & player status!`);
+      } catch(e) {
+        alert("Failed to load template: " + e.message);
+      }
+    }
+
+    // Delete template
+    function deleteTemplate(index) {
+      if(!confirm("Delete this template from browser local storage?")) return;
+      savedTemplates.splice(index, 1);
+      localStorage.setItem("mbb_saved_practice_templates", JSON.stringify(savedTemplates));
+      renderPlanExplorerList();
+    }
+
+    // Load plan from repository
+    function loadPublishedPlan(filename) {
+      fetch(`./plans/${filename}`)
+        .then(res => {
+          if (!res.ok) throw new Error("File not found on server");
+          return res.json();
+        })
+        .then(plan => {
+          currentPlan = plan;
+          
+          // Automatically update date and day of week to present day (today)
+          const today = new Date().toISOString().split('T')[0];
+          currentPlan.date = today;
+          currentPlan.day = getDayOfWeekFromDate(today);
+
+          // Update inputs
+          document.getElementById("inputSeason").value = currentPlan.season;
+          document.getElementById("inputWeek").value = currentPlan.week;
+          document.getElementById("inputDay").value = currentPlan.day;
+          document.getElementById("inputDate").value = currentPlan.date;
+          document.getElementById("inputStartTime").value = currentPlan.startTime;
+          document.getElementById("inputTimeRange").value = currentPlan.timeRange;
+          document.getElementById("inputObjective").value = currentPlan.objective;
+          document.getElementById("inputNews").value = currentPlan.news;
+          document.getElementById("inputDefTerms").value = currentPlan.defTerms || "";
+          document.getElementById("inputOffTerms").value = currentPlan.offTerms || "";
+
+          selectedPlayerIndex = null;
+          document.getElementById("playerActionsPanel").style.display = "none";
+
+          renderRoster();
+          renderDrillList();
+          renderPreview();
+        })
+        .catch(err => {
+          alert(`Error fetching practice plan "${filename}": ` + err.message);
+        });
+    }
+
+    // Export current plan as JSON file download
+    function exportJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentPlan, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `mbb_practice_plan_${currentPlan.date}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    // Trigger input file click
+    function triggerImportFile() {
+      document.getElementById("importFile").click();
+    }
+
+    // Import JSON file to plan state
+    function importJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed && parsed.activities && parsed.roster) {
+            currentPlan = parsed;
+            syncPlanRosterWithOfficialRoster();
+            
+            // Automatically update date and day of week to present day (today)
+            const today = new Date().toISOString().split('T')[0];
+            currentPlan.date = today;
+            currentPlan.day = getDayOfWeekFromDate(today);
+
+            // Refresh forms
+            document.getElementById("inputSeason").value = currentPlan.season;
+            document.getElementById("inputWeek").value = currentPlan.week;
+            document.getElementById("inputDay").value = currentPlan.day;
+            document.getElementById("inputDate").value = currentPlan.date;
+            document.getElementById("inputStartTime").value = currentPlan.startTime;
+            document.getElementById("inputTimeRange").value = currentPlan.timeRange;
+            document.getElementById("inputObjective").value = currentPlan.objective;
+            document.getElementById("inputNews").value = currentPlan.news;
+            document.getElementById("inputDefTerms").value = currentPlan.defTerms || "";
+            document.getElementById("inputOffTerms").value = currentPlan.offTerms || "";
+
+            selectedPlayerIndex = null;
+            document.getElementById("playerActionsPanel").style.display = "none";
+
+            renderRoster();
+            renderDrillList();
+            renderPreview();
+            alert("Plan imported successfully!");
+          } else {
+            alert("Invalid practice plan file format!");
+          }
+        } catch(err) {
+          alert("Error parsing JSON file: " + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // Export current plan in Markdown format
+    function exportMarkdown() {
+      let md = `# Practice Plan — Week ${currentPlan.week} ${currentPlan.day} (${currentPlan.date})\n\n`;
+      md += `**Season:** ${currentPlan.season} | **Time:** ${currentPlan.timeRange}\n\n`;
+      md += `## Objective\n> ${currentPlan.objective}\n\n`;
+      md += `## News\n${currentPlan.news}\n\n`;
+      
+      const formatTeamPlayerName = p => p.custom ? `${p.name} (R)` : p.name;
+
+      const availRoster = currentPlan.roster.filter(p => p.available && !p.custom).map(p => p.name);
+      const availRecruits = currentPlan.roster.filter(p => p.available && p.custom).map(p => p.name);
+      let availStr = "";
+      if (availRoster.length > 0) availStr += `Roster: ${availRoster.join(", ")}`;
+      if (availRecruits.length > 0) {
+        if (availStr) availStr += " | ";
+        availStr += `Recruits: ${availRecruits.join(", ")}`;
+      }
+      if (!availStr) availStr = "None";
+
+      const unavailRoster = currentPlan.roster.filter(p => !p.available && !p.custom).map(p => p.name);
+      const unavailRecruits = currentPlan.roster.filter(p => !p.available && p.custom).map(p => p.name);
+      let unavailStr = "";
+      if (unavailRoster.length > 0) unavailStr += `Roster: ${unavailRoster.join(", ")}`;
+      if (unavailRecruits.length > 0) {
+        if (unavailStr) unavailStr += " | ";
+        unavailStr += `Recruits: ${unavailRecruits.join(", ")}`;
+      }
+      if (!unavailStr) unavailStr = "None";
+
+      md += `**Available:** ${availStr}\n`;
+      md += `**Unavailable:** ${unavailStr}\n\n`;
+
+      const teamA = currentPlan.roster.filter(p => p.available && p.team === "A").map(formatTeamPlayerName).join(", ");
+      const teamB = currentPlan.roster.filter(p => p.available && p.team === "B").map(formatTeamPlayerName).join(", ");
+      const teamC = currentPlan.roster.filter(p => p.available && p.team === "C").map(formatTeamPlayerName).join(", ");
+      md += `* **Team A:** ${teamA || 'None'}\n`;
+      md += `* **Team B:** ${teamB || 'None'}\n`;
+      md += `* **Team C:** ${teamC || 'None'}\n\n`;
+
+      md += `## Key Terms\n`;
+      md += `### Defensive\n\`\`\`\n${currentPlan.defTerms}\n\`\`\`\n`;
+      md += `### Offensive\n\`\`\`\n${currentPlan.offTerms}\n\`\`\`\n\n`;
+
+      md += `## Grid Schedule\n\n`;
+      md += `| Time | Duration | Activity | Notes / Details |\n`;
+      md += `|---|---|---|---|\n`;
+
+      let currentMin = parseTimeToMinutes(currentPlan.startTime);
+      currentPlan.activities.forEach(item => {
+        const startStr = formatMinutesToTime(currentMin);
+        currentMin += item.duration;
+        const endStr = formatMinutesToTime(currentMin);
+        
+        md += `| ${startStr}-${endStr.split(' ')[0]} | ${item.duration} min | ${item.activity || '—'} | ${item.notes.replace(/\n/g, '<br>') || ''} |\n`;
+      });
+
+      openModal("Markdown Code Export", "Copy the Markdown code below to save into a new file in your practice-plans/ folder.", md);
+    }
+
+    // Modal popup utilities
+    function openModal(title, instructions, content) {
+      document.getElementById("modalTitle").innerText = title;
+      document.getElementById("modalInstructions").innerText = instructions;
+      document.getElementById("modalContent").innerText = content;
+      document.getElementById("modal").classList.add("active");
+    }
+
+    function closeModal() {
+      document.getElementById("modal").classList.remove("active");
+    }
+
+    function copyModalContent() {
+      const content = document.getElementById("modalContent").innerText;
+      navigator.clipboard.writeText(content).then(() => {
+        alert("Copied to clipboard!");
+      }).catch(e => {
+        alert("Failed to copy automatically: Please manually copy the text.");
+      });
+    }
+
+    // DRILL BANK LOGIC AND STATE
+    const DRILL_BANK = [
+      {
+        name: "Celtic Shooting",
+        category: "Shooting",
+        duration: 10,
+        video: "https://www.youtube.com/watch?v=2LFahrmLQ0A",
+        desc: "Make 2 consecutive shots from 5 spots around the arc. Repeat in reverse order under 2 minutes.",
+        coachingPoints: [
+          "Catch ready & game-speed footwork",
+          "Shooter vs fatigue conditioning",
+          "Crisp, accurate passes from rebounders"
+        ]
+      },
+      {
+        name: "5-Star Shooting",
+        category: "Shooting",
+        duration: 10,
+        video: "https://www.youtube.com/watch?v=jeDYzYfbgMQ",
+        desc: "Continuous perimeter passing & shooting drill using 5 stations, maintaining high energy.",
+        coachingPoints: [
+          "High hands, target ready",
+          "Sprint to next spot immediately after passing",
+          "Follow shots and communicate"
+        ]
+      },
+      {
+        name: "3-Man Weave to 2-on-1",
+        category: "Transition",
+        duration: 12,
+        video: "https://www.youtube.com/watch?v=j7hj2zNysVw",
+        desc: "Traditional 3-man weave down court. Shooter becomes the defender, others attack back 2-on-1.",
+        coachingPoints: [
+          "No dribble during weave, high-speed passes",
+          "Offensive spacing on 2-on-1 (stay wide)",
+          "Defender stunts/recovers to stop ball"
+        ]
+      },
+      {
+        name: "3-on-2 Continuous",
+        category: "Transition",
+        duration: 15,
+        video: "https://www.youtube.com/watch?v=0o2OxNkyaI4",
+        desc: "High-tempo fast break transition game. 3 attack 2. Scramble and transition on change of possession.",
+        coachingPoints: [
+          "Fill lanes, push ball to middle or wing",
+          "Tandem defense (I got ball, I got basket)",
+          "Quick transition conversion on stop"
+        ]
+      },
+      {
+        name: "4-Man Shell Drill",
+        category: "Defense",
+        duration: 15,
+        video: "https://www.youtube.com/watch?v=8sekeXeo1zI",
+        desc: "Foundational man-to-man team defensive drill mapping positioning, help-and-recover.",
+        coachingPoints: [
+          "Jump to the ball on every pass",
+          "Maintain ball-you-man triangle",
+          "Loud communication (Ball, Help, Deny)"
+        ]
+      },
+      {
+        name: "Closeout to 1-on-1",
+        category: "Defense",
+        duration: 10,
+        video: "https://www.youtube.com/watch?v=S-QW3Tmkzc0",
+        desc: "Defender rolls ball to offense, sprints out to closeout, then plays live 1-on-1 from bounce.",
+        coachingPoints: [
+          "Chop feet, high hands to contest shot",
+          "Keep chest in front of driver",
+          "Contest and box out"
+        ]
+      },
+      {
+        name: "Nail Help & Recover",
+        category: "Defense",
+        duration: 12,
+        video: "https://www.youtube.com/watch?v=tfGGPGLZFzg",
+        desc: "Wing drives into paint, defender at the nail stunts/helps to stop drive, then recovers to shooter.",
+        coachingPoints: [
+          "Active stunting (fake help and recover)",
+          "High-hand closeout to perimeter",
+          "No middle drives allowed"
+        ]
+      },
+      {
+        name: "11-Man Fast Break",
+        category: "Transition",
+        duration: 15,
+        video: "https://www.youtube.com/watch?v=Z-qDbRc8A1o",
+        desc: "Continuous fast break drill with outlet lines on sidelines to transition continuously.",
+        coachingPoints: [
+          "Hard sprint on outlet run",
+          "Crisp chest/bounce passes in stride",
+          "Finish layups at speed"
+        ]
+      },
+      {
+        name: "Build-Up (2v2 to 4v4)",
+        category: "Scrimmage",
+        duration: 15,
+        video: "https://www.youtube.com/watch?v=ciX7dhSlwTI",
+        desc: "Scrimmage starting 2v2. Coach yells numbers to add attackers/defenders into active play.",
+        coachingPoints: [
+          "Instant spacing and defensive pickup",
+          "Identify the mismatch quickly",
+          "High-communication scramble defense"
+        ]
+      },
+      {
+        name: "4-on-4-on-4 Continuous",
+        category: "Scrimmage",
+        duration: 20,
+        video: "https://www.youtube.com/watch?v=7aEmt7xrbJk",
+        desc: "3-team scrimmage. Offense stays on score, transitions to defense on stop. Third team waits.",
+        coachingPoints: [
+          "Conditioning under pressure",
+          "Instant transition focus",
+          "Organized defensive wall"
+        ]
+      }
+    ];
+
+    let drillBankCategoryFilter = 'All';
+    let drillBankCollapsed = false;
+    let addDrillFormVisible = false;
+    let isCheckingVideo = false;
+
+    // Load custom drills from Local Storage and merge with defaults
+    function getDrillBank() {
+      const customRaw = localStorage.getItem("mbb_custom_drills");
+      let customDrills = [];
+      if (customRaw) {
+        try {
+          customDrills = JSON.parse(customRaw);
+        } catch(e) {
+          customDrills = [];
+        }
+      }
+      return [...DRILL_BANK, ...customDrills];
+    }
+
+    function toggleDrillBankCollapse() {
+      const body = document.getElementById("drillBankBody");
+      const btn = document.getElementById("btnToggleDrillBank");
+      drillBankCollapsed = !drillBankCollapsed;
+      if (drillBankCollapsed) {
+        body.style.display = "none";
+        btn.innerText = "Expand";
+      } else {
+        body.style.display = "block";
+        btn.innerText = "Collapse";
+      }
+    }
+
+    function toggleAddDrillForm() {
+      const formContainer = document.getElementById("addDrillFormContainer");
+      const btn = document.getElementById("btnToggleAddDrill");
+      addDrillFormVisible = !addDrillFormVisible;
+      
+      if (addDrillFormVisible) {
+        formContainer.style.display = "block";
+        btn.innerText = "Cancel Add";
+        btn.style.backgroundColor = "#d9534f"; // Red cancel
+        btn.style.color = "#fff";
+      } else {
+        formContainer.style.display = "none";
+        btn.innerText = "+ Add Drill";
+        btn.style.backgroundColor = "var(--accent2)"; // Gold
+        btn.style.color = "#000";
+        document.getElementById("addDrillStatus").innerText = "";
+      }
+    }
+
+    async function saveCustomDrill() {
+      if (isCheckingVideo) return;
+      
+      const name = document.getElementById("newDrillName").value.trim();
+      const category = document.getElementById("newDrillCategory").value;
+      const duration = parseInt(document.getElementById("newDrillDuration").value) || 10;
+      const video = document.getElementById("newDrillVideo").value.trim();
+      const desc = document.getElementById("newDrillDesc").value.trim();
+      const pointsText = document.getElementById("newDrillPoints").value.trim();
+      const statusEl = document.getElementById("addDrillStatus");
+
+      if (!name) {
+        alert("Please enter a drill name.");
+        return;
+      }
+      if (!desc) {
+        alert("Please enter a description.");
+        return;
+      }
+
+      // Check for duplicate names
+      const allDrills = getDrillBank();
+      if (allDrills.some(d => d.name.toLowerCase() === name.toLowerCase())) {
+        alert(`A drill named "${name}" already exists in the drill bank.`);
+        return;
+      }
+
+      const coachingPoints = pointsText ? pointsText.split("\n").map(p => p.trim()).filter(p => p.length > 0) : [];
+
+      const newDrill = {
+        name,
+        category,
+        duration,
+        video,
+        desc,
+        coachingPoints,
+        custom: true
+      };
+
+      if (video) {
+        const isYoutube = video.includes("youtube.com") || video.includes("youtu.be");
+        
+        if (isYoutube) {
+          statusEl.innerText = "Checking video availability...";
+          statusEl.style.color = "var(--accent)";
+          isCheckingVideo = true;
+          
+          try {
+            const res = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(video)}`);
+            const data = await res.json();
+            isCheckingVideo = false;
+            
+            if (data.error) {
+              const confirmSave = confirm(`⚠️ We couldn't verify this YouTube video (it might be private, deleted, or incorrect).\n\nError: ${data.error}\n\nDo you want to save this drill anyway?`);
+              if (!confirmSave) {
+                statusEl.innerText = "";
+                return;
+              }
+            } else {
+              statusEl.innerText = "✓ Video verified!";
+              statusEl.style.color = "green";
+            }
+          } catch(e) {
+            isCheckingVideo = false;
+            const confirmSave = confirm("⚠️ Network error while verifying video. Do you want to save this drill anyway?");
+            if (!confirmSave) {
+              statusEl.innerText = "";
+              return;
+            }
+          }
+        } else {
+          const confirmSave = confirm("⚠️ This video link is not a standard YouTube link and cannot be verified automatically. Save anyway?");
+          if (!confirmSave) return;
+        }
+      }
+
+      // Save to localStorage custom drills
+      const customRaw = localStorage.getItem("mbb_custom_drills");
+      let customDrills = [];
+      if (customRaw) {
+        try {
+          customDrills = JSON.parse(customRaw);
+        } catch(e) {}
+      }
+      customDrills.push(newDrill);
+      localStorage.setItem("mbb_custom_drills", JSON.stringify(customDrills));
+
+      // Reset form
+      document.getElementById("newDrillName").value = "";
+      document.getElementById("newDrillVideo").value = "";
+      document.getElementById("newDrillDesc").value = "";
+      document.getElementById("newDrillPoints").value = "";
+      document.getElementById("newDrillDuration").value = "10";
+      statusEl.innerText = "";
+
+      toggleAddDrillForm();
+      renderDrillBank();
+      alert(`Drill "${name}" successfully added to your Drill Bank!`);
+    }
+
+    function deleteCustomDrill(name) {
+      if (!confirm(`Are you sure you want to delete the custom drill "${name}" from your drill bank?`)) return;
+      const customRaw = localStorage.getItem("mbb_custom_drills");
+      if (customRaw) {
+        try {
+          let customDrills = JSON.parse(customRaw);
+          customDrills = customDrills.filter(d => d.name !== name);
+          localStorage.setItem("mbb_custom_drills", JSON.stringify(customDrills));
+          renderDrillBank();
+        } catch(e) {
+          console.error(e);
+        }
+      }
+    }
+
+    function filterDrillBankCategory(cat, btnEl) {
+      drillBankCategoryFilter = cat;
+      const buttons = document.querySelectorAll("#drillBankFilters button");
+      buttons.forEach(b => b.classList.remove("active"));
+      btnEl.classList.add("active");
+      renderDrillBank();
+    }
+
+    function renderDrillBank() {
+      const listContainer = document.getElementById("drillBankList");
+      const query = document.getElementById("drillBankSearch").value.toLowerCase();
+      listContainer.innerHTML = "";
+
+      const allDrills = getDrillBank();
+
+      allDrills.forEach((drill, index) => {
+        // category check
+        if (drillBankCategoryFilter !== 'All' && drill.category !== drillBankCategoryFilter) return;
+
+        // search check
+        const matchName = drill.name.toLowerCase().includes(query);
+        const matchDesc = drill.desc.toLowerCase().includes(query);
+        const matchCat = drill.category.toLowerCase().includes(query);
+        if (!matchName && !matchDesc && !matchCat) return;
+
+        const item = document.createElement("div");
+        item.className = "drill-bank-item";
+
+        // Header
+        const header = document.createElement("div");
+        header.className = "drill-bank-header";
+        
+        const titleSpan = document.createElement("span");
+        titleSpan.className = "drill-bank-title";
+        titleSpan.innerText = drill.name;
+        
+        const metaDiv = document.createElement("div");
+        metaDiv.className = "drill-bank-meta";
+        
+        const catBadge = document.createElement("span");
+        catBadge.className = "drill-badge-cat";
+        catBadge.innerText = drill.category;
+        
+        const durBadge = document.createElement("span");
+        durBadge.className = "drill-badge-dur";
+        durBadge.innerText = `${drill.duration} MIN`;
+        
+        metaDiv.appendChild(catBadge);
+        metaDiv.appendChild(durBadge);
+        header.appendChild(titleSpan);
+        header.appendChild(metaDiv);
+        item.appendChild(header);
+
+        // Description
+        const descP = document.createElement("p");
+        descP.className = "drill-bank-desc";
+        descP.innerText = drill.desc;
+        item.appendChild(descP);
+
+        // Coaching points bullet list
+        if (drill.coachingPoints && drill.coachingPoints.length > 0) {
+          const ul = document.createElement("ul");
+          ul.className = "drill-bank-points";
+          drill.coachingPoints.forEach(pt => {
+            const li = document.createElement("li");
+            li.innerText = pt;
+            ul.appendChild(li);
+          });
+          item.appendChild(ul);
+        }
+
+        // Actions row
+        const actions = document.createElement("div");
+        actions.className = "drill-bank-actions";
+
+        const videoLink = document.createElement("a");
+        videoLink.className = "drill-video-link";
+        videoLink.href = drill.video || "#";
+        videoLink.target = drill.video ? "_blank" : "_self";
+        videoLink.style.opacity = drill.video ? "1" : "0.5";
+        videoLink.style.pointerEvents = drill.video ? "auto" : "none";
+        videoLink.innerHTML = `🎥 Watch Video`;
+        
+        const addBtn = document.createElement("button");
+        addBtn.className = "btn-add-drill";
+        addBtn.innerText = `+ Add to Plan`;
+        addBtn.onclick = () => addDrillToPlanFromBank(drill);
+
+        actions.appendChild(videoLink);
+        actions.appendChild(addBtn);
+
+        if (drill.custom) {
+          const deleteBtn = document.createElement("button");
+          deleteBtn.className = "btn-danger";
+          deleteBtn.style.padding = "2px 6px";
+          deleteBtn.style.fontSize = "11px";
+          deleteBtn.style.marginLeft = "8px";
+          deleteBtn.innerHTML = `🗑️ Delete`;
+          deleteBtn.onclick = (e) => {
+            e.stopPropagation();
+            deleteCustomDrill(drill.name);
+          };
+          actions.appendChild(deleteBtn);
+        }
+
+        item.appendChild(actions);
+        listContainer.appendChild(item);
+      });
+    }
+
+    function addDrillToPlanFromBank(drill) {
+      const durationStr = prompt(`Enter duration in minutes for "${drill.name}":`, drill.duration);
+      if (durationStr === null) return; // cancelled
+      const duration = parseInt(durationStr) || drill.duration;
+
+      // Build drill notes
+      const notesLines = [];
+      notesLines.push(`Objective: ${drill.desc}`);
+      if (drill.coachingPoints && drill.coachingPoints.length > 0) {
+        notesLines.push("Coaching Points:");
+        drill.coachingPoints.forEach(cp => {
+          notesLines.push(`- ${cp}`);
+        });
+      }
+      if (drill.video) {
+        notesLines.push(`Video: ${drill.video}`);
+      }
+
+      currentPlan.activities.push({
+        duration: duration,
+        activity: drill.name,
+        notes: notesLines.join("\n")
+      });
+
+      renderDrillList();
+      renderPreview();
+      
+      // Scroll bottom of drill list container in editor
+      const container = document.getElementById("drillListContainer");
+      container.scrollTop = container.scrollHeight;
+    }
+
+    // Dynamic print filename controller using document.title
+    let originalTitle = document.title;
+    window.addEventListener('beforeprint', () => {
+      originalTitle = document.title;
+      let formattedDate = "";
+      const dateStr = currentPlan && currentPlan.date;
+      if (dateStr && dateStr.includes('-')) {
+        const parts = dateStr.split('-');
+        if (parts.length === 3) {
+          // input date is in YYYY-MM-DD format, parts = [YYYY, MM, DD]
+          formattedDate = `${parts[1]}-${parts[2]}-${parts[0]}`;
+        }
+      }
+      if (!formattedDate) {
+        const today = new Date();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        const yyyy = today.getFullYear();
+        formattedDate = `${mm}-${dd}-${yyyy}`;
+      }
+      document.title = `MacPractice-${formattedDate}`;
+    });
+    window.addEventListener('afterprint', () => {
+      document.title = originalTitle;
+    });
+  </script>
+</body>
+</html>

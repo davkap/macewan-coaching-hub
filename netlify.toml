@@ -1,0 +1,38 @@
+[build]
+  command = "npm run update-stats"
+  publish = "."
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[redirects]]
+  from = "/offense-logger"
+  to = "/offense-logger.html"
+  status = 200
+
+[[redirects]]
+  from = "/defense-logger"
+  to = "/defense-logger.html"
+  status = 200
+
+[[redirects]]
+  from = "/lineup-logger"
+  to = "/lineup-logger.html"
+  status = 200
+
+[[redirects]]
+  from = "/lineup-tracker"
+  to = "/lineup-tracker.html"
+  status = 200
+
+[[redirects]]
+  from = "/database"
+  to = "/lineup-tracker.html"
+  status = 200
+
+[[redirects]]
+  from = "/macewan-database"
+  to = "/lineup-tracker.html"
+  status = 200
+

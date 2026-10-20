@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>{{OPPONENT}} — Scout Card</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap');
+  body { margin:0; font-family:'Inter',sans-serif; background:#0a0a0a; color:#fff; }
+  .card { width:1080px; padding:48px 56px; background:linear-gradient(135deg,{{COLOR_A}} 0%,{{COLOR_B}} 100%); }
+  .eyebrow { font-family:'Bebas Neue'; letter-spacing:.18em; font-size:22px; opacity:.85; }
+  h1 { font-family:'Bebas Neue'; font-size:96px; line-height:.95; margin:8px 0 4px; letter-spacing:.02em; }
+  .sub { font-size:20px; opacity:.9; margin-bottom:32px; }
+  .keys { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:28px; }
+  .key { background:rgba(0,0,0,.35); border-radius:14px; padding:20px; }
+  .key .lbl { font-family:'Bebas Neue'; letter-spacing:.15em; font-size:14px; opacity:.7; }
+  .key .val { font-size:18px; font-weight:600; line-height:1.35; margin-top:6px; }
+  .matchup { background:rgba(255,255,255,.08); border-radius:14px; padding:20px 24px; display:flex; justify-content:space-between; align-items:center; }
+  .matchup .l { font-size:20px; font-weight:800; }
+  .matchup .r { font-size:14px; opacity:.85; max-width:60%; text-align:right; }
+  .footer { margin-top:28px; font-size:13px; opacity:.6; letter-spacing:.05em; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="eyebrow">{{LEAGUE}} • {{DATE}}</div>
+  <h1>{{OPPONENT_UPPER}}</h1>
+  <div class="sub">{{ONE_LINER}}</div>
+
+  <div class="keys">
+    <div class="key"><div class="lbl">Defense</div><div class="val">{{KEY_D}}</div></div>
+    <div class="key"><div class="lbl">Offense</div><div class="val">{{KEY_O}}</div></div>
+    <div class="key"><div class="lbl">Mindset</div><div class="val">{{KEY_M}}</div></div>
+  </div>
+
+  <div class="matchup">
+    <div class="l">{{THEIR_BEST}} <span style="opacity:.6;font-weight:400">vs</span> {{OUR_DEFENDER}}</div>
+    <div class="r">{{MATCHUP_NOTE}}</div>
+  </div>
+
+  <div class="footer">SCOUT • {{OUR_TEAM_UPPER}} STAFF • DO NOT SHARE OUTSIDE PROGRAM</div>
+</div>
+</body>
+</html>

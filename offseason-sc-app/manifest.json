@@ -1,0 +1,13 @@
+{
+  "name": "MacEwan Griffins — Offseason S&C",
+  "short_name": "Griffins",
+  "description": "Offseason strength, conditioning & mobility for MacEwan Griffins basketball.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#da291c",
+  "icons": [
+    { "src": "MacEwan-logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
+

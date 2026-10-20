@@ -1,0 +1,162 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Canada West Opponent Scout",
+  "description": "Structured scouting data for one Canada West men's basketball opponent",
+  "type": "object",
+  "required": ["slug", "name", "season", "meta"],
+  "properties": {
+    "slug": { "type": "string", "description": "URL-safe identifier, e.g. 'ambrose-lions'" },
+    "name": { "type": "string", "description": "Display name, e.g. 'Ambrose Lions'" },
+    "season": { "type": "string", "description": "e.g. '2025-26'" },
+    "lastUpdated": { "type": "string", "format": "date", "description": "ISO date of last data update" },
+    "completeness": {
+      "type": "string",
+      "enum": ["full", "partial", "skeleton"],
+      "description": "How complete this scout is"
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "headCoach": { "type": ["string", "null"] },
+        "assistants": { "type": "array", "items": { "type": "string" } },
+        "division": { "type": "string", "enum": ["PRAIRIE", "PACIFIC"] },
+        "rosterConfidence": { "type": "string", "description": "e.g. 'verified', 'partial'" },
+        "filmAvailable": { "type": "boolean" },
+        "record": { "type": ["string", "null"], "description": "e.g. '17-3'" }
+      }
+    },
+    "stats": {
+      "type": "object",
+      "description": "Team-level season stats — nullable for incomplete data",
+      "properties": {
+        "ppg": { "type": ["number", "null"] },
+        "oppPpg": { "type": ["number", "null"] },
+        "fgPct": { "type": ["number", "null"] },
+        "threePtPct": { "type": ["number", "null"] },
+        "threePtMade": { "type": ["number", "null"], "description": "3PM per game" },
+        "threePtAtt": { "type": ["number", "null"], "description": "3PA per game" },
+        "ftPct": { "type": ["number", "null"] },
+        "astPg": { "type": ["number", "null"] },
+        "toPg": { "type": ["number", "null"] },
+        "stlPg": { "type": ["number", "null"] },
+        "blkPg": { "type": ["number", "null"] },
+        "orebPg": { "type": ["number", "null"] },
+        "drebPg": { "type": ["number", "null"] },
+        "totalRebPg": { "type": ["number", "null"] },
+        "pfPg": { "type": ["number", "null"] },
+        "offEff": { "type": ["number", "null"], "description": "Offensive efficiency" },
+        "cwRank": {
+          "type": "object",
+          "description": "Canada West rank for each stat (1 = best)",
+          "additionalProperties": { "type": ["integer", "null"] }
+        }
+      }
+    },
+    "scoutingNuggets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": { "type": "string" },
+          "detail": { "type": "string" }
+        }
+      }
+    },
+    "tendencies": {
+      "type": "array",
+      "description": "Tendencies & tells from the analytical tab",
+      "items": { "type": "string" }
+    },
+    "systems": {
+      "type": "object",
+      "properties": {
+        "offense": {
+          "type": "object",
+          "properties": {
+            "primarySetFamily": { "type": ["string", "null"] },
+            "spacingModel": { "type": ["string", "null"] },
+            "pace": { "type": ["string", "null"] },
+            "goToActions": { "type": "array", "items": { "type": "string" } },
+            "blobSlobAto": { "type": ["string", "null"] }
+          }
+        },
+        "defense": {
+          "type": "object",
+          "properties": {
+            "base": { "type": ["string", "null"] },
+            "ballScreenCoverage": { "type": ["string", "null"] },
+            "postCoverage": { "type": ["string", "null"] },
+            "pressTrap": { "type": ["string", "null"] }
+          }
+        }
+      }
+    },
+    "narrative": {
+      "type": "object",
+      "description": "Prose content — stored as text, not over-structured",
+      "properties": {
+        "identity": { "type": ["string", "null"], "description": "What to expect paragraph" },
+        "coachTake": { "type": ["string", "null"], "description": "Coach's analysis" },
+        "gamePlanKeys": { "type": ["string", "null"], "description": "Key game plan points" }
+      }
+    },
+    "matchupHistory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string" },
+          "result": { "type": "string", "enum": ["W", "L"] },
+          "score": { "type": "string" },
+          "notes": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "keyPlayers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "number": { "type": ["string", "null"] },
+          "position": { "type": ["string", "null"] },
+          "role": { "type": ["string", "null"] },
+          "notes": { "type": ["string", "null"] },
+          "stats": {
+            "type": "object",
+            "properties": {
+              "points": { "type": ["number", "null"] },
+              "fgPct": { "type": ["number", "null"] },
+              "threePtPct": { "type": ["number", "null"] },
+              "ftPct": { "type": ["number", "null"] }
+            }
+          }
+        }
+      }
+    },
+    "roster": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "number": { "type": ["string", "null"] },
+          "name": { "type": "string" },
+          "position": { "type": ["string", "null"] },
+          "height": { "type": ["string", "null"] },
+          "year": { "type": ["string", "null"] },
+          "hometown": { "type": ["string", "null"] },
+          "prior": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "tags": {
+      "type": "array",
+      "description": "Searchable tags: e.g. 'zone', 'press', 'fast-pace', 'physical'",
+      "items": { "type": "string" }
+    }
+  }
+}

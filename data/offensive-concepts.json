@@ -1,0 +1,529 @@
+[
+  {
+    "id": "offence",
+    "title": "OFFENCE",
+    "slogan": "",
+    "pillars": [],
+    "terms": []
+  },
+  {
+    "id": "race",
+    "title": "RACE",
+    "slogan": "NO LAYUPS, 3s OR FOULS IN FIRST 6 SECONDS",
+    "pillars": [
+      "★PACE 21—> CROSS 1/2 BY 21",
+      "★SPOTS —> 5 OUT OR 4 OUT",
+      "★EARLY PAINT —> DRIVE OR RIM RUN",
+      "★BLENDER —> FORCE ROTATION",
+      "★DRAG (FIST) = TRANSITION PNR",
+      "★77 = DOUBLE DRAG"
+    ],
+    "terms": [
+      {
+        "name": "PACE 21",
+        "description": "Get the ball transported across half court by 21 seconds on shot clock — either thru breakout dribble or throw ahead,"
+      },
+      {
+        "name": "SPOTS - All players sprint to the 5 spots",
+        "description": "Deep Corners-Wings—& Post (either Big Ahead into Dunker or Big Above the 3 as a Trailer) in 5 sec or less"
+      },
+      {
+        "name": "DUNKER",
+        "description": "Short corner - “heels on the baseline” - outside the hash mark - wide and flat - opposite the ball for O5"
+      },
+      {
+        "name": "THROW AHEAD",
+        "description": "Look to advance the ball with the pass. Create early numbers advantages."
+      },
+      {
+        "name": "DEEP OUTLET",
+        "description": "Guard Gets butt to the Sideline - Free Throw-Line Extended. First sneak a peek to see numbers before receiving pass."
+      },
+      {
+        "name": "CLOSEST MAN INBOUNDS",
+        "description": "If 5 man inbounds, he will trail and we will be 5 Out Big Above. If anyone else inbounds = Big Ahead and 4 Out  Spacing"
+      },
+      {
+        "name": "77 -Double Drag",
+        "description": "Staggered ball screen - O5 Screens second."
+      }
+    ]
+  },
+  {
+    "id": "core",
+    "title": "CORE",
+    "slogan": "TRIGGERS IF WE ARE NEUTRALIZED ‘SECONDARY BREAKS",
+    "pillars": [
+      "PG CALLS - MAKE OR MISS",
+      "★ “HORNS SIDE” = 5 OUT PISTOL",
+      "★ “4” = 4 OUT DHO INTO STEP UP",
+      "★ “1” = 5 OUT SINGLE PIN",
+      "★ “2” = STAGGER",
+      "★ “0” = 5 OUT SPLIT GAMES -O5 HANDLING",
+      "★ \"4 DOWN\" = BLOCK MOVER",
+      "★ \" MOTION\" OR FINGER TWIRL = CONTINUOUS BALLSCREEN"
+    ],
+    "terms": [
+      {
+        "name": "NEUTRALIZED",
+        "description": "If the defense has all 5 players back- they are loaded to the ball - and the on ball defender is square without a foot angle  advantage. If no advantage = neutralized. We would then flow into a Trigger to create action."
+      },
+      {
+        "name": "TRIGGER",
+        "description": "Screening action — one of our Core 5 Calls. Triggers incorporate O5 to get a ballhandler downhill and to but defense in the  blender."
+      },
+      {
+        "name": "BIG AHEAD",
+        "description": "When the O5 is ahead of the ball and rim runs. If he does not get ball early, he spaces to opposite dunker and we initiate “4”  series for 4 out 1 in spacing."
+      },
+      {
+        "name": "BIG ABOVE",
+        "description": "When the O5 is above the 3 point line or “trailing” the play. We would initiate any one of our 5-Out Triggers— Handler calls it."
+      },
+      {
+        "name": "EARLY CALL",
+        "description": "PG or handler identities 4 out or 5 Out Spacing, if we are neutralized with no advantage, and makes a call for a Core 5 Trigger."
+      }
+    ]
+  },
+  {
+    "id": "drive-and-kick",
+    "title": "DRIVE AND KICK",
+    "slogan": ".5 SCRAMBLE MULTIPLE ATTACKS",
+    "pillars": [
+      "★ 1ST SIDE = TRIGGER",
+      "★ 2ND SIDE = 2 MAN GAME",
+      "★ 3RD SIDE = FLASH OR SNAP"
+    ],
+    "terms": [
+      {
+        "name": "BREAK THE PAINT",
+        "description": "Any time we enter the paint with a drive or a pass to a cutter or post man - ENGAGE 2 DEFENDERS!"
+      },
+      {
+        "name": "SCRAMBLE",
+        "description": "Our term for when we force the other team into full rotation by making their LOW MAN help at the RIM forcing a double team."
+      },
+      {
+        "name": "E2",
+        "description": "Stands for engage 2. When this happen, we must look and pass to open teammate"
+      },
+      {
+        "name": "DRIVE KICK SWING",
+        "description": "When we drive the paint - then kick out and make a quick swing to punish rotation — the “Extra Pass”."
+      },
+      {
+        "name": "KICK OUT GET OUT",
+        "description": "If you drive to the paint, and kick out, you must sprint and exit cut faster than you entered. Creates space for next drive."
+      },
+      {
+        "name": "FOLLOW YOUR MOMENTUM",
+        "description": "When you break the paint and cross the nail, and you kick out, follow the momentum of your pass to relocate."
+      },
+      {
+        "name": ".5",
+        "description": "Stands for 1/2 a second. Once you have the defense on the run, make quick decisions to shoot, drive or pass - do not let the ball stick."
+      }
+    ]
+  },
+  {
+    "id": "flow",
+    "title": "FLOW",
+    "slogan": "PLAY AFTER THE PLAY",
+    "pillars": [
+      "★ 1ST SIDE = TRIGGER",
+      "★ 2ND SIDE = 2 MAN GAME",
+      "★ 3RD SIDE = FLASH OR SNAP"
+    ],
+    "terms": [
+      {
+        "name": "1ST SIDE",
+        "description": "The side of the floor where the initial trigger is initiated. O5 usually rolls off the trigger to the basket and spaces to opposite  dunker."
+      },
+      {
+        "name": "2ND SIDE",
+        "description": "Any time the ball crosses the midline with a pass after the initial 1st side action. O5 stays spaced to opposite dunker and we run a  2-man game with the players on that side of the floor."
+      },
+      {
+        "name": "GHOST",
+        "description": "Whenever we “ghost screen”, a player without the ball sprints up to set a screen but slips to the 3 PT LINE without making  contact"
+      },
+      {
+        "name": "SLIP",
+        "description": "Whenever we “ghost screen”, a player without the ball sprints up to set a screen but slips to the RIM without making contact"
+      },
+      {
+        "name": "GET",
+        "description": "The Shooter’s Pick N Roll” When player with the ball throws to the 05 and sprints off for a handback"
+      },
+      {
+        "name": "RIFLE",
+        "description": "Weakside action when we have O4 or O5 in weakside corner — he flashes out of the corner for Get Game with the Small in slot."
+      },
+      {
+        "name": "3RD SIDE",
+        "description": "If the ball does not break the paint or we get neutralized on 2nd side, we swing it to the 3rd side into Flash or Snap Action."
+      },
+      {
+        "name": "SNAP - Slot Step Up Screen",
+        "description": "Angle PNR WIth Corners filled. Big Sprints up from the dunker as the ball leaves fingertips of 2nd side  passer."
+      },
+      {
+        "name": "FLASH (HAND FLASHING 0-5)- When the big flashes up from the dunker on the 3rd side to create action with Split Games",
+        "description": "either Hi Splits or Low Splits."
+      },
+      {
+        "name": "ACTION TAGS",
+        "description": "Tag words we add to the end of a play Family to create variety quickly on demand to create new advantages or punish  coverages."
+      },
+      {
+        "name": "SIDE",
+        "description": "Move the trigger to a wing ( Side horns, Side Fist)"
+      },
+      {
+        "name": "TOUCH",
+        "description": "Whenever we throw the ball to another small (1-4) and look to flip it back to the original passer to get downhill & create  separation."
+      },
+      {
+        "name": "C",
+        "description": "Whenever we curl a two-man game, we tag it with a C. Examples include Away C, 5 C Point C.- Whoever we curl off, flashes back to  ball."
+      },
+      {
+        "name": "TWIST",
+        "description": "Whenever we re-screen to counter the defense going under the screen."
+      },
+      {
+        "name": "ROCKET - Our tag for Spain PNR",
+        "description": "Where shooter O2 sets a backscreen for 05 right after a 15 PNR."
+      },
+      {
+        "name": "CASH - our term for a backdoor cut",
+        "description": "a Cash Cut— vs overplay. If defense is flat, we face cut. If defense is up the line, we backcut."
+      },
+      {
+        "name": "COLOR",
+        "description": "any color = a rescreen or QUICK ACTION where O5 sets a pin down rescreen"
+      },
+      {
+        "name": "CLEAR",
+        "description": "if we clear out the weakside corner to open up lob and single side tag."
+      },
+      {
+        "name": "EXIT  OR KLAY ACTION",
+        "description": "Strongside baseline pin screen while PNR takes place to distort and eliminate a loaded side of tags. Named for Klay Thompson."
+      },
+      {
+        "name": "UP",
+        "description": "Up screen that leads screen receiver towards the screen"
+      },
+      {
+        "name": "DOWN",
+        "description": "Down screen that leads screen receiver away from closest baseline"
+      },
+      {
+        "name": "MIAMI",
+        "description": "Weakside Rip Slip with a shooter followed by a Quick screen From 5."
+      },
+      {
+        "name": "HAMMER",
+        "description": "Weakside flare screen and slip from the corner to slot while a baseline drive takes place on strong side."
+      }
+    ]
+  },
+  {
+    "id": "closeout-reads",
+    "title": "CLOSEOUT READS",
+    "slogan": ".5 DECISIONS",
+    "pillars": [],
+    "terms": [
+      {
+        "name": "4 POINT LINE SPACING",
+        "description": "In the HIgh Quad or Slot - Space 3 feet behind the FIBA 3 point line to create a longer closeout for Nail Defender."
+      },
+      {
+        "name": "STAMPEDE GO",
+        "description": "If receiver catches on the run and rips thru opposite of his defender to punish heavy nail or heavy corner shrink by puncturing the gap created by over help."
+      },
+      {
+        "name": "RUN THRU - If receiver catches on the run and face cuts the defender",
+        "description": "if defense is closing out on low shoulder."
+      },
+      {
+        "name": "SIDE STEP 3 - If shooter gets run off the line",
+        "description": "side dribble to create a new window to shoot a 3 instead of settling for a long 2"
+      },
+      {
+        "name": "DRIFT",
+        "description": "When the ball drives toward you, drift away to create more space and a longer closeout for your defender."
+      },
+      {
+        "name": "DRAG",
+        "description": "When the ball drives away from you, you drag behind the penatrator."
+      },
+      {
+        "name": "DIVE",
+        "description": "When you see the back of your defender, you dive to the basket (cut)"
+      },
+      {
+        "name": "CIRCLE CUT",
+        "description": "Weakside 5 in the \"DUNKER\" , circle cuts around the rim to create space for a rim drive towards him"
+      },
+      {
+        "name": "I CUT",
+        "description": "Strong side 5 in the \"DUNKER:, \"I CUTS\" up to create space for a rim drive towards him"
+      }
+    ]
+  },
+  {
+    "id": "pick-and-roll-reads",
+    "title": "PICK AND ROLL READS",
+    "slogan": "MAKE DEFENDERS TRAIL",
+    "pillars": [
+      "\"FORCE THE OVER\"",
+      "“BREAK THE PAINT”",
+      "★ SCORE = NO ONE ENGAGE",
+      "★ SEARCH = IF E2, LOOK FOR ROLL OR POP",
+      "★ SKIP = PUNISH TAGS WITH SKIP PASSES"
+    ],
+    "terms": [
+      {
+        "name": "SPRINT TO SCREEN",
+        "description": "Screeners create separation by sprinting to screen.. “Arrive Alone"
+      },
+      {
+        "name": "SCREEN LOWER 1/3",
+        "description": "Make sure you force the over by screening the lower 1/3 of the defenders body. “Force The Over"
+      },
+      {
+        "name": "TOUCH N GO HOT STOVE",
+        "description": "Release and sprint out of the screen after setting it to create a 2-on-1 to the basket. - Go once ballhandling defender turns hip ( not squared anymore)"
+      },
+      {
+        "name": "ROLLER BEHIND MENTALITY",
+        "description": "Big “looks to get to the rim to force a 2-on-1."
+      },
+      {
+        "name": "SCORE",
+        "description": "Handler looks to come off the screen looking to get downhill or punish the under if they are a great shooter. “SCORE"
+      },
+      {
+        "name": "SEARCH",
+        "description": "As the ball handler Engages 2 Defenders, he looks for the roll or pop man. “SEARCH FOR SCREENER"
+      },
+      {
+        "name": "SKIP",
+        "description": "If perimeter defenders pull in to tag and help on roller, the handler looks to skip it to the perimeter receiver's man who helps."
+      },
+      {
+        "name": "HOSTAGE",
+        "description": "Holding defender behind you after accepting the ball screen."
+      },
+      {
+        "name": "HANG",
+        "description": "Using a float dribble to engage X5 until O5 gets behing X5"
+      },
+      {
+        "name": "GORTAT",
+        "description": "Used vs deep drop. Guard hostage dribble & holds X1 on back while O5 sprints ahead & seals X5. O1 snakes for rim finish."
+      },
+      {
+        "name": "ENGAGE BIG",
+        "description": "Guards job is to engage the big by forcing him to displace himself from O5 to create an early pocket pass window."
+      },
+      {
+        "name": "TWIST",
+        "description": "Our term for re-screening if the defense goes under."
+      },
+      {
+        "name": "RACE THE UNDER",
+        "description": "Ballhandler still turns the corner with force and beats his defender to the paint and gets to his body downhill."
+      },
+      {
+        "name": "SLIP ROLL",
+        "description": "Screener dives to the rim when his man calls the ice. Handler looks to hit him for lob or pocket."
+      },
+      {
+        "name": "TWIST THE SCREEN",
+        "description": "Screener flips the screen into step up. Handler looks to snake to the middle. Good for great shooter vs Drop"
+      },
+      {
+        "name": "GET GAME",
+        "description": "O5 pops - and ball handler throws it to popping big and flies off it for hardback going over the top to the middle."
+      },
+      {
+        "name": "RACE THE SWITCH",
+        "description": "Attack a soft switch by racing it downhill to the basket."
+      },
+      {
+        "name": "CUTBACK AKA DRIVE THE WAKE",
+        "description": "Cutback vs Hard Switch and look to attack the foot angle of the hard switch by rejecting it to the paint"
+      },
+      {
+        "name": "SLIP ROLL",
+        "description": "When screener reads switch and your defender is at the level, slip roll to the rim to get behind the defense."
+      },
+      {
+        "name": "BOOMERANG",
+        "description": "Ballhandler immediately reverses the ball on switch, backs up 3 steps, creates a runway for catch n go on pass back."
+      },
+      {
+        "name": "MOUSE IN THE HOUSE",
+        "description": "After a switch having a small defender on our Big in the post"
+      },
+      {
+        "name": "MOOSE ON THE LOOSE",
+        "description": "After a switch having a big defender on our Guard in the perimeter"
+      },
+      {
+        "name": "4 S PASSES - Short roll, Shake (drag pass), See ( Reversal pass to the player your dribbling towards), Skip ( opposite corner)",
+        "description": "> Get behind the trap & find window to pass"
+      },
+      {
+        "name": "ADVANCE IT",
+        "description": "Use a Flow Pass and then look to break the paint after the ball leaves the trap"
+      },
+      {
+        "name": "SCORE-SEARCH-SKIP",
+        "description": "Reads for the Short Roll Man in the pocket. Score first, Search for Cutters - Skip Opposite for 3 If they  collapse"
+      },
+      {
+        "name": "NASH IT",
+        "description": "Handler keeps his dribble and draws the big out along the baseline out to the corner and can boomerang from there."
+      },
+      {
+        "name": "WARRIOR",
+        "description": "Nash the ball out to the corner, then pass it to the wing and get it back to attack the X5 off boomerang in corner."
+      }
+    ]
+  },
+  {
+    "id": "dho-reads",
+    "title": "DHO READS",
+    "slogan": "CREATE ADVANTAGES",
+    "pillars": [
+      "★ KEEP THE FLOW",
+      "★ RELIEVE PRESSURE"
+    ],
+    "terms": [
+      {
+        "name": "UNDER",
+        "description": "Race The Under or Twist."
+      },
+      {
+        "name": "CASH",
+        "description": "Backcut if the defender ever plays on the top side when you are receiving a DHO"
+      },
+      {
+        "name": "CHASE",
+        "description": "Get downhill and break the paint or SPACE Out 3s for shooters"
+      },
+      {
+        "name": "SWITCH",
+        "description": "Race The Switch or DRIVE THE WAKE vs Hard Switch"
+      },
+      {
+        "name": "BLITZ",
+        "description": "Quick Pocket pass or Advance it"
+      }
+    ]
+  },
+  {
+    "id": "iso-offense",
+    "title": "ISO OFFENSE",
+    "slogan": "HUNT MOOSE",
+    "pillars": [
+      "★ ID THE MOOSE",
+      "★ FORCE THE SWITCH",
+      "★ SPACE FLOOR",
+      "★ BREAK PAINY"
+    ],
+    "terms": [
+      {
+        "name": "MOOSE",
+        "description": "Term for weakest defenders. Players and matchups we want to target."
+      },
+      {
+        "name": "4:1 SPACING",
+        "description": "Ball In Slot with Mismatch we want to target. Corners Filled. Big in dunker to create Double Gap for Handler to attack."
+      },
+      {
+        "name": "DOUBLE GAP��",
+        "description": "When we move an offensive player & the nearest gap defender to create more space for the handler to create"
+      },
+      {
+        "name": "BREAK THE PAINT",
+        "description": "Force the defense into the BLENDER. Force rotation and Engage 2 defenders - Drive and Kick to create great shots."
+      },
+      {
+        "name": "BOOMERANG",
+        "description": "Ballhandler immediately reverses the ball on the switch, backs up 3 steps, creates a runway for catch n go on pass back"
+      }
+    ]
+  },
+  {
+    "id": "split-games",
+    "title": "SPLIT GAMES",
+    "slogan": "2-MAN GAMES",
+    "pillars": [
+      "★ CREATE ADVANTAGES",
+      "★ COVERAGE CONFUSION"
+    ],
+    "terms": [
+      {
+        "name": "HI SPLITS",
+        "description": "2-Man Game that takes place in the High Quad. Great to create downhill drives with uphill DHO and punish switches"
+      },
+      {
+        "name": "LOW SPLITS",
+        "description": "2-Man Game that takes place in Corners to create a double gap for the handler to get over top & create low angle PNR."
+      },
+      {
+        "name": "C",
+        "description": "Any time we tag the split game with “C” it means that the cutter in the 2-,man game CURLS to basket bringing screener back to ball."
+      },
+      {
+        "name": "I GO",
+        "description": "I go to the rim during split game"
+      },
+      {
+        "name": "YOU GO",
+        "description": "You go to the rim during split game"
+      },
+      {
+        "name": "YES",
+        "description": "I accept the screen during split game"
+      },
+      {
+        "name": "TWIRL",
+        "description": "Like a pigs tail, receiver sling to screen screener's defender"
+      }
+    ]
+  },
+  {
+    "id": "post-feed-cutters",
+    "title": "POST FEED & CUTTERS",
+    "slogan": "CATCH-CHIN-CHECK",
+    "pillars": [
+      "★ CREATE ADVANTAGES",
+      "★ COVERAGE CONFUSION"
+    ],
+    "terms": [
+      {
+        "name": "SPEED CUT",
+        "description": "Post feeder sprints baseline side of post feed and cuts to basket and then opposite corner."
+      },
+      {
+        "name": "CATCH-CHIN-CHECK",
+        "description": "When post catches it: Catch on Two Feet with 2 Hands. Chin the basketball. Check over inside shoulder for  cutters."
+      },
+      {
+        "name": "SCORE-SEARCH-SKIP",
+        "description": "Reads for post player. Score first, Search for Cutters - Skip Opposite for 3 If they Collapse"
+      },
+      {
+        "name": "SPLIT GAMES",
+        "description": "Post Feeder initiates a 2-man games with the nearest perimeter offensive player."
+      }
+    ]
+  }
+]

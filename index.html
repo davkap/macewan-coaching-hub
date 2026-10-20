@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="auth-lock.js"></script>
+  <script src="offseason-sc-app/tracking-config.js"></script>
+  <script src="site-tracking.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MacEwan Griffins Coaching Hub | 2025-26 Canada West</title>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+     color:#1c1c1c;background:#f4f5f7;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:#98002e;text-decoration:none}
+a:hover{text-decoration:underline}
+.layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+nav.side{position:sticky;top:0;align-self:start;height:100vh;overflow:auto;
+         background:#000;color:#fff;padding:20px 16px;font-size:.92em;border-right:3px solid #98002e}
+nav.side h2{font-size:.78em;margin:0 0 12px;text-transform:uppercase;letter-spacing:.08em;color:#d1ad7d}
+nav.side ul{list-style:none;margin:0 0 18px;padding:0}
+nav.side li{margin:2px 0}
+nav.side a{display:block;padding:6px 10px;color:#E6E7E9;border-radius:4px;font-size:.9em}
+nav.side a:hover{background:rgba(255,255,255,.1);text-decoration:none}
+nav.side .brand{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.18)}
+nav.side .brand img{width:42px;height:42px;background:#fff;border-radius:6px;padding:3px}
+nav.side .brand h1{margin:0;font-size:.95em;line-height:1.2}
+nav.side .brand h1 small{display:block;font-size:.7em;font-weight:400;color:#d1ad7d;margin-top:2px}
+main{padding:28px 36px 80px;max-width:1180px}
+.cover{background:#98002e;color:#fff;padding:30px 32px;border-radius:10px;margin-bottom:28px;
+       box-shadow:0 1px 3px rgba(0,0,0,.08);position:relative;overflow:hidden}
+.cover::before{content:"";position:absolute;top:0;right:0;bottom:0;width:6px;background:#d1ad7d}
+.cover h1{margin:0 0 6px;font-size:1.9em;letter-spacing:.01em}
+.cover p{margin:4px 0;opacity:.95}
+.section-h{margin:28px 0 12px;font-size:.85em;text-transform:uppercase;letter-spacing:.08em;color:#5c6470;font-weight:700}
+.section-h .div{display:inline-block;margin-left:10px;padding:2px 8px;border-radius:10px;background:#000;color:#d1ad7d;font-size:.85em}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.opp{display:block;background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 1px 3px rgba(0,0,0,.06);border-left:5px solid #98002e;transition:transform .1s,box-shadow .15s;color:#1c1c1c}
+.opp:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1);text-decoration:none}
+.opp-name{font-weight:700;font-size:1.02em;color:#1c1c1c;margin-bottom:8px}
+.opp-links{display:flex;gap:10px;font-size:.78em;color:#5c6470;align-items:center}
+.opp-links span{color:#98002e;font-weight:600}
+.opp-links a{color:#5c6470;text-decoration:underline;text-decoration-color:#d1ad7d}
+.opp-links a:hover{color:#98002e}
+.tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:14px}
+.tool{background:#fff;border:1px solid #e1e3e6;border-radius:10px;padding:16px 18px;border-top:4px solid #d1ad7d}
+.tool h3{margin:0 0 6px;font-size:1em;color:#1c1c1c}
+.tool p{margin:0 0 8px;font-size:.88em;color:#5c6470}
+.tool a{font-size:.85em;font-weight:600}
+footer{margin-top:40px;padding-top:18px;border-top:1px solid #d4d6da;color:#5c6470;font-size:.82em}
+#mobile-header {
+  display: none;
+  background: #000;
+  color: #fff;
+  padding: 10px 16px;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 2px solid #98002e;
+}
+.menu-toggle {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+.drawer-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1005;
+  backdrop-filter: blur(2px);
+}
+.close-drawer {
+  display: none;
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  color: #d1ad7d;
+  font-size: 28px;
+  cursor: pointer;
+  line-height: 1;
+}
+@media(max-width:850px){
+  .layout{grid-template-columns:1fr}
+  #mobile-header {
+    display: flex;
+  }
+  nav.side {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 280px;
+    height: 100vh;
+    z-index: 999999;
+    background: #0d0f17;
+    border-right: 2px solid #98002e;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.8);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .side-open nav.side {
+    left: 0;
+  }
+  .side-open .drawer-backdrop {
+    display: block;
+    z-index: 999990;
+  }
+  .close-drawer {
+    display: block;
+  }
+  main {
+    padding: 20px 16px 60px;
+  }
+  .cover {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .cover h1 {
+    font-size: 1.5em;
+  }
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+  }
+  .tools {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+</style>
+</head>
+<body>
+<div id="mobile-header">
+  <div style="display:flex; align-items:center; gap:8px;">
+    <img src="macewan-logo.png" alt="MacEwan" style="width:32px; height:32px; background:#fff; border-radius:4px; padding:2px;">
+    <span style="font-weight:700; font-size:0.9em; letter-spacing:0.3px; color:#fff;">Griffins Hoops</span>
+  </div>
+  <button class="menu-toggle" onclick="toggleDrawer(true)">☰</button>
+</div>
+<div class="drawer-backdrop" id="backdrop" onclick="toggleDrawer(false)"></div>
+<div class="layout">
+<nav class="side">
+  <button class="close-drawer" onclick="toggleDrawer(false)">×</button>
+  <div class="brand">
+    <img src="macewan-logo.png" alt="MacEwan">
+    <h1>Griffins Hoops<small>Coaching Hub</small></h1>
+  </div>
+  <h2>Quick nav</h2>
+  <ul>
+    <li><a href="canadawest-scout-2026-27.html" style="background:rgba(152,0,46,0.1);color:#98002e;font-weight:700;border-left:3px solid #98002e;padding-left:7px">CW Scouting Hub ➔</a></li>
+    <li><a href="lineup-tracker.html" style="background:rgba(152,0,46,0.15);color:#d1ad7d;font-weight:700;border-left:3px solid #d1ad7d;padding-left:7px">MacEwan Database 📊</a></li>
+    <li><a href="shot-tracker.html" style="background:rgba(230,126,34,0.18);color:#e67e22;font-weight:700;border-left:3px solid #e67e22;padding-left:7px">🎯 Shot Tracker 📱</a></li>
+    <li><a href="lineup-logger.html" style="background:rgba(152,0,46,0.25);color:#fff;font-weight:700;border-left:3px solid #2ecc71;padding-left:7px">Live Lineup Logger 📱</a></li>
+    <li><a href="offense-logger.html" style="background:rgba(152,0,46,0.2);color:#ff9f43;font-weight:700;border-left:3px solid #ff9f43;padding-left:7px">🏀 Offense Logger (/offense-logger)</a></li>
+    <li><a href="defense-logger.html" style="background:rgba(41,128,185,0.2);color:#70a1ff;font-weight:700;border-left:3px solid #70a1ff;padding-left:7px">🛡️ Defense Logger (/defense-logger)</a></li>
+    <li><a href="drills.html" style="background:rgba(209,173,125,0.1);color:#d1ad7d;font-weight:700;border-left:3px solid #d1ad7d;padding-left:7px">Animated Drill Bank ➔</a></li>
+    <li><a href="griffin-concepts.html" style="background:rgba(152,0,46,0.15);color:#fff;font-weight:700;border-left:3px solid var(--gold);padding-left:7px">Griffin Concepts ➔</a></li>
+    <li><a href="playbook.html" style="background:rgba(152,0,46,0.05);color:#98002e;font-weight:600;border-left:3px solid #d1ad7d;padding-left:7px">Playbook Links ➔</a></li>
+    <li><a href="#ourteam">Our Team</a></li>
+    <li><a href="#opponents">Opponents</a></li>
+    <li><a href="#tools">Tools and library</a></li>
+    <li><a href="offseason-sc-app/index.html">S&amp;C app</a></li>
+    <li id="rosterManagerNav" style="display:none;"><a href="players.html" style="background:rgba(209,173,125,0.15);color:#d1ad7d;font-weight:700;border-left:3px solid #d1ad7d;padding-left:7px">Roster Manager ➔</a></li>
+    <li><a href="#" onclick="logoutHub(); return false;" style="color:#ff5e5e; font-weight:600; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">🔒 Log Out</a></li>
+  </ul>
+  <h2>Library</h2>
+  <ul>
+    <li><a href="systems/">Systems</a></li>
+    <li><a href="templates/">Templates</a></li>
+    <li><a href="practice-plans/">Practice plans</a></li>
+    <li><a href="sources/foundation.md">Foundation</a></li>
+  </ul>
+</nav>
+<main>
+  <div class="cover">
+    <h1>MacEwan Griffins Coaching Hub</h1>
+    <p>2026-27 Canada West Men's Basketball</p>
+    <p style="margin-top:10px;font-size:.92em;opacity:.9">Opponent scouts, systems library, S&amp;C app, and the Griffin coaching agent. Built for HC David Kapinga and staff.</p>
+  </div>
+
+  <h2 class="section-h" id="ourteam">Our Team <span class="div" style="background:#d1ad7d;color:#000">HOME</span></h2>
+  <div style="background:#fff;border-radius:10px;padding:22px 26px;box-shadow:0 1px 3px rgba(0,0,0,.06);border-left:5px solid #d1ad7d;border-top:1px solid #e1e3e6;margin-bottom:14px">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #e6e8eb">
+      <img src="macewan-logo.png" alt="MacEwan" style="width:64px;height:64px;background:#000;border-radius:8px;padding:6px">
+      <div>
+        <h3 style="margin:0;font-size:1.25em;color:#98002e">MacEwan Griffins</h3>
+        <p style="margin:2px 0 0;color:#5c6470;font-size:.92em">Canada West · Prairie Division · Edmonton, AB</p>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px 28px">
+      <div>
+        <h4 style="margin:0 0 6px;font-size:.78em;text-transform:uppercase;letter-spacing:.06em;color:#5c6470">Coaching staff</h4>
+        <ul style="margin:0;padding-left:18px;font-size:.9em;line-height:1.7">
+          <li><strong>HC:</strong> David Kapinga</li>
+          <li><strong>Asst:</strong> Cole Wijeyaratnam</li>
+          <li><strong>Asst:</strong> Eliel Lukusa</li>
+          <li><strong>Asst:</strong> Brian Ortiz</li>
+          <li><strong>Asst:</strong> Ryan May</li>
+          <li><strong>Asst:</strong> Jeffrey Mendji</li>
+          <li><strong>Special Asst to HC:</strong> Steven Constantin</li>
+          <li><strong>Student Therapist:</strong> Kyla Richardson</li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="margin:0 0 6px;font-size:.78em;text-transform:uppercase;letter-spacing:.06em;color:#5c6470">Identity (to be set by HC)</h4>
+        <ul style="margin:0;padding-left:18px;font-size:.9em;line-height:1.7;color:#5c6470">
+          <li>Pace: TBD</li>
+          <li>Offense: TBD (4-out, motion, ball-screen continuity)</li>
+          <li>Defense: TBD (pack-line, switch, zone)</li>
+          <li>Must-win categories: TBD</li>
+        </ul>
+        <p style="margin:8px 0 0;font-size:.82em;color:#98002e"><a href="my-team/identity.md">Edit identity →</a></p>
+      </div>
+      <div>
+        <h4 style="margin:0 0 6px;font-size:.78em;text-transform:uppercase;letter-spacing:.06em;color:#5c6470">Team files</h4>
+        <ul style="margin:0;padding-left:18px;font-size:.9em;line-height:1.7">
+          <li><a href="my-team/identity.md">Identity</a></li>
+          <li><a href="my-team/roster.md">Roster</a> <span style="color:#2e7d32;font-size:.85em;font-weight:600">(updated 2026-27)</span></li>
+          <li><a href="my-team/sets.md">Playbook (sets)</a> <span style="color:#5c6470;font-size:.85em">(blank, fill in)</span></li>
+          <li><a href="my-team/season-log.md">Season log</a> <span style="color:#5c6470;font-size:.85em">(blank, fill in)</span></li>
+          <li><a href="griffin-concepts.html" style="font-weight:700;color:#98002e">📖 Griffin Basketball Concepts (Playbook &amp; Quiz)</a></li>
+          <li><a href="opponents/macewan-griffins/scout-cards.html" style="font-weight:700;color:#98002e">🎴 MacEwan Player Scout Cards</a></li>
+        </ul>
+        <div style="margin-top:12px;">
+          <button style="background:#1565c0; color:#fff; border:0; padding:8px 14px; border-radius:6px; font-weight:700; cursor:pointer; font-size:0.85em; display:inline-flex; align-items:center; gap:6px;" onclick="updateUSportsWeeklyStats()">🏀 Refresh Weekly USports Stats</button>
+<div class="stats-updated-label" style="font-size:0.75em; opacity:0.75; margin-top:6px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid #e6e8eb">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h4 style="margin:0;font-size:.78em;text-transform:uppercase;letter-spacing:.06em;color:#5c6470">Active Roster (2026-27)</h4>
+        <a href="canadawest-scout-2026-27.html#macewan-griffins" style="font-size:.82em;font-weight:600;color:#98002e;text-decoration:underline">Open in Interactive Scouting Hub →</a>
+      </div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:.88em;text-align:left;line-height:1.4">
+          <thead>
+            <tr style="border-bottom:2px solid #98002e;color:#5c6470;font-weight:700">
+              <th style="padding:8px 10px">#</th>
+              <th style="padding:8px 10px">Player</th>
+              <th style="padding:8px 10px">Pos</th>
+              <th style="padding:8px 10px">Ht</th>
+              <th style="padding:8px 10px">Yr</th>
+              <th style="padding:8px 10px">Hometown / Previous</th>
+            </tr>
+          </thead>
+          <tbody id="rosterTableBody">
+            <tr style="border-bottom:1px solid #f0f1f3"><td style="padding:8px 10px;font-weight:600">0</td><td style="padding:8px 10px"><strong>Owen Hickey</strong></td><td style="padding:8px 10px">G</td><td style="padding:8px 10px">6-3</td><td style="padding:8px 10px">3</td><td style="padding:8px 10px">Edmonton, AB</td></tr>
+            <tr style="border-bottom:1px solid #f0f1f3"><td style="padding:8px 10px;font-weight:600">1</td><td style="padding:8px 10px"><strong>Jojo Muyo</strong></td><td style="padding:8px 10px">G</td><td style="padding:8px 10px">5-10</td><td style="padding:8px 10px">3</td><td style="padding:8px 10px">Calgary, AB</td></tr>
+            <tr style="border-bottom:1px solid #f0f1f3"><td style="padding:8px 10px;font-weight:600">2</td><td style="padding:8px 10px"><strong>Khushal Shukla</strong></td><td style="padding:8px 10px">G</td><td style="padding:8px 10px">6-3</td><td style="padding:8px 10px">2</td><td style="padding:8px 10px">Calgary, AB</td></tr>
+            <tr style="border-bottom:1px solid #f0f1f3"><td style="padding:8px 10px;font-weight:600">3</td><td style="padding:8px 10px"><strong>Joel Seke</strong></td><td style="padding:8px 10px">W</td><td style="padding:8px 10px">6-5</td><td style="padding:8px 10px">3</td><td style="padding:8px 10px">Edmonton, AB</td></tr>
+            <tr style="border-bottom:1px solid #f0f1f3"><td style="padding:8px 10px;font-weight:600">4</td><td style="padding:8px 10px"><strong>Elisha Ampofo</strong></td><td style="padding:8px 10px">G</td><td style="padding:8px 10px">6-2</td><td style="padding:8px 10px">5</td><td style="padding:8px 10px">Milton, ON</td></tr>
+            <tr style="border-bottom:1px solid #f0f1f3"><td style="padding:8px 10px;font-weight:600">5</td><td style="padding:8px 10px"><strong>Diego Presingular</strong></td><td style="padding:8px 10px">G</td><td style="padding:8px 10px">5-10</td><td style="padding:8px 10px">3</td><td style="padding:8px 10px">Winnipeg, MB</td></tr>
+            <tr style="border-bottom:1px solid #f0f1f3"><td style="padding:8px 10px;font-weight:600">6</td><td style="padding:8px 10px"><strong>Noah Simon</strong></td><td style="padding:8px 10px">F</td><td style="padding:8px 10px">6-5</td><td style="padding:8px 10px">2</td><td style="padding:8px 10px">Calgary, AB</td></tr>
+            <tr style="border-bottom:1px solid #f0f1f3"><td style="padding:8px 10px;font-weight:600">7</td><td style="padding:8px 10px"><strong>Judson Weir</strong></td><td style="padding:8px 10px">W</td><td style="padding:8px 10px">6-5</td><td style="padding:8px 10px">3</td><td style="padding:8px 10px">Regina, SK</td></tr>
+            <tr style="border-bottom:1px solid #f0f1f3"><td style="padding:8px 10px;font-weight:600">8</td><td style="padding:8px 10px"><strong>Dele Osuma</strong></td><td style="padding:8px 10px">W</td><td style="padding:8px 10px">6-3</td><td style="padding:8px 10px">4</td><td style="padding:8px 10px">Calgary, AB</td></tr>
+            <tr style="border-bottom:1px solid #f0f1f3"><td style="padding:8px 10px;font-weight:600">9</td><td style="padding:8px 10px"><strong>Ryan Ziolkowski</strong></td><td style="padding:8px 10px">F</td><td style="padding:8px 10px">6-6</td><td style="padding:8px 10px">3</td><td style="padding:8px 10px">Regina, SK</td></tr>
+            <tr style="border-bottom:1px solid #f0f1f3"><td style="padding:8px 10px;font-weight:600">10</td><td style="padding:8px 10px"><strong>Wol Wol</strong></td><td style="padding:8px 10px">F</td><td style="padding:8px 10px">6-7</td><td style="padding:8px 10px">2</td><td style="padding:8px 10px">Edmonton, AB</td></tr>
+            <tr style="border-bottom:1px solid #f0f1f3"><td style="padding:8px 10px;font-weight:600">11</td><td style="padding:8px 10px"><strong>Favour Igbinyemi</strong></td><td style="padding:8px 10px">F</td><td style="padding:8px 10px">6-7</td><td style="padding:8px 10px">5</td><td style="padding:8px 10px">Surrey, BC</td></tr>
+            <tr style="border-bottom:1px solid #f0f1f3"><td style="padding:8px 10px;font-weight:600">12</td><td style="padding:8px 10px"><strong>Abdi Musse</strong></td><td style="padding:8px 10px">G</td><td style="padding:8px 10px">6-5</td><td style="padding:8px 10px">1</td><td style="padding:8px 10px">Edmonton, AB</td></tr>
+            <tr style="border-bottom:1px solid #f0f1f3"><td style="padding:8px 10px;font-weight:600">13</td><td style="padding:8px 10px"><strong>Nathan Lefevre</strong></td><td style="padding:8px 10px">G</td><td style="padding:8px 10px">6-8</td><td style="padding:8px 10px">1</td><td style="padding:8px 10px">Metz, France</td></tr>
+            <tr style="border-bottom:1px solid #f0f1f3"><td style="padding:8px 10px;font-weight:600">14</td><td style="padding:8px 10px"><strong>David Wilmes</strong></td><td style="padding:8px 10px">F</td><td style="padding:8px 10px">6-9</td><td style="padding:8px 10px">2</td><td style="padding:8px 10px">Munich, Germany</td></tr>
+            <tr style="border-bottom:1px solid #f0f1f3"><td style="padding:8px 10px;font-weight:600">15</td><td style="padding:8px 10px"><strong>Otis Onink</strong></td><td style="padding:8px 10px">F</td><td style="padding:8px 10px">6-10</td><td style="padding:8px 10px">1</td><td style="padding:8px 10px">Amsterdam, Netherlands</td></tr>
+            <tr style="border-bottom:1px solid #f0f1f3"><td style="padding:8px 10px;font-weight:600">17</td><td style="padding:8px 10px"><strong>Peter-Aluk Deng</strong></td><td style="padding:8px 10px">G</td><td style="padding:8px 10px">6-4</td><td style="padding:8px 10px">2</td><td style="padding:8px 10px">Edmonton, AB</td></tr>
+            <tr style="border-bottom:1px solid #f0f1f3"><td style="padding:8px 10px;font-weight:600">18</td><td style="padding:8px 10px"><strong>Freddy Kapinga</strong></td><td style="padding:8px 10px">G</td><td style="padding:8px 10px">6-3</td><td style="padding:8px 10px">3</td><td style="padding:8px 10px">Calgary, AB</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-h" id="opponents">Opponents · Prairie Division <span class="div">9 teams</span></h2>
+  <div class="grid">
+        <a class="opp" href="opponents/alberta-golden-bears/scout-cards.html">
+          <div class="opp-name">Alberta Golden Bears</div>
+          <div class="opp-links">
+            <span>Scout cards</span>
+            <a href="opponent-scout.html?team=alberta-golden-bears&type=profile">Profile</a>
+            <a href="opponent-scout.html?team=alberta-golden-bears&type=scout">Scout</a>
+          </div>
+        </a>
+        <a class="opp" href="opponents/brandon-bobcats/scout-cards.html">
+          <div class="opp-name">Brandon Bobcats</div>
+          <div class="opp-links">
+            <span>Scout cards</span>
+            <a href="opponent-scout.html?team=brandon-bobcats&type=profile">Profile</a>
+            <a href="opponent-scout.html?team=brandon-bobcats&type=scout">Scout</a>
+          </div>
+        </a>
+        <a class="opp" href="opponents/calgary-dinos/scout-cards.html">
+          <div class="opp-name">Calgary Dinos</div>
+          <div class="opp-links">
+            <span>Scout cards</span>
+            <a href="opponent-scout.html?team=calgary-dinos&type=profile">Profile</a>
+            <a href="opponent-scout.html?team=calgary-dinos&type=scout">Scout</a>
+          </div>
+        </a>
+        <a class="opp" href="opponents/lethbridge-pronghorns/scout-cards.html">
+          <div class="opp-name">Lethbridge Pronghorns</div>
+          <div class="opp-links">
+            <span>Scout cards</span>
+            <a href="opponent-scout.html?team=lethbridge-pronghorns&type=profile">Profile</a>
+            <a href="opponent-scout.html?team=lethbridge-pronghorns&type=scout">Scout</a>
+          </div>
+        </a>
+        <a class="opp" href="opponents/manitoba-bisons/scout-cards.html">
+          <div class="opp-name">Manitoba Bisons</div>
+          <div class="opp-links">
+            <span>Scout cards</span>
+            <a href="opponent-scout.html?team=manitoba-bisons&type=profile">Profile</a>
+            <a href="opponent-scout.html?team=manitoba-bisons&type=scout">Scout</a>
+          </div>
+        </a>
+        <a class="opp" href="opponents/mount-royal-cougars/scout-cards.html">
+          <div class="opp-name">Mount Royal Cougars</div>
+          <div class="opp-links">
+            <span>Scout cards</span>
+            <a href="opponent-scout.html?team=mount-royal-cougars&type=profile">Profile</a>
+            <a href="opponent-scout.html?team=mount-royal-cougars&type=scout">Scout</a>
+          </div>
+        </a>
+        <a class="opp" href="opponents/regina-cougars/scout-cards.html">
+          <div class="opp-name">Regina Cougars</div>
+          <div class="opp-links">
+            <span>Scout cards</span>
+            <a href="opponent-scout.html?team=regina-cougars&type=profile">Profile</a>
+            <a href="opponent-scout.html?team=regina-cougars&type=scout">Scout</a>
+          </div>
+        </a>
+        <a class="opp" href="opponents/saskatchewan-huskies/scout-cards.html">
+          <div class="opp-name">Saskatchewan Huskies</div>
+          <div class="opp-links">
+            <span>Scout cards</span>
+            <a href="opponent-scout.html?team=saskatchewan-huskies&type=profile">Profile</a>
+            <a href="opponent-scout.html?team=saskatchewan-huskies&type=scout">Scout</a>
+          </div>
+        </a>
+        <a class="opp" href="opponents/winnipeg-wesmen/scout-cards.html">
+          <div class="opp-name">Winnipeg Wesmen</div>
+          <div class="opp-links">
+            <span>Scout cards</span>
+            <a href="opponent-scout.html?team=winnipeg-wesmen&type=profile">Profile</a>
+            <a href="opponent-scout.html?team=winnipeg-wesmen&type=scout">Scout</a>
+          </div>
+        </a>
+  </div>
+
+  <h2 class="section-h">Opponents · Pacific Division <span class="div">7 teams</span></h2>
+  <div class="grid">
+        <a class="opp" href="opponents/fraser-valley-cascades/scout-cards.html">
+          <div class="opp-name">Fraser Valley Cascades</div>
+          <div class="opp-links">
+            <span>Scout cards</span>
+            <a href="opponent-scout.html?team=fraser-valley-cascades&type=profile">Profile</a>
+            <a href="opponent-scout.html?team=fraser-valley-cascades&type=scout">Scout</a>
+          </div>
+        </a>
+        <a class="opp" href="opponents/thompson-rivers-wolfpack/scout-cards.html">
+          <div class="opp-name">Thompson Rivers Wolfpack</div>
+          <div class="opp-links">
+            <span>Scout cards</span>
+            <a href="opponent-scout.html?team=thompson-rivers-wolfpack&type=profile">Profile</a>
+            <a href="opponent-scout.html?team=thompson-rivers-wolfpack&type=scout">Scout</a>
+          </div>
+        </a>
+        <a class="opp" href="opponents/trinity-western-spartans/scout-cards.html">
+          <div class="opp-name">Trinity Western Spartans</div>
+          <div class="opp-links">
+            <span>Scout cards</span>
+            <a href="opponent-scout.html?team=trinity-western-spartans&type=profile">Profile</a>
+            <a href="opponent-scout.html?team=trinity-western-spartans&type=scout">Scout</a>
+          </div>
+        </a>
+        <a class="opp" href="opponents/ubc-thunderbirds/scout-cards.html">
+          <div class="opp-name">UBC Thunderbirds</div>
+          <div class="opp-links">
+            <span>Scout cards</span>
+            <a href="opponent-scout.html?team=ubc-thunderbirds&type=profile">Profile</a>
+            <a href="opponent-scout.html?team=ubc-thunderbirds&type=scout">Scout</a>
+          </div>
+        </a>
+        <a class="opp" href="opponents/ubco-heat/scout-cards.html">
+          <div class="opp-name">UBCO Heat</div>
+          <div class="opp-links">
+            <span>Scout cards</span>
+            <a href="opponent-scout.html?team=ubco-heat&type=profile">Profile</a>
+            <a href="opponent-scout.html?team=ubco-heat&type=scout">Scout</a>
+          </div>
+        </a>
+        <a class="opp" href="opponents/unbc-timberwolves/scout-cards.html">
+          <div class="opp-name">UNBC Timberwolves</div>
+          <div class="opp-links">
+            <span>Scout cards</span>
+            <a href="opponent-scout.html?team=unbc-timberwolves&type=profile">Profile</a>
+            <a href="opponent-scout.html?team=unbc-timberwolves&type=scout">Scout</a>
+          </div>
+        </a>
+        <a class="opp" href="opponents/victoria-vikes/scout-cards.html">
+          <div class="opp-name">Victoria Vikes</div>
+          <div class="opp-links">
+            <span>Scout cards</span>
+            <a href="opponent-scout.html?team=victoria-vikes&type=profile">Profile</a>
+            <a href="opponent-scout.html?team=victoria-vikes&type=scout">Scout</a>
+          </div>
+        </a>
+  </div>
+
+  <h2 class="section-h" id="tools">Tools and library</h2>
+  <div class="tools">
+    <div class="tool" style="border-top-color:#d1ad7d">
+      <h3>📊 MacEwan Database</h3>
+      <p>Master basketball analytics database: Lineup +/-, Individual &amp; 5-Man Offense &amp; Defense metrics, and tactical event logs.</p>
+      <a href="lineup-tracker.html">Open Database →</a>
+    </div>
+    <div class="tool" style="border-top-color:#e67e22">
+      <h3>🎯 Shot Tracker</h3>
+      <p>Live game shot-tracking app for mobile at the scorer's table: shot locations, player tracking, and possession logs.</p>
+      <a href="shot-tracker.html">Open Shot Tracker →</a>
+    </div>
+    <div class="tool" style="border-top-color:#98002e">
+      <h3>🏀 Animated Drill Bank</h3>
+      <p>Interactive playbook and drill animator. Play, design, and share basketball drills for practice plans.</p>
+      <a href="drills.html">Open drills →</a>
+    </div>
+    <div class="tool">
+      <h3>🏋️ Offseason S&amp;C app</h3>
+      <p>Mobile-first weekly strength + mobility program for the Griffins, branded MacEwan maroon.</p>
+      <a href="offseason-sc-app/index.html">Open app →</a>
+    </div>
+    <div class="tool">
+      <h3>📘 Systems library</h3>
+      <p>35 docs covering offense, defense, concepts, actions, special situations, transition.</p>
+      <a href="systems/">Browse →</a>
+    </div>
+    <div class="tool">
+      <h3>📋 Templates</h3>
+      <p>Scout report, opponent profile, practice plan, player card. Drop-in markdown + HTML.</p>
+      <a href="templates/">Browse →</a>
+    </div>
+    <div class="tool">
+      <h3>�� Griffin agent</h3>
+      <p>Always-on assistant coach. Spec at <code>.skill/SKILL.md</code>. Engages on hoops topics, scouts opponents, builds practice plans.</p>
+      <a href=".skill/SKILL.md">Read spec →</a>
+    </div>
+    <div class="tool">
+      <h3>👥 My team</h3>
+      <p>Roster, identity, sets, season log. Edit these files as your single source of truth.</p>
+      <a href="my-team/identity.md">Open →</a>
+    </div>
+    <div class="tool">
+      <h3>📊 usportshoops.ca</h3>
+      <p>Independent stats for U Sports basketball. Linked from every opponent profile.</p>
+      <a href="https://www.usportshoops.ca/history/showteams.php?Gender=MBB&amp;Season=2025-26" target="_blank">Open site ↗</a>
+    </div>
+  </div>
+
+  <footer>
+    MacEwan Griffins Men's Basketball Coaching Hub. Built for HC David Kapinga and coaching staff.
+    Edit any file. Run the Griffin agent for new scouts and practice plans.
+  </footer>
+</main>
+</div>
+<script>
+  function toggleDrawer(open) {
+    if (open) {
+      document.body.classList.add('side-open');
+    } else {
+      document.body.classList.remove('side-open');
+    }
+  }
+
+  // Bind touch and click events for reliable mobile navigation
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggles = document.querySelectorAll('.menu-toggle');
+    toggles.forEach(btn => {
+      btn.addEventListener('click', function(e) { e.preventDefault(); toggleDrawer(true); });
+      btn.addEventListener('touchstart', function(e) { e.preventDefault(); toggleDrawer(true); }, { passive: false });
+    });
+
+    const backdrops = document.querySelectorAll('.drawer-backdrop, .close-drawer');
+    backdrops.forEach(el => {
+      el.addEventListener('click', function(e) { e.preventDefault(); toggleDrawer(false); });
+      el.addEventListener('touchstart', function(e) { e.preventDefault(); toggleDrawer(false); }, { passive: false });
+    });
+  });
+
+  // Close drawer on clicking side nav links
+  document.querySelectorAll('nav.side a').forEach(link => {
+    link.addEventListener('click', () => {
+      toggleDrawer(false);
+    });
+  });
+
+  // Roster Manager Admin link visibility
+  const isAdmin = sessionStorage.getItem('griffin_hub_admin') === 'true';
+  if (isAdmin) {
+    const rNav = document.getElementById('rosterManagerNav');
+    if (rNav) rNav.style.display = 'block';
+  }
+
+  // Load roster dynamically if cached and valid for 2026-27
+  function renderDynamicRoster() {
+    try {
+      const cached = JSON.parse(localStorage.getItem('hoops-hub:cached-roster'));
+      const tbody = document.getElementById('rosterTableBody');
+      const isNewRoster = cached && Array.isArray(cached) && cached.some(p => p.name === 'Owen Hickey' || p.name === 'Freddy Kapinga' || p.name === 'Jojo Muyo');
+      if (isNewRoster && tbody) {
+        let html = '';
+        cached.forEach(p => {
+          html += `<tr style="border-bottom:1px solid #f0f1f3">
+            <td style="padding:8px 10px;font-weight:600">${p.number || '0'}</td>
+            <td style="padding:8px 10px"><strong>${p.name}</strong></td>
+            <td style="padding:8px 10px">${p.position || '—'}</td>
+            <td style="padding:8px 10px">${p.height || '—'}</td>
+            <td style="padding:8px 10px">${p.year || '—'}</td>
+            <td style="padding:8px 10px">${p.hometown || '—'}</td>
+          </tr>`;
+        });
+        tbody.innerHTML = html;
+      } else if (cached && !isNewRoster) {
+        localStorage.removeItem('hoops-hub:cached-roster');
+      }
+    } catch(e) {}
+  }
+  
+  renderDynamicRoster();
+
+  // Background fetch to update cached roster
+  const apiURL = typeof window.TRACKING_API_URL !== 'undefined' ? window.TRACKING_API_URL : '';
+  if (apiURL) {
+    fetch(apiURL + "?action=getRoster")
+      .then(res => res.json())
+      .then(data => {
+        if (data && Array.isArray(data) && data.some(p => p.name === 'Owen Hickey' || p.name === 'Freddy Kapinga' || p.name === 'Jojo Muyo')) {
+          localStorage.setItem('hoops-hub:cached-roster', JSON.stringify(data));
+          renderDynamicRoster();
+        }
+      }).catch(function(){});
+  }
+  // Stats refresh button logic lives in /stats-refresh.js
+</script>
+
+<script src="/stats-refresh.js"></script>
+<!-- Non-Blocking Weekly Update Floating Corner Popup (Requires pressing × to dismiss) -->
+<div id="weekly-update-modal" style="display:none; position:fixed; bottom:24px; right:24px; z-index:999999; width:380px; max-width:calc(100vw - 32px); background:#151822; border:2px solid #d1ad7d; border-radius:12px; box-shadow:0 12px 40px rgba(0,0,0,0.85); overflow:hidden; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color:#eee; pointer-events:auto; animation:weeklySlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+  <div style="background:linear-gradient(135deg, #1c0f1b 0%, #151822 100%); padding:12px 16px; border-bottom:1px solid #2a2d3c; display:flex; justify-content:space-between; align-items:center;">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span style="font-size:20px;" id="weekly-modal-icon">🔄</span>
+      <h3 style="margin:0; font-size:14px; color:#fff; font-weight:800;" id="weekly-modal-title">Syncing USports Stats...</h3>
+    </div>
+    <button onclick="closeWeeklyUpdateModal()" style="background:none; border:none; color:#d1ad7d; font-size:24px; cursor:pointer; line-height:1; padding:0 4px; font-weight:bold;" title="Close popup" aria-label="Close notification">×</button>
+  </div>
+  <div style="padding:14px 16px;">
+    <p style="margin:0 0 10px; font-size:12.5px; line-height:1.45; color:#ddd;" id="weekly-modal-msg">
+      Syncing 2026-27 rosters and Canada West statistics in background... You can freely browse and navigate the website.
+    </p>
+    <div id="weekly-modal-loader" style="display:flex; align-items:center; gap:8px; color:#d1ad7d; font-size:12px; margin-bottom:10px;">
+      <span style="display:inline-block; width:14px; height:14px; border:2px solid #d1ad7d; border-top-color:transparent; border-radius:50%; animation:weeklySpin 0.8s linear infinite;"></span>
+      <span>Contacting Netlify...</span>
+    </div>
+    <div id="weekly-modal-details" style="display:none; background:#0c0d12; border:1px solid #272a3b; border-radius:8px; padding:10px; font-size:11.5px; color:#bbb; margin-bottom:12px; line-height:1.45;"></div>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:11px; color:#888;">💡 Press × to dismiss</span>
+      <button onclick="closeWeeklyUpdateModal()" style="background:#d1ad7d; color:#000; font-weight:800; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-size:12px;">✕ Close</button>
+    </div>
+  </div>
+</div>
+<style>
+  @keyframes weeklySpin { to { transform: rotate(360deg); } }
+  @keyframes weeklySlideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  @media (max-width: 600px) {
+    #weekly-update-modal {
+      bottom: 12px !important;
+      right: 12px !important;
+      left: 12px !important;
+      width: auto !important;
+      max-width: none !important;
+    }
+  }
+</style>
+</body>
+</html>

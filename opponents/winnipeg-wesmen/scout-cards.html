@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="../../auth-lock.js"></script>
+  <meta charset="utf-8">
+  <title>Winnipeg Wesmen: Player Scout Cards | MacEwan Griffins</title>
+  <style>
+    :root {
+      --mac-maroon: #98002e;
+      --mac-tan: #d1ad7d;
+      --mac-black: #111;
+      --accent-red: #cc0000;
+      --bg: #f4f4f4;
+      --card-bg: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: #111;
+      margin: 0;
+      padding: 20px;
+    }
+    header.title {
+      max-width: 1300px;
+      margin: 0 auto 20px;
+      padding-bottom: 12px;
+      border-bottom: 3px solid var(--mac-maroon);
+    }
+    header.title h1 {
+      margin: 0 0 4px;
+      font-size: 26px;
+      color: var(--mac-maroon);
+    }
+    header.title p {
+      margin: 0;
+      color: #555;
+      font-size: 13px;
+    }
+    .section-banner {
+      background: #000000;
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 800;
+      text-align: center;
+      padding: 6px 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 24px 0 16px 0;
+      border-radius: 4px;
+      max-width: 1300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .grid {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(580px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 14px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+      display: flex;
+      gap: 16px;
+      position: relative;
+      page-break-inside: avoid;
+    }
+    .card.starter {
+      border-left: 6px solid var(--mac-maroon);
+    }
+    .photo-tile {
+      flex: 0 0 120px;
+      height: 140px;
+      background: #e0e0e0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .photo-tile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .card-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .player-header {
+      font-size: 16px;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 3px;
+    }
+    .header-divider {
+      height: 2px;
+      background: var(--accent-red);
+      width: 100%;
+      margin-bottom: 8px;
+    }
+    .tactical-tags {
+      font-size: 12.5px;
+      line-height: 1.4;
+      color: #111;
+      margin-bottom: 8px;
+    }
+    .tactical-tags strong {
+      font-weight: 700;
+    }
+    .scout-notes {
+      font-size: 12.5px;
+      line-height: 1.4;
+      color: #111;
+      margin-bottom: 12px;
+      flex: 1;
+    }
+    .stats-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.5px;
+      margin-top: auto;
+    }
+    .stats-table th {
+      border-bottom: 1.5px solid var(--accent-red);
+      padding: 3px 4px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 10.5px;
+      color: #111;
+    }
+    .stats-table td {
+      padding: 3px 4px;
+      text-align: center;
+      font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+      color: #222;
+    }
+    .stats-table td:first-child, .stats-table th:first-child {
+      text-align: left;
+      font-family: inherit;
+      font-weight: 600;
+      width: 80px;
+    }
+    @media (max-width: 650px) {
+      .grid { grid-template-columns: 1fr; }
+      .card { flex-direction: column; }
+      .photo-tile { width: 100%; height: 180px; }
+    }
+    @media print {
+      .no-print { display: none !important; }
+      body { padding: 0; background: white; }
+      .grid { gap: 10px; grid-template-columns: repeat(2, 1fr); }
+      .card { break-inside: avoid; border: 1px solid #888; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="title">
+  <div style="margin-bottom: 12px; font-size: 13px;" class="no-print">
+    <a href="../../index.html" style="color: var(--mac-maroon); font-weight: 700; text-decoration: none; margin-right: 15px;">🏠 Coaching Hub</a>
+    <a href="../../canadawest-scout-2026-27.html" style="color: #555; font-weight: 700; text-decoration: none;">🏀 Scouting Hub</a>
+  </div>
+  <h1>Winnipeg Wesmen: Player Scout Cards</h1>
+  <p>MacEwan Griffins Men's Basketball &middot; 2026-27 Canada West &middot; Tactical Prep Packet</p>
+</header>
+
+<div id="scout-cards-wrapper" data-template-version="2026-10-08-v4">
+<div class="section-banner">Starters</div>
+<div class="grid">
+  
+    <div class="card starter">
+      <div class="photo-tile">
+        <img src="https://wesmen.ca/images/2026/10/6/KJaroHS_2026.jpg?width=80&quality=90" alt="Kato Jaro" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#0</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#0 • Kato Jaro • Guard • 6-0 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (6-0, Winnipeg, MB). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>17.5</td><td>35.8</td><td>40.3%</td><td>32.3%</td><td>71.4%</td><td>5.0</td><td>5.5</td><td>3.8</td><td>1.3</td><td>0.3</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>17.5</td><td>35.8</td><td>40.3%</td><td>32.3%</td><td>71.4%</td><td>5.0</td><td>5.5</td><td>3.8</td><td>1.3</td><td>0.3</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card starter">
+      <div class="photo-tile">
+        <img src="https://wesmen.ca/images/2026/10/6/WiebeHS_2026.jpg?width=80&quality=90" alt="Elijah Wiebe" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#3</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#3 • Elijah Wiebe • Forward • 6-6 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Brown, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> MUST BOX OUT
+        </div>
+        <div class="scout-notes">
+          Forward (6-6, Winnipeg, MB). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card starter">
+      <div class="photo-tile">
+        <img src="https://wesmen.ca/images/2026/10/6/UwambalyiaHS_2026.jpg?width=80&quality=90" alt="Ashton Uwamaliya" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#4</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#4 • Ashton Uwamaliya • Forward • 6-5 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Brown, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> MUST BOX OUT
+        </div>
+        <div class="scout-notes">
+          Forward (6-5, Vancouver, BC). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>2.5</td><td>9.2</td><td>40.0%</td><td>0.0%</td><td>100.0%</td><td>1.2</td><td>0.3</td><td>0.0</td><td>0.5</td><td>0.3</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>2.5</td><td>9.2</td><td>40.0%</td><td>0.0%</td><td>100.0%</td><td>1.2</td><td>0.3</td><td>0.0</td><td>0.5</td><td>0.3</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card starter">
+      <div class="photo-tile">
+        <img src="https://wesmen.ca/images/2026/10/6/MacalaladHS_2026.jpg?width=80&quality=90" alt="Noah Macalalad" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#6</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#6 • Noah Macalalad • Guard • 5-9 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (5-9, Winnipeg, MB). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>7.5</td><td>14.8</td><td>64.7%</td><td>66.7%</td><td>50.0%</td><td>1.5</td><td>1.3</td><td>0.5</td><td>0.3</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>7.5</td><td>14.8</td><td>64.7%</td><td>66.7%</td><td>50.0%</td><td>1.5</td><td>1.3</td><td>0.5</td><td>0.3</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card starter">
+      <div class="photo-tile">
+        <img src="https://wesmen.ca/images/2026/10/6/UgbahHS_2026.jpg?width=80&quality=90" alt="Emmanuel Ugbah" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#8</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#8 • Emmanuel Ugbah • Guard • 6-4 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (6-4, Winnipeg, MB). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>7.5</td><td>28.8</td><td>29.0%</td><td>30.8%</td><td>72.7%</td><td>3.2</td><td>1.5</td><td>0.8</td><td>1.5</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>7.5</td><td>28.8</td><td>29.0%</td><td>30.8%</td><td>72.7%</td><td>3.2</td><td>1.5</td><td>0.8</td><td>1.5</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+
+
+<div class="section-banner">Rotational &amp; Bench</div>
+<div class="grid">
+  
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="https://wesmen.ca/images/2026/10/6/GordoHS_2026.jpg?width=80&quality=90" alt="Alberto Gordo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#9</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#9 • Alberto Gordo • Guard • 6-3 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (6-3, Gran Canaria, Spain). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>11.0</td><td>26.5</td><td>45.0%</td><td>26.7%</td><td>57.1%</td><td>4.5</td><td>1.8</td><td>2.0</td><td>0.5</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>11.0</td><td>26.5</td><td>45.0%</td><td>26.7%</td><td>57.1%</td><td>4.5</td><td>1.8</td><td>2.0</td><td>0.5</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="https://wesmen.ca/images/2026/10/6/LukeHS_2026.jpg?width=80&quality=90" alt="Ryan Luke" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#10</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#10 • Ryan Luke • Forward • 6-7 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Brown, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> MUST BOX OUT
+        </div>
+        <div class="scout-notes">
+          Forward (6-7, Winnipeg, MB). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>8.0</td><td>24.5</td><td>37.0%</td><td>37.5%</td><td>75.0%</td><td>5.5</td><td>0.8</td><td>1.3</td><td>0.5</td><td>0.3</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>8.0</td><td>24.5</td><td>37.0%</td><td>37.5%</td><td>75.0%</td><td>5.5</td><td>0.8</td><td>1.3</td><td>0.5</td><td>0.3</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="https://wesmen.ca/images/2026/10/6/OgwenoHS_2026.jpg?width=80&quality=90" alt="Paul Ogweno" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#11</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#11 • Paul Ogweno • Guard • 6-3 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (6-3, Winnipeg, MB). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>0.0</td><td>4.0</td><td>0.0%</td><td>0.0%</td><td>0.0%</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>0.0</td><td>4.0</td><td>0.0%</td><td>0.0%</td><td>0.0%</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="https://wesmen.ca/images/2026/10/6/MensahHS_2026.jpg?width=80&quality=90" alt="Elijah Mensah" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#12</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#12 • Elijah Mensah • Forward • 6-7 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Brown, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> MUST BOX OUT
+        </div>
+        <div class="scout-notes">
+          Forward (6-7, Winnipeg, MB). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>18.0</td><td>33.0</td><td>55.1%</td><td>44.0%</td><td>77.8%</td><td>5.5</td><td>1.5</td><td>1.8</td><td>0.5</td><td>1.3</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>18.0</td><td>33.0</td><td>55.1%</td><td>44.0%</td><td>77.8%</td><td>5.5</td><td>1.5</td><td>1.8</td><td>0.5</td><td>1.3</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="https://wesmen.ca/images/2026/10/6/GrandboisHS_2026.jpg?width=80&quality=90" alt="Connor Grandbois" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#14</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#14 • Connor Grandbois • Forward • 6-7 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Brown, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> MUST BOX OUT
+        </div>
+        <div class="scout-notes">
+          Forward (6-7, Kenora, ON). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>2.5</td><td>8.8</td><td>44.4%</td><td>33.3%</td><td>50.0%</td><td>2.0</td><td>0.3</td><td>0.0</td><td>0.3</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>2.5</td><td>8.8</td><td>44.4%</td><td>33.3%</td><td>50.0%</td><td>2.0</td><td>0.3</td><td>0.0</td><td>0.3</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#15</text></svg>" alt="Jayden Westerlund" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#15</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#15 • Jayden Westerlund • Forward • 6-6 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Brown, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> MUST BOX OUT
+        </div>
+        <div class="scout-notes">
+          Forward (6-6, Stockholm, Sweden). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>0.0</td><td>3.5</td><td>0.0%</td><td>0.0%</td><td>0.0%</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>0.0</td><td>3.5</td><td>0.0%</td><td>0.0%</td><td>0.0%</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="https://wesmen.ca/images/2026/10/6/KankamHS_2026.jpg?width=80&quality=90" alt="Noah Kankam" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#RS</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#RS • Noah Kankam • Guard • 6-2 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (6-2, Winnipeg, MB). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#RS</text></svg>" alt="Levi Molitowsky" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#RS</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#RS • Levi Molitowsky • Forward • 6-5 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Brown, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> MUST BOX OUT
+        </div>
+        <div class="scout-notes">
+          Forward (6-5, East St. Paul, MB). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="https://wesmen.ca/images/2026/10/6/MKallonHS_2026.jpg?width=80&quality=90" alt="Michael Kallon" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#N/A • Michael Kallon • Guard • 6-4 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (6-4, Winnipeg, MB). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>0.0</td><td>3.0</td><td>0.0%</td><td>0.0%</td><td>0.0%</td><td>0.5</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>0.0</td><td>3.0</td><td>0.0%</td><td>0.0%</td><td>0.0%</td><td>0.5</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="https://wesmen.ca/images/2026/10/6/ReidHS_2026.jpg?width=80&quality=90" alt="Istvan Reid" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#N/A • Istvan Reid • Centre • 7-0 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Brown, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> MUST BOX OUT
+        </div>
+        <div class="scout-notes">
+          Centre (7-0, Winnipeg, MB). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>2.5</td><td>6.0</td><td>66.7%</td><td>100.0%</td><td>0.0%</td><td>1.5</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>2.5</td><td>6.0</td><td>66.7%</td><td>100.0%</td><td>0.0%</td><td>1.5</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="https://wesmen.ca/images/2026/10/6/LJaroHS_2026.jpg?width=80&quality=90" alt="Liam Jaro" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#N/A • Liam Jaro • Guard • 6-0 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (6-0, Winnipeg, MB). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>1.0</td><td>7.7</td><td>50.0%</td><td>50.0%</td><td>0.0%</td><td>1.0</td><td>0.0</td><td>0.0</td><td>0.7</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>1.0</td><td>7.7</td><td>50.0%</td><td>50.0%</td><td>0.0%</td><td>1.0</td><td>0.0</td><td>0.0</td><td>0.7</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="https://wesmen.ca/images/2026/10/6/MAlleyneHS_2026.jpg?width=80&quality=90" alt="Maddox Alleyne" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#N/A • Maddox Alleyne • Guard • 6-3 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (6-3, Winnipeg, MB). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>0.0</td><td>3.0</td><td>0.0%</td><td>0.0%</td><td>0.0%</td><td>0.0</td><td>0.0</td><td>0.5</td><td>0.0</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>0.0</td><td>3.0</td><td>0.0%</td><td>0.0%</td><td>0.0%</td><td>0.0</td><td>0.0</td><td>0.5</td><td>0.0</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card key">
+      <div class="photo-tile">
+        <img src="https://wesmen.ca/images/2026/10/6/AJAlleyneHS_2026.jpg?width=80&quality=90" alt="Ajay Alleyne" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+      </div>
+      <div class="card-info">
+        <div class="player-header">#N/A • Ajay Alleyne • Guard • 6-3 • 190 lbs</div>
+        <div class="header-divider"></div>
+        <div class="tactical-tags">
+          <strong>Hand:</strong> R, <strong>C/O:</strong> Trae, <strong>DTRAN:</strong> Locate
+          <br><strong>PNR:</strong> Over/Switch, <strong>PIN/DHO:</strong> Over/Switch
+          <br><strong>REBOUND:</strong> Box out
+        </div>
+        <div class="scout-notes">
+          Guard (6-3, Winnipeg, MB). Key member of Canada West rotation. [Scouting note editable via Edit Cards]
+        </div>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th></th><th>PTS</th><th>MIN</th><th>FG%</th><th>3P%</th><th>FT%</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 5 Games</td><td>0.0</td><td>3.0</td><td>0.0%</td><td>0.0%</td><td>0.0%</td><td>0.3</td><td>0.7</td><td>0.0</td><td>0.3</td><td>0.0</td>
+            </tr>
+            <tr>
+              <td>U Sports</td><td>0.0</td><td>3.0</td><td>0.0%</td><td>0.0%</td><td>0.0%</td><td>0.3</td><td>0.7</td><td>0.0</td><td>0.3</td><td>0.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+
+</div>
+
+<footer style="max-width:1300px;margin:24px auto 0;font-size:11px;color:#666;border-top:1px solid #ddd;padding-top:8px;">
+  Sources: Canada West official rosters, USportsHoops database &middot; Built for MacEwan Coaching Staff &middot; Editable via Edit Cards button.
+</footer>
+
+<script src="../../scout-cards-editor.js"></script>
+</body>
+</html>

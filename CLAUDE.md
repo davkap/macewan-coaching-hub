@@ -39,7 +39,11 @@ Edit the source, then regenerate. Hand edits to these get wiped on the next buil
 | `data/usports-rosters-stats.json`, `data/stats-meta.json` | `scripts/update_usports_data.js` / `scripts/lib/usports-scraper.js` |
 | `my-team/roster.md`, `opponents/*/profile.md`, `opponents/*/scouts/2026-27-scout.md` | `scripts/update_usports_data.js`, `scripts/generate_season_reports.js` (a "Coach's Note" section in a profile is preserved) |
 | `opponents/*/scout-cards.html` | `build_scout_cards.js` |
-| `offense-logger.html`, `defense-logger.html`, `lineup-logger.html`, `lineup-tracker.html` | the matching `scripts/build_*.js` |
+| `offense-logger.html`, `defense-logger.html`, `lineup-logger.html` | the matching `scripts/build_*.js` |
+
+**Exception: `lineup-tracker.html` (the MacEwan Database) is edited by hand.** Its generator
+`scripts/build_lineup_tracker.js` is out of date (it predates the Shot Tracker connection) and
+refuses to run without `--force`. Never regenerate the Database from it.
 
 `build_canadawest_hub.js` uses Windows (CRLF) line endings. Keep them that way when editing.
 
@@ -49,8 +53,8 @@ Edit the source, then regenerate. Hand edits to these get wiped on the next buil
   server-side by `netlify/functions/verify-access.js` against Netlify environment variables
   `HUB_COACH_PASSWORD` and `HUB_ADMIN_PASSWORD`. **Never put a password, PIN or build hook
   URL in any file in this repo.** Every file here is publicly downloadable from the site.
-- Netlify's free plan only builds commits from recognized contributors on a private repo.
-  Commits must be authored with an email tied to a GitHub account that is linked in Netlify.
+- The repo is public so every coach's commits build on Netlify's free plan (it blocks
+  unrecognized contributors only on private repos). Never commit anything private.
 - Player PINs are checked by the Google Apps Script in `offseason-sc-app/tracking-config.js`.
 - The login screen only hides pages in the browser. It is not real security: anyone who knows
   a page's address can still load it directly. Don't add anything truly confidential.
@@ -68,6 +72,26 @@ When a coach edits a team's scout cards, `scout-cards-editor.js` saves a snapsho
 to Netlify Blobs and shows it to everyone. On load it puts the freshly built "U Sports" stats
 row back into the snapshot (and the "Last 5 Games" row, unless a coach typed it by hand).
 Don't bump `data-template-version` in `build_scout_cards.js`: that discards every saved edit.
+
+## Shot Tracker → MacEwan Database
+
+The staff tracks games with `shot-tracker.html` only (the Offense/Defense/Lineup Loggers are
+legacy). After every logged play the tracker saves a report for its phone under the Blobs key
+`st_report_<gameId>__<trackerId>` (pending reports retry until the server confirms them).
+`lineup-tracker.html` loads them through `netlify/functions/list-reports.js` and combines the
+phones per game. The bridge (`bridgeToMacEwanDatabase` in `shot-tracker.html`) converts plays
+into the loggers' event format so every Database view works:
+
+- zones: R rim, P paint, J mid-range, C catch-and-shoot 3, D off-the-dribble 3
+- offence outcomes: open/contested make/miss, and_1, turnover, foul_made_ft, foul_no_ft
+- defence outcomes: stop_open/contested_miss, opp_open/contested_make, forced_to,
+  foul_committed, foul_committed_fts
+- play types map to the Database triggers (PNR BH/SC → PnR, OFB → OBS, ORB → OR, CUT → Cut,
+  TRANS → Tran, ISO → Iso); the original type is kept in `playType`
+- defence is credited to the player marked as guarding the shot (or who got the steal),
+  otherwise to "Team Defense"
+
+If you change either side, keep these names in sync or the Database will count plays wrong.
 
 ## Content saved from the site
 

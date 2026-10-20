@@ -420,6 +420,10 @@ img{max-width:100%}
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+/* Today's date in the device's own time zone (YYYY-MM-DD). toISOString() is
+   UTC, which turns an evening game in Edmonton into tomorrow's date. */
+const localDate = (d = new Date()) =>
+  d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
 const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 const sum = a => a.reduce((s, x) => s + x, 0);
@@ -653,7 +657,7 @@ function newGame(roster, opts) {
   opts = opts || {};
   return {
     id: uid(), version: 1,
-    date: opts.date || new Date().toISOString().slice(0, 10),
+    date: opts.date || localDate(),
     venue: opts.venue || "Home",
     us: { roster: JSON.parse(JSON.stringify(roster)) },   // snapshot so later roster edits don't rewrite history
     opp: { name: opts.oppName || "Opponent", short: opts.oppShort || "OPP", roster: opts.oppRoster || [] },
@@ -821,7 +825,10 @@ function derive(game, S, nowGs) {
     const ch = {
       id: ev.id, team: T, grade, pts, pl: ev.pl || null, pt: ev.pt || "Unknown", lineup: lineup.slice(), gs, p: ev.p,
       kind: ev.type, cls: ev.cls, zone: ev.zone, x: ev.x, y: ev.y, st: ev.st, ct: ev.ct, made: !!ev.made,
-      and1: !!ev.and1, preset: !!ev.preset, poss: cur.id
+      and1: !!ev.and1, preset: !!ev.preset, poss: cur.id,
+      // For the MacEwan Database: who guarded the shot (or stole the ball),
+      // and the game clock when it happened.
+      dfn: ev.dfn || (ev.type === "to" ? ev.stl : null) || null, clk: ev.c
     };
     D.chances.push(ch);
     cur.pts += pts; cur.grades.push(grade);
@@ -2812,7 +2819,7 @@ function renderSetup() {
     '<div class="btnrow" style="padding-top:10px">' +
     '<button class="btn" data-act="dbsync" style="background:#1565c0;color:#fff">🔄 Sync to MacEwan Database Now</button>' +
     '<a class="btn ghost" href="lineup-tracker.html" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center">Open Database ↗</a>' +
-    '</div><div id="dbSyncStatus" class="note" style="color:#2e7d32;font-weight:600;padding-top:6px">' + (App._dbSyncMsg || "Auto-sync active on every save") + '</div></div>' +
+    '</div><div id="dbSyncStatus" class="note" style="color:' + (App._dbSyncOk === false ? '#b26a00' : '#2e7d32') + ';font-weight:600;padding-top:6px">' + esc(App._dbSyncMsg || "Sends to the MacEwan Database automatically after every play") + '</div></div>' +
 
     '<div class="card"><h3>Export</h3>' +
     '<div class="btnrow"><button class="btn" data-act="csv">Copy CSV</button><button class="btn ghost" data-act="json">Copy game JSON</button></div>' +
@@ -3084,16 +3091,53 @@ function playerNum(g, id) {
   return p ? p.num : "";
 }
 
-function mapShotZone(cls, zone) {
+/* ============================================================
+   Shot Tracker → MacEwan Database, in the same format as the old
+   Offense / Defense Loggers so every Database view works on this data.
+   ============================================================ */
+
+/* Shot zones in the Database's codes (the loggers' codes): R rim, P paint,
+   J mid-range jumper, C catch-and-shoot 3, D off-the-dribble 3. */
+function mapShotZone(cls, st) {
   if (cls === "rim") return "R";
   if (cls === "paint") return "P";
-  if (cls === "mid") return "J";
-  if (cls === "three") {
-    if (zone === "c3L" || zone === "c3R") return "C";
-    if (zone === "t3") return "T";
-    return "W";
-  }
+  if (cls === "three") return st === "otd" ? "D" : "C";
   return "J";
+}
+
+/* Shot Tracker play types → the trigger names the Database filters on
+   (PnR, Cut, Tran, ...). Types the loggers never had keep their own name.
+   The original Shot Tracker play type is kept in `playType`. */
+const DB_TRIGGER = {
+  "PNR BH": "PnR", "PNR SC": "PnR", "OFB": "OBS", "ORB": "OR",
+  "CUT": "Cut", "TRANS": "Tran", "ISO": "Iso", "DRIVE": "Drive", "INB": "INB"
+};
+function dbTrigger(pt) {
+  if (!pt || pt === "Unknown") return "General";
+  return DB_TRIGGER[pt] || pt;
+}
+
+function dbClock(c) {
+  return c != null ? fmtClock(c).replace(/\.\d$/, "") : "00:00";
+}
+
+/* Our possession result, in the Offense Logger's outcome names. */
+function offenseOutcome(c) {
+  const contested = c.ct !== "open";
+  if (c.kind === "to") return "turnover";
+  if (c.kind === "ft") return c.pts > 0 ? "foul_made_ft" : "foul_no_ft";
+  if (c.and1) return "and_1";
+  if (c.made) return contested ? "contested_make" : "open_make";
+  return contested ? "contested_miss" : "open_miss";
+}
+
+/* Their possession result, in the Defense Logger's outcome names. */
+function defenseOutcome(c) {
+  const contested = c.ct !== "open";
+  if (c.kind === "to") return "forced_to";
+  if (c.kind === "ft") return c.pts > 0 ? "foul_committed_fts" : "foul_committed";
+  if (c.made) return contested ? "opp_contested_make" : "opp_open_make";
+  return contested ? "stop_contested_miss" : "stop_open_miss";
 }
 
 /* Each phone is one "tracker" with a permanent id, a name and a role.
@@ -3109,24 +3153,84 @@ function trackerInfo() {
   };
 }
 
+/* Sending reports to the cloud. Each report stays "pending" until the
+   server confirms it was saved. Pending reports are re-sent when the page
+   opens, when the phone gets signal back and when the tracker comes back on
+   screen, so a dead gym connection never loses a game. The status line only
+   says "sent" once the server has actually confirmed it. */
 let _dbNetlifySyncTimer = null;
-function syncReportDebounced(key, report) {
-  if (typeof fetch === 'undefined') return;
-  clearTimeout(_dbNetlifySyncTimer);
-  _dbNetlifySyncTimer = setTimeout(() => {
-    fetch('/.netlify/functions/save-content', {
+let _dbSyncInFlight = false;
+const ST_PENDING_KEY = 'macewan_st_pending';
+
+function stPendingKeys() {
+  try { return JSON.parse(localStorage.getItem(ST_PENDING_KEY) || '[]') || []; } catch (e) { return []; }
+}
+function stSetPending(keys) {
+  try { localStorage.setItem(ST_PENDING_KEY, JSON.stringify(Array.from(new Set(keys)))); } catch (e) {}
+}
+function stLocalReports() {
+  try { return JSON.parse(localStorage.getItem('macewan_st_reports') || '{}') || {}; } catch (e) { return {}; }
+}
+
+function setDbSyncStatus(ok, text) {
+  App._dbSyncOk = ok;
+  App._dbSyncMsg = text;
+  const el = typeof document !== 'undefined' && document.getElementById('dbSyncStatus');
+  if (el) { el.textContent = text; el.style.color = ok ? '#2e7d32' : '#b26a00'; }
+}
+
+function flushDbReports() {
+  if (typeof fetch === 'undefined' || _dbSyncInFlight) return;
+  const keys = stPendingKeys();
+  if (!keys.length) return;
+  const local = stLocalReports();
+  _dbSyncInFlight = true;
+  Promise.all(keys.map(key => {
+    const report = local[key];
+    if (!report) return Promise.resolve({ key: key, ok: true, updated: null });
+    return fetch('/.netlify/functions/save-content', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ key: key, content: JSON.stringify(report) })
-    }).catch(() => {});
-  }, 1200);
+    }).then(r => ({ key: key, ok: r.ok, updated: report.updated }))
+      .catch(() => ({ key: key, ok: false, updated: report.updated }));
+  })).then(results => {
+    _dbSyncInFlight = false;
+    const now = stLocalReports();
+    // Done = saved, and not changed again on this phone while it was sending.
+    const done = results.filter(r => r.ok && (!now[r.key] || now[r.key].updated === r.updated)).map(r => r.key);
+    const failed = results.some(r => !r.ok);
+    const left = stPendingKeys().filter(k => !done.includes(k));
+    stSetPending(left);
+    if (failed) {
+      setDbSyncStatus(false, "⚠️ Not sent to the MacEwan Database yet (no connection?). It's saved on this phone and will send automatically once you're back online.");
+      _dbNetlifySyncTimer = setTimeout(flushDbReports, 30000);
+    } else if (left.length) {
+      _dbNetlifySyncTimer = setTimeout(flushDbReports, 1500);
+    } else {
+      setDbSyncStatus(true, trackerInfo().name + " · sent to the MacEwan Database at " +
+        new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    }
+  });
+}
+
+function syncReportDebounced(key) {
+  stSetPending(stPendingKeys().concat([key]));
+  clearTimeout(_dbNetlifySyncTimer);
+  _dbNetlifySyncTimer = setTimeout(flushDbReports, 1200);
+}
+
+if (typeof window !== 'undefined' && window.addEventListener) {
+  window.addEventListener('online', () => setTimeout(flushDbReports, 500));
+  window.addEventListener('load', () => setTimeout(flushDbReports, 2000));
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) setTimeout(flushDbReports, 500); });
 }
 
 function bridgeToMacEwanDatabase(game, D, showNotice) {
   if (!game) return;
   try {
     const oppName = (game.opp && game.opp.name) || "Opponent";
-    const dateStr = game.date || new Date().toISOString().slice(0, 10);
+    const dateStr = game.date || localDate();
     const gameId = "game_st_" + dateStr.replace(/[^0-9]/g, "") + "_" + oppName.toLowerCase().replace(/[^a-z0-9]/g, "");
 
     // 1. Build standardized 5-man stints
@@ -3134,8 +3238,11 @@ function bridgeToMacEwanDatabase(game, D, showNotice) {
     if (D && D.stints && D.stints.length > 0) {
       D.stints.forEach((st, idx) => {
         if (!st.ids || st.ids.length < 5) return;
-        const ptsUs = sum((D.scoring || []).filter(s => s.team === "us" && s.gs >= st.s && s.gs < st.e).map(s => s.pts));
-        const ptsThem = sum((D.scoring || []).filter(s => s.team === "them" && s.gs >= st.s && s.gs < st.e).map(s => s.pts));
+        // The last stint also counts a basket scored right at its end.
+        const last = idx === D.stints.length - 1;
+        const inStint = s => s.gs >= st.s && (s.gs < st.e || (last && s.gs <= st.e));
+        const ptsUs = sum((D.scoring || []).filter(s => s.team === "us" && inStint(s)).map(s => s.pts));
+        const ptsThem = sum((D.scoring || []).filter(s => s.team === "them" && inStint(s)).map(s => s.pts));
         mappedStints.push({
           players: st.ids.map(id => cleanPlayerName(game, id)),
           shortNames: st.ids.map(id => shortPlayerName(game, id)),
@@ -3157,20 +3264,11 @@ function bridgeToMacEwanDatabase(game, D, showNotice) {
 
     const T = trackerInfo();
 
-    // 2. Build standardized Offensive Events
+    // 2. Our offence (our chances), in the Offense Logger's format
     const mappedOffEvents = [];
     const chancesList = (D && D.chances) || [];
     chancesList.filter(c => c.team === "us").forEach(c => {
-      const sz = mapShotZone(c.cls, c.zone);
-      const contested = (c.ct !== "open");
-      let outcome = "contested_miss";
-      if (c.kind === "to") outcome = "turnover";
-      else if (c.kind === "ft") outcome = "foul";
-      else if (c.made && !contested) outcome = "open_make";
-      else if (c.made && contested) outcome = "contested_make";
-      else if (!c.made && !contested) outcome = "open_miss";
-      else outcome = "contested_miss";
-
+      const sz = mapShotZone(c.cls, c.st);
       const pNum = playerNum(game, c.pl);
       const activeLineup = (c.lineup && c.lineup.length >= 5 ? c.lineup : (D.lineup || [])).map(id => cleanPlayerName(game, id));
       mappedOffEvents.push({
@@ -3179,32 +3277,26 @@ function bridgeToMacEwanDatabase(game, D, showNotice) {
         opponent: oppName,
         date: dateStr,
         quarter: periodName(c.p),
-        gameClock: c.ev ? fmtClock(c.ev.c).replace(/\.\d$/, "") : "00:00",
+        gameClock: dbClock(c.clk),
         activeLineup: activeLineup,
         playerId: pNum ? ("p" + pNum) : "team",
         playerName: c.pl ? cleanPlayerName(game, c.pl) : "Team",
-        playTrigger: c.pt && c.pt !== "Unknown" ? c.pt : "General",
+        playTrigger: dbTrigger(c.pt),
+        playType: c.pt || "Unknown",
         shotZone: sz,
-        isContested: contested,
-        outcome: outcome,
+        isContested: c.kind === "shot" && c.ct !== "open",
+        outcome: offenseOutcome(c),
         points: c.pts || 0,
         notationSymbol: "(" + sz + ")"
       });
     });
 
-
-    // 3. Build standardized Defensive Events
+    // 3. Our defence (their chances), in the Defense Logger's format.
+    //    The defender is the MacEwan player marked as guarding the shot
+    //    (or who stole the ball); otherwise it's a team possession.
     const mappedDefEvents = [];
     chancesList.filter(c => c.team === "them").forEach(c => {
-      const sz = mapShotZone(c.cls, c.zone);
-      const contested = (c.ct !== "open");
-      let outcome = "stop_contested_miss";
-      if (c.kind === "to") outcome = "stop_turnover";
-      else if (c.made && contested) outcome = "score_contested_make";
-      else if (c.made && !contested) outcome = "score_open_make";
-      else if (!c.made && contested) outcome = "stop_contested_miss";
-      else outcome = "stop_open_miss";
-
+      const sz = mapShotZone(c.cls, c.st);
       const defNum = playerNum(game, c.dfn);
       const activeLineup = (c.lineup && c.lineup.length >= 5 ? c.lineup : (D.lineup || [])).map(id => cleanPlayerName(game, id));
       mappedDefEvents.push({
@@ -3213,14 +3305,15 @@ function bridgeToMacEwanDatabase(game, D, showNotice) {
         opponent: oppName,
         date: dateStr,
         quarter: periodName(c.p),
-        gameClock: c.ev ? fmtClock(c.ev.c).replace(/\.\d$/, "") : "00:00",
+        gameClock: dbClock(c.clk),
         activeLineup: activeLineup,
         defenderId: defNum ? ("p" + defNum) : "team",
-        defenderName: c.dfn ? cleanPlayerName(game, c.dfn) : (activeLineup[0] || "Team Defense"),
-        opponentTrigger: c.pt && c.pt !== "Unknown" ? c.pt : "General",
+        defenderName: c.dfn ? cleanPlayerName(game, c.dfn) : "Team Defense",
+        opponentTrigger: dbTrigger(c.pt),
+        playType: c.pt || "Unknown",
         shotZone: sz,
-        isContested: contested,
-        outcome: outcome,
+        isContested: c.kind === "shot" && c.ct !== "open",
+        outcome: defenseOutcome(c),
         pointsAllowed: c.pts || 0,
         notationSymbol: "<u>" + sz + "</u>"
       });
@@ -3239,13 +3332,10 @@ function bridgeToMacEwanDatabase(game, D, showNotice) {
     try { localReports = JSON.parse(localStorage.getItem('macewan_st_reports') || '{}') || {}; } catch(e) { localReports = {}; }
     localReports[reportKey] = report;
     localStorage.setItem('macewan_st_reports', JSON.stringify(localReports));
-    syncReportDebounced(reportKey, report);
-
-    App._dbSyncMsg = T.name + " (" + ({ offense: "our offence", defense: "their offence", both: "both ends" }[T.role]) + ") · synced at " + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) +
-      " (" + mappedStints.length + " stints, " + mappedOffEvents.length + " off, " + mappedDefEvents.length + " def)";
+    syncReportDebounced(reportKey);
 
     if (showNotice) {
-      toast("Synced with MacEwan Database! (" + mappedStints.length + " stints, " + (mappedOffEvents.length + mappedDefEvents.length) + " events)");
+      toast("Saved. Sending to the MacEwan Database (" + mappedStints.length + " lineups, " + (mappedOffEvents.length + mappedDefEvents.length) + " plays)…");
       renderSetup();
     }
   } catch(err) {

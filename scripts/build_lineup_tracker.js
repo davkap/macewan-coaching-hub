@@ -1,3 +1,14 @@
+// ⚠️ OUT OF DATE: do not use without --force.
+// lineup-tracker.html (the MacEwan Database) has been edited by hand since
+// this script last generated it. Most importantly it now reads Shot Tracker
+// reports (/.netlify/functions/list-reports), which this script does not
+// know about. Running it would overwrite the page and silently break the
+// Shot Tracker -> Database connection. Edit lineup-tracker.html directly.
+if (!process.argv.includes('--force')) {
+  console.error('build_lineup_tracker.js is out of date and would overwrite lineup-tracker.html. Edit lineup-tracker.html directly (or pass --force if you really mean it).');
+  process.exit(1);
+}
+
 const fs = require('fs');
 const path = require('path');
 

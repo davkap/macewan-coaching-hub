@@ -39,7 +39,7 @@ Edit the source, then regenerate. Hand edits to these get wiped on the next buil
 | `data/usports-rosters-stats.json`, `data/stats-meta.json` | `scripts/update_usports_data.js` / `scripts/lib/usports-scraper.js` |
 | `my-team/roster.md`, `opponents/*/profile.md`, `opponents/*/scouts/2026-27-scout.md` | `scripts/update_usports_data.js`, `scripts/generate_season_reports.js` (a "Coach's Note" section in a profile is preserved) |
 | `opponents/*/scout-cards.html` | `build_scout_cards.js` |
-| `offense-logger.html`, `defense-logger.html`, `lineup-logger.html` | the matching `scripts/build_*.js` |
+| `lineup-logger.html` | `scripts/build_lineup_logger.js` |
 
 **Exception: `lineup-tracker.html` (the MacEwan Database) is edited by hand.** Its generator
 `scripts/build_lineup_tracker.js` is out of date (it predates the Shot Tracker connection) and
@@ -75,12 +75,14 @@ Don't bump `data-template-version` in `build_scout_cards.js`: that discards ever
 
 ## Shot Tracker → MacEwan Database
 
-The staff tracks games with `shot-tracker.html` only (the Offense/Defense/Lineup Loggers are
-legacy). After every logged play the tracker saves a report for its phone under the Blobs key
+The staff tracks games with `shot-tracker.html` (both ends) and `lineup-logger.html`. The old
+Offense/Defense Loggers were removed in Oct 2026; their saved events still load in the Database
+(Blobs keys `game_offense_events` / `game_defense_events`), and their old addresses redirect
+to the Shot Tracker. After every logged play the tracker saves a report for its phone under the Blobs key
 `st_report_<gameId>__<trackerId>` (pending reports retry until the server confirms them).
 `lineup-tracker.html` loads them through `netlify/functions/list-reports.js` and combines the
 phones per game. The bridge (`bridgeToMacEwanDatabase` in `shot-tracker.html`) converts plays
-into the loggers' event format so every Database view works:
+into the Database's event format (the format the old loggers used) so every view works:
 
 - zones: R rim, P paint, J mid-range, C catch-and-shoot 3, D off-the-dribble 3
 - offence outcomes: open/contested make/miss, and_1, turnover, foul_made_ft, foul_no_ft

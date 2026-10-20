@@ -161,8 +161,6 @@ footer{margin-top:40px;padding-top:18px;border-top:1px solid #d4d6da;color:#5c64
     <li><a href="lineup-tracker.html" style="background:rgba(152,0,46,0.15);color:#d1ad7d;font-weight:700;border-left:3px solid #d1ad7d;padding-left:7px">MacEwan Database 📊</a></li>
     <li><a href="shot-tracker.html" style="background:rgba(230,126,34,0.18);color:#e67e22;font-weight:700;border-left:3px solid #e67e22;padding-left:7px">🎯 Shot Tracker 📱</a></li>
     <li><a href="lineup-logger.html" style="background:rgba(152,0,46,0.25);color:#fff;font-weight:700;border-left:3px solid #2ecc71;padding-left:7px">Live Lineup Logger 📱</a></li>
-    <li><a href="offense-logger.html" style="background:rgba(152,0,46,0.2);color:#ff9f43;font-weight:700;border-left:3px solid #ff9f43;padding-left:7px">🏀 Offense Logger (/offense-logger)</a></li>
-    <li><a href="defense-logger.html" style="background:rgba(41,128,185,0.2);color:#70a1ff;font-weight:700;border-left:3px solid #70a1ff;padding-left:7px">🛡️ Defense Logger (/defense-logger)</a></li>
     <li><a href="drills.html" style="background:rgba(209,173,125,0.1);color:#d1ad7d;font-weight:700;border-left:3px solid #d1ad7d;padding-left:7px">Animated Drill Bank ➔</a></li>
     <li><a href="griffin-concepts.html" style="background:rgba(152,0,46,0.15);color:#fff;font-weight:700;border-left:3px solid var(--gold);padding-left:7px">Griffin Concepts ➔</a></li>
     <li><a href="playbook.html" style="background:rgba(152,0,46,0.05);color:#98002e;font-weight:600;border-left:3px solid #d1ad7d;padding-left:7px">Playbook Links ➔</a></li>
@@ -510,6 +508,21 @@ footer{margin-top:40px;padding-top:18px;border-top:1px solid #d4d6da;color:#5c64
     if (rNav) rNav.style.display = 'block';
   }
 
+  // Google Sheets turns a height like "6-3" into a date (June 3), so the
+  // roster comes back as "Wed Jun 03 2026 ...". Turn that back into feet-inches
+  // (month = feet, day = inches). Real heights like "6-3" pass through unchanged.
+  function fixHeight(h) {
+    if (h == null) return '';
+    const s = String(h).trim();
+    if (!s || /^\d{1,2}\s*-\s*\d{1,2}$/.test(s) || /^\d['′]\s*\d{1,2}/.test(s)) return s;
+    const MONTHS = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+    let m = s.match(/^(?:[A-Za-z]{3},?\s+)?([A-Za-z]{3})[a-z]*\.?\s+(\d{1,2})\b/);   // "Wed Jun 03 2026 ..." / "Jun 3, 2026"
+    if (m && MONTHS.indexOf(m[1].toLowerCase()) > -1) return (MONTHS.indexOf(m[1].toLowerCase()) + 1) + '-' + parseInt(m[2], 10);
+    m = s.match(/^\d{4}-(\d{2})-(\d{2})/);                                                // "2026-06-03T06:00:00.000Z"
+    if (m) return parseInt(m[1], 10) + '-' + parseInt(m[2], 10);
+    return s;
+  }
+
   // Load roster dynamically if cached and valid for 2026-27
   function renderDynamicRoster() {
     try {
@@ -523,7 +536,7 @@ footer{margin-top:40px;padding-top:18px;border-top:1px solid #d4d6da;color:#5c64
             <td style="padding:8px 10px;font-weight:600">${p.number || '0'}</td>
             <td style="padding:8px 10px"><strong>${p.name}</strong></td>
             <td style="padding:8px 10px">${p.position || '—'}</td>
-            <td style="padding:8px 10px">${p.height || '—'}</td>
+            <td style="padding:8px 10px">${fixHeight(p.height) || '—'}</td>
             <td style="padding:8px 10px">${p.year || '—'}</td>
             <td style="padding:8px 10px">${p.hometown || '—'}</td>
           </tr>`;

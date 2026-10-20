@@ -579,8 +579,7 @@ const htmlContent = `<!doctype html>
       <p>Griffins Men's Basketball Official Analytics, Lineups &amp; Tactical Log Engine</p>
     </div>
     <div class="nav-links">
-      <a href="offense-logger.html" class="nav-btn">🏀 Offense Logger</a>
-      <a href="defense-logger.html" class="nav-btn">🛡️ Defense Logger</a>
+      <a href="shot-tracker.html" class="nav-btn">🎯 Shot Tracker</a>
       <a href="lineup-logger.html" class="nav-btn">📱 Lineup Logger</a>
       <a href="canadawest-scout-2026-27.html" class="nav-btn">📋 Scouting Hub</a>
       <a href="index.html" class="nav-btn">🏠 Coaching Hub</a>

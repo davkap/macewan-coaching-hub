@@ -11,8 +11,6 @@ console.log('==============================================\n');
 // 1. Syntax Validation
 const targetFiles = [
   'lineup-logger.html',
-  'offense-logger.html',
-  'defense-logger.html',
   'lineup-tracker.html'
 ];
 
@@ -41,8 +39,6 @@ console.log('\n--- Checking UI Button Hooks ---');
 // Check that buttons exist on all three loggers
 const checks = [
   { file: 'lineup-logger.html', terms: ['btn-save-game', 'btn-end-game', 'saveGameProgress', 'endGameAndSaveToTracker', 'startNewGameFromSetup', 'Cancel / Return to Game'] },
-  { file: 'offense-logger.html', terms: ['btn-save-game', 'btn-end-game', 'saveOffenseGame', 'endOffenseGame', 'startNewGameFromSetup', 'Cancel / Return to Game'] },
-  { file: 'defense-logger.html', terms: ['btn-save-game', 'btn-end-game', 'saveDefenseGame', 'endDefenseGame', 'startNewGameFromSetup', 'Cancel / Return to Game'] }
 ];
 
 checks.forEach(c => {

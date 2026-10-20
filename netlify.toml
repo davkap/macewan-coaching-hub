@@ -8,13 +8,23 @@
 
 [[redirects]]
   from = "/offense-logger"
-  to = "/offense-logger.html"
-  status = 200
+  to = "/shot-tracker.html"
+  status = 301
+
+[[redirects]]
+  from = "/offense-logger.html"
+  to = "/shot-tracker.html"
+  status = 301
 
 [[redirects]]
   from = "/defense-logger"
-  to = "/defense-logger.html"
-  status = 200
+  to = "/shot-tracker.html"
+  status = 301
+
+[[redirects]]
+  from = "/defense-logger.html"
+  to = "/shot-tracker.html"
+  status = 301
 
 [[redirects]]
   from = "/lineup-logger"

@@ -26,7 +26,7 @@ function extractAndTestScripts(filename) {
 }
 
 console.log('--- Testing HTML Script Blocks ---');
-['lineup-tracker.html', 'offense-logger.html', 'defense-logger.html', 'lineup-logger.html', 'index.html', 'players.html'].forEach(extractAndTestScripts);
+['lineup-tracker.html', 'lineup-logger.html', 'shot-tracker.html', 'index.html', 'players.html'].forEach(extractAndTestScripts);
 
 console.log('\n--- Verifying Lethbridge Stints Preservation ---');
 const trackerHtml = fs.readFileSync(path.join(ROOT, 'lineup-tracker.html'), 'utf8');

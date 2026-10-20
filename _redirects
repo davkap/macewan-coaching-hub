@@ -1,5 +1,7 @@
-/offense-logger    /offense-logger.html    200
-/defense-logger    /defense-logger.html    200
+/offense-logger       /shot-tracker.html    301
+/offense-logger.html  /shot-tracker.html    301
+/defense-logger       /shot-tracker.html    301
+/defense-logger.html  /shot-tracker.html    301
 /lineup-logger     /lineup-logger.html     200
 /lineup-tracker    /lineup-tracker.html    200
 /database          /lineup-tracker.html    200

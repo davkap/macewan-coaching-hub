@@ -102,9 +102,7 @@
 
   function applyAutoField(el, freshHtml, looksLikeOldDefault) {
     if (!el || !freshHtml) return;
-    const text = squash(el.textContent);
-    const markedAuto = el.hasAttribute('data-auto') && el.getAttribute('data-auto') === text;
-    if (markedAuto || looksLikeOldDefault(text)) {
+    if (isAutoText(el, looksLikeOldDefault)) {
       el.innerHTML = freshHtml;
       el.setAttribute('data-auto', squash(el.textContent));
     } else {
@@ -144,9 +142,27 @@
       (getCardsContainer().getAttribute('data-roster-order') || '');
     tmp.innerHTML = rosterAttr;
     const roster = tmp.value.split('|').map(n => n.trim().toLowerCase()).filter(Boolean);
-    if (!roster.length) return false;
-    const order = lay.s.concat(lay.b);
-    return lay.s.length === Math.min(5, roster.length) && order.join('|') === roster.join('|');
+    if (roster.length) {
+      const order = lay.s.concat(lay.b);
+      if (lay.s.length === Math.min(5, roster.length) && order.join('|') === roster.join('|')) return true;
+    }
+    // A version saved before any coach wrote tags or notes (e.g. only photos
+    // were added) gets the automatic split too.
+    return noCoachText(container);
+  }
+
+  function isAutoText(el, looksLikeOldDefault) {
+    if (!el) return true;
+    const text = squash(el.textContent);
+    return (el.hasAttribute('data-auto') && el.getAttribute('data-auto') === text) || looksLikeOldDefault(text);
+  }
+
+  function noCoachText(container) {
+    if (!freshStats) return false;
+    const cards = Array.from(container.querySelectorAll('.card'));
+    return cards.length > 0 && cards.every(card => freshStats[cardPlayerName(card)] &&
+      isAutoText(card.querySelector('.tactical-tags'), t => OLD_DEFAULT_TAGS.test(t)) &&
+      isAutoText(card.querySelector('.scout-notes'), isAutoNote));
   }
 
   // Rebuild the fresh Starters/Bench layout, dropping each saved card into the

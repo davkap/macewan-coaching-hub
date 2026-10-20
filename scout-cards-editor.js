@@ -78,10 +78,25 @@
       const name = cardPlayerName(card);
       const rows = card.querySelectorAll('.stats-table tbody tr');
       if (name && rows.length >= 2) {
-        map[name] = { last5: statCells(rows[0]), season: statCells(rows[1]), header: headerParts(card) };
+        const img = card.querySelector('.photo-tile img');
+        map[name] = { last5: statCells(rows[0]), season: statCells(rows[1]), header: headerParts(card),
+          photo: img ? img.getAttribute('src') : '', fallback: img ? img.getAttribute('data-fallback') : '' };
       }
     });
     return map;
+  }
+
+  // A saved card's "no photo" placeholder may be the old broken markup. Use
+  // the freshly built photo/placeholder unless a real photo was saved.
+  function applyFreshPhoto(card, fresh) {
+    const img = card.querySelector('.photo-tile img');
+    if (!img || !fresh.fallback) return;
+    const src = img.getAttribute('src') || '';
+    const isPlaceholder = !src || src.indexOf('data:image/svg') === 0;
+    if (isPlaceholder && fresh.photo) img.setAttribute('src', fresh.photo);
+    img.setAttribute('data-fallback', fresh.fallback);
+    img.setAttribute('onerror', 'this.onerror=null; this.src=this.dataset.fallback;');
+    img.onerror = function () { img.onerror = null; img.src = fresh.fallback; };
   }
 
   // Swap old made-up height/weight placeholders in a saved card for the
@@ -101,6 +116,7 @@
       const fresh = freshStats[cardPlayerName(card)];
       if (!fresh) return;
       applyFreshHeader(card, fresh);
+      applyFreshPhoto(card, fresh);
       if (fresh.season.every(v => v === '-' || v === '')) return;
       const rows = card.querySelectorAll('.stats-table tbody tr');
       if (rows.length < 2) return;
@@ -178,6 +194,11 @@
         max-width: 1300px;
         margin-left: auto;
         margin-right: auto;
+      }
+      @media (max-width: 650px) {
+        .editor-bar { flex-direction: column; align-items: stretch; gap: 10px; padding: 12px 14px; }
+        .editor-actions { gap: 8px; }
+        .editor-btn { min-height: 40px; display: inline-flex; align-items: center; }
       }
       .editor-bar h4 {
         margin: 0;

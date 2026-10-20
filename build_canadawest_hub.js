@@ -402,12 +402,12 @@ function buildOurTeamCard(){
       const items = files.map(f => {
         const rel = 'systems/' + folder + '/' + f;
         const label = f.replace(/\.md$/i,'').replace(/-/g,' ');
-        return '<li><a href="'+rel+'" target="_blank" rel="noopener">'+esc(label)+'</a> <span class="muted">'+esc(rel)+'</span></li>';
+        return '<li><a href="/doc.html?f='+encodeURIComponent(rel)+'">'+esc(label)+'</a></li>';
       }).join('');
       const nice = folder.charAt(0).toUpperCase() + folder.slice(1).replace(/-/g,' ');
       blocks.push('<h4>'+esc(nice)+' ('+files.length+')</h4><ul>'+items+'</ul>');
     }
-    systemsHtml = '<p>Concept and system library, '+totalFiles+' files across '+blocks.length+' folders. Each link opens the raw markdown file in a new tab.</p>' + blocks.join('');
+    systemsHtml = '<p>Concept and system library, '+totalFiles+' files across '+blocks.length+' folders. Tap any document to read it, or <a href="/systems/">browse the full Systems library</a>.</p>' + blocks.join('');
   } else {
     systemsHtml = '<p class="thin">systems/ folder not found.</p>';
   }
@@ -691,6 +691,7 @@ const html = `<!doctype html>
 <script src="site-tracking.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/site-responsive.css">
 <title>Canada West Men&#39;s Basketball, MacEwan Griffins Coaching Hub 2026-27</title>
 <style>
 *,*::before,*::after{box-sizing:border-box}
@@ -1012,6 +1013,7 @@ th{background:#f4f6f7;font-weight:600;color:#333}
   }
   main{padding:20px 14px 60px}
   .team-banner{padding:14px 16px}
+  .team-card.us .team-banner.us-banner{background:#98002e} /* text wraps onto the gold strip on small screens */
   .chips,.tabs,.card-pad{padding-left:16px;padding-right:16px}
   .collapse{margin-left:16px;margin-right:16px}
 }

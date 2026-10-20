@@ -12,6 +12,7 @@
   <script src="site-tracking.js"></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="/site-responsive.css">
   <title>Roster & Accounts Manager | MacEwan Griffins Coaching Hub</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
   <style>
@@ -642,7 +643,7 @@
       <li><a href="systems/">Systems</a></li>
       <li><a href="templates/">Templates</a></li>
       <li><a href="practice-plans/">Practice plans</a></li>
-      <li><a href="sources/foundation.md">Foundation</a></li>
+      <li><a href="/doc.html?f=sources%2Ffoundation.md">Foundation</a></li>
     </ul>
   </nav>
 
@@ -661,7 +662,7 @@
 <div class="stats-updated-label" style="font-size:0.75em; opacity:0.75; margin-top:6px;"></div>
         <button class="btn btn-accent" onclick="openAddModal()">➕ Add Player</button>
         <button class="btn btn-outline" onclick="fetchRoster(true)">🔄 Sync Sheets</button>
-        <button class="btn btn-danger btn-outline" style="color:var(--danger)" onclick="resetRosterDefaults()">⚠️ Reset Defaults</button>
+        <button class="btn btn-danger btn-outline" style="background:transparent; color:var(--danger); border:1px solid var(--danger)" onclick="resetRosterDefaults()">⚠️ Reset Defaults</button>
       </div>
     </div>
 

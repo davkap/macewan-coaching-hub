@@ -126,7 +126,10 @@ function generateScoutCardsHtml(teamItem) {
       statsLast5Row = ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'];
     }
 
-    const fallbackSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#${encodeURIComponent(num)}</text></svg>`;
+    // "No photo" placeholder: a grey tile with the jersey number. Fully
+    // URL-encoded so its quotes can't break the <img> tag it sits in.
+    const fallbackSvg = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="#e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="#555">#${num}</text></svg>`);
     let rawPhoto = p.photo || '';
     if (rawPhoto.includes('gohorns.ca/images/')) {
       rawPhoto = rawPhoto.replace('https://gohorns.ca/images/', 'https://dxbhsrqyrr690.cloudfront.net/sidearm.nextgen.sites/gohorns.ca/images/');
@@ -136,7 +139,7 @@ function generateScoutCardsHtml(teamItem) {
     return `
     <div class="card ${isStarter ? 'starter' : 'key'}">
       <div class="photo-tile">
-        <img src="${photoUrl}" alt="${name}" onerror="this.onerror=null; this.src='${fallbackSvg}';">
+        <img src="${photoUrl}" alt="${name}" data-fallback="${fallbackSvg}" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#${num} • ${name} • ${pos} • ${ht} • ${wt}</div>
@@ -173,6 +176,8 @@ function generateScoutCardsHtml(teamItem) {
 <head>
   <script src="../../auth-lock.js"></script>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/site-responsive.css">
   <title>${teamItem.title}: Player Scout Cards | MacEwan Griffins</title>
   <style>
     :root {
@@ -317,9 +322,13 @@ function generateScoutCardsHtml(teamItem) {
       width: 80px;
     }
     @media (max-width: 650px) {
-      .grid { grid-template-columns: 1fr; }
-      .card { flex-direction: column; }
+      body { padding: 12px; }
+      .grid { grid-template-columns: minmax(0, 1fr); }
+      .card { flex-direction: column; min-width: 0; }
       .photo-tile { width: 100%; height: 180px; }
+      .card-info { min-width: 0; width: 100%; }
+      /* 10 stat columns don't fit a phone: let the table scroll sideways */
+      .stats-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
     }
     @media print {
       .no-print { display: none !important; }

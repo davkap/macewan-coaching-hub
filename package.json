@@ -4,8 +4,8 @@
   "description": "MacEwan Griffins Men's Basketball Coaching Hub & Scouting System",
   "main": "build_canadawest_hub.js",
   "scripts": {
-    "build": "node build_scout_cards.js && node build_canadawest_hub.js",
-    "update-stats": "node scripts/update_usports_data.js && node build_scout_cards.js && node build_canadawest_hub.js"
+    "build": "node build_scout_cards.js && node build_canadawest_hub.js && node scripts/build_library_pages.js",
+    "update-stats": "node scripts/update_usports_data.js && node build_scout_cards.js && node build_canadawest_hub.js && node scripts/build_library_pages.js"
   },
   "dependencies": {
     "@netlify/blobs": "^11.1.4"

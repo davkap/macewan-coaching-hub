@@ -3,6 +3,8 @@
 <head>
   <script src="../../auth-lock.js"></script>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/site-responsive.css">
   <title>Brandon Bobcats: Player Scout Cards | MacEwan Griffins</title>
   <style>
     :root {
@@ -147,9 +149,13 @@
       width: 80px;
     }
     @media (max-width: 650px) {
-      .grid { grid-template-columns: 1fr; }
-      .card { flex-direction: column; }
+      body { padding: 12px; }
+      .grid { grid-template-columns: minmax(0, 1fr); }
+      .card { flex-direction: column; min-width: 0; }
       .photo-tile { width: 100%; height: 180px; }
+      .card-info { min-width: 0; width: 100%; }
+      /* 10 stat columns don't fit a phone: let the table scroll sideways */
+      .stats-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
     }
     @media print {
       .no-print { display: none !important; }
@@ -176,7 +182,7 @@
   
     <div class="card starter">
       <div class="photo-tile">
-        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-18.JPG?width=80&quality=90" alt="Isaac Brown" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#0</text></svg>';">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-18.JPG?width=80&quality=90" alt="Isaac Brown" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%230%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#0 • Isaac Brown • Guard • 6-2 • N/A</div>
@@ -209,7 +215,7 @@
 
     <div class="card starter">
       <div class="photo-tile">
-        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-14.JPG?width=80&quality=90" alt="Youri Cange" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#2</text></svg>';">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-14.JPG?width=80&quality=90" alt="Youri Cange" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%232%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#2 • Youri Cange • Guard • 6-3 • N/A</div>
@@ -242,7 +248,7 @@
 
     <div class="card starter">
       <div class="photo-tile">
-        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-3.JPG?width=80&quality=90" alt="Malik Brown" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#3</text></svg>';">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-3.JPG?width=80&quality=90" alt="Malik Brown" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%233%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#3 • Malik Brown • Guard • 6-1 • N/A</div>
@@ -275,7 +281,7 @@
 
     <div class="card starter">
       <div class="photo-tile">
-        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-10.JPG?width=80&quality=90" alt="Liam McArthur" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#4</text></svg>';">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-10.JPG?width=80&quality=90" alt="Liam McArthur" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%234%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#4 • Liam McArthur • Forward • 6-6 • N/A</div>
@@ -308,7 +314,7 @@
 
     <div class="card starter">
       <div class="photo-tile">
-        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-20.JPG?width=80&quality=90" alt="Pablo Carvajal" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#5</text></svg>';">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-20.JPG?width=80&quality=90" alt="Pablo Carvajal" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%235%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#5 • Pablo Carvajal • Guard • 6-2 • N/A</div>
@@ -346,7 +352,7 @@
   
     <div class="card key">
       <div class="photo-tile">
-        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-17.JPG?width=80&quality=90" alt="Arjun Hehar" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#6</text></svg>';">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-17.JPG?width=80&quality=90" alt="Arjun Hehar" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%236%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#6 • Arjun Hehar • Guard • 6-6 • N/A</div>
@@ -379,7 +385,7 @@
 
     <div class="card key">
       <div class="photo-tile">
-        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-12.JPG?width=80&quality=90" alt="Jerry Ige" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#8</text></svg>';">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-12.JPG?width=80&quality=90" alt="Jerry Ige" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%238%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#8 • Jerry Ige • Guard • 6-2 • N/A</div>
@@ -412,7 +418,7 @@
 
     <div class="card key">
       <div class="photo-tile">
-        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-1.JPG?width=80&quality=90" alt="Max Winters" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#10</text></svg>';">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-1.JPG?width=80&quality=90" alt="Max Winters" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%2310%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#10 • Max Winters • Forward • 6-8 • N/A</div>
@@ -445,7 +451,7 @@
 
     <div class="card key">
       <div class="photo-tile">
-        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-16.JPG?width=80&quality=90" alt="Munroop Gill" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#13</text></svg>';">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-16.JPG?width=80&quality=90" alt="Munroop Gill" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%2313%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#13 • Munroop Gill • Guard • 5-11 • N/A</div>
@@ -478,7 +484,7 @@
 
     <div class="card key">
       <div class="photo-tile">
-        <img src="data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>" alt="Yussef Jawad" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+        <img src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%23N%2FA%3C%2Ftext%3E%3C%2Fsvg%3E" alt="Yussef Jawad" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%23N%2FA%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#N/A • Yussef Jawad • Guard • 6-3 • N/A</div>
@@ -511,7 +517,7 @@
 
     <div class="card key">
       <div class="photo-tile">
-        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-19.JPG?width=80&quality=90" alt="Kevin Lupetu" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-19.JPG?width=80&quality=90" alt="Kevin Lupetu" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%23N%2FA%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#N/A • Kevin Lupetu • Guard • 6-2 • N/A</div>
@@ -544,7 +550,7 @@
 
     <div class="card key">
       <div class="photo-tile">
-        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-2.JPG?width=80&quality=90" alt="Noah Manikoglu" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-2.JPG?width=80&quality=90" alt="Noah Manikoglu" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%23N%2FA%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#N/A • Noah Manikoglu • Guard • 6-3 • N/A</div>
@@ -577,7 +583,7 @@
 
     <div class="card key">
       <div class="photo-tile">
-        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-13.JPG?width=80&quality=90" alt="Sam Rempel" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-13.JPG?width=80&quality=90" alt="Sam Rempel" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%23N%2FA%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#N/A • Sam Rempel • Forward • 6-6 • N/A</div>
@@ -610,7 +616,7 @@
 
     <div class="card key">
       <div class="photo-tile">
-        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-15.JPG?width=80&quality=90" alt="Dzidula Sowadan" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-15.JPG?width=80&quality=90" alt="Dzidula Sowadan" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%23N%2FA%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#N/A • Dzidula Sowadan • Guard • 6-2 • N/A</div>
@@ -643,7 +649,7 @@
 
     <div class="card key">
       <div class="photo-tile">
-        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-9.JPG?width=80&quality=90" alt="Orie Zehavi" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+        <img src="https://gobobcats.ca/images/2026/10/4/MBB-Headshots-2026-9.JPG?width=80&quality=90" alt="Orie Zehavi" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%23N%2FA%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#N/A • Orie Zehavi • Forward • 6-5 • N/A</div>

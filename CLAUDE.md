@@ -25,6 +25,7 @@ Netlify runs `npm run update-stats` on every build (see `netlify.toml`):
 2. `build_scout_cards.js` regenerates every `opponents/*/scout-cards.html` from the data JSON.
 3. `build_canadawest_hub.js` generates `canadawest-scout-2026-27.html` (the big scouting hub
    page) from the opponent markdown files, the data JSON and `data/*-concepts.json`.
+4. `scripts/build_library_pages.js` generates `systems/index.html` and `templates/index.html`.
 
 The build's output is deployed but **not** committed back to git, so files in the repo can
 be older than the live site. That is expected.
@@ -39,6 +40,7 @@ Edit the source, then regenerate. Hand edits to these get wiped on the next buil
 | `data/usports-rosters-stats.json`, `data/stats-meta.json` | `scripts/update_usports_data.js` / `scripts/lib/usports-scraper.js` |
 | `my-team/roster.md`, `opponents/*/profile.md`, `opponents/*/scouts/2026-27-scout.md` | `scripts/update_usports_data.js`, `scripts/generate_season_reports.js` (a "Coach's Note" section in a profile is preserved) |
 | `opponents/*/scout-cards.html` | `build_scout_cards.js` |
+| `systems/index.html`, `templates/index.html` | `scripts/build_library_pages.js` |
 | `lineup-logger.html` | `scripts/build_lineup_logger.js` |
 
 **Exception: `lineup-tracker.html` (the MacEwan Database) is edited by hand.** Its generator
@@ -94,6 +96,17 @@ into the Database's event format (the format the old loggers used) so every view
   otherwise to "Team Defense"
 
 If you change either side, keep these names in sync or the Database will count plays wrong.
+
+## Pages, navigation and phones
+
+- Every page loads `/site-responsive.css` (shared phone/tablet fixes: no sideways scrolling
+  with the slide-out menu, 44px tap targets on touch). Add it to any new page, next to a
+  `<meta name="viewport" content="width=device-width, initial-scale=1">` tag.
+- Every page needs a visible way back to `index.html` (the Coaching Hub).
+- Never link to a raw `.md` file: link to `/doc.html?f=<path>.md`, which shows it as a page
+  (phones otherwise download or show raw text). `.skill/` isn't served by Netlify at all.
+- Before publishing a layout change, check it at phone (390px), tablet (820px) and laptop
+  (1366px) widths.
 
 ## Content saved from the site
 

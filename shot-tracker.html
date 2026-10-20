@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="/site-responsive.css">
 <meta name="theme-color" content="#8D1838">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -81,6 +82,7 @@ h1,h2,h3{margin:0;font-family:var(--disp);font-weight:600;letter-spacing:.01em;t
 .bar-top{display:flex;align-items:center;gap:10px;min-width:0}
 .mark{font-family:var(--disp);font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;
   background:var(--brand);color:var(--on-brand);padding:4px 8px 3px;border-radius:3px;flex:none}
+a.mark{text-decoration:none;display:inline-flex;align-items:center;min-height:32px;padding-inline:10px}
 .gamechip{flex:1;min-width:0;text-align:left;font-family:var(--disp);font-size:17px;font-weight:600;
   color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gamechip .vs{color:var(--ink-3);font-weight:500}
@@ -353,7 +355,7 @@ img{max-width:100%}
   <div class="stickyhead">
   <header class="bar">
     <div class="bar-top">
-      <span class="mark">Griffins</span>
+      <a class="mark" href="index.html" title="Back to the Coaching Hub (your game stays saved on this device)" aria-label="Griffins: back to the Coaching Hub">Griffins</a>
       <button class="gamechip" id="gameChip">MacEwan <span class="vs">vs</span> Opponent</button>
       <span class="syncdot off" id="syncDot" hidden></span>
       <span class="score tnum" id="scoreBox">0<span class="sep">–</span>0</span>

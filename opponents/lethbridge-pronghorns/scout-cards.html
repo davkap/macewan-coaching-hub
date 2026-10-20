@@ -3,6 +3,8 @@
 <head>
   <script src="../../auth-lock.js"></script>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/site-responsive.css">
   <title>Lethbridge Pronghorns: Player Scout Cards | MacEwan Griffins</title>
   <style>
     :root {
@@ -147,9 +149,13 @@
       width: 80px;
     }
     @media (max-width: 650px) {
-      .grid { grid-template-columns: 1fr; }
-      .card { flex-direction: column; }
+      body { padding: 12px; }
+      .grid { grid-template-columns: minmax(0, 1fr); }
+      .card { flex-direction: column; min-width: 0; }
       .photo-tile { width: 100%; height: 180px; }
+      .card-info { min-width: 0; width: 100%; }
+      /* 10 stat columns don't fit a phone: let the table scroll sideways */
+      .stats-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
     }
     @media print {
       .no-print { display: none !important; }
@@ -176,7 +182,7 @@
   
     <div class="card starter">
       <div class="photo-tile">
-        <img src="data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>" alt="Dray Walburger" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+        <img src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%23N%2FA%3C%2Ftext%3E%3C%2Fsvg%3E" alt="Dray Walburger" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%23N%2FA%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#N/A • Dray Walburger • G • 6-4 • N/A</div>
@@ -209,7 +215,7 @@
 
     <div class="card starter">
       <div class="photo-tile">
-        <img src="data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>" alt="Joshua Francis" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+        <img src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%23N%2FA%3C%2Ftext%3E%3C%2Fsvg%3E" alt="Joshua Francis" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%23N%2FA%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#N/A • Joshua Francis • F • 6-11 • N/A</div>
@@ -242,7 +248,7 @@
 
     <div class="card starter">
       <div class="photo-tile">
-        <img src="data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>" alt="Nate Hosannah" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+        <img src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%23N%2FA%3C%2Ftext%3E%3C%2Fsvg%3E" alt="Nate Hosannah" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%23N%2FA%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#N/A • Nate Hosannah • G • 6-4 • N/A</div>
@@ -275,7 +281,7 @@
 
     <div class="card starter">
       <div class="photo-tile">
-        <img src="data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>" alt="Kai Gibbons" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+        <img src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%23N%2FA%3C%2Ftext%3E%3C%2Fsvg%3E" alt="Kai Gibbons" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%23N%2FA%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#N/A • Kai Gibbons • G • 5-10 • N/A</div>
@@ -308,7 +314,7 @@
 
     <div class="card starter">
       <div class="photo-tile">
-        <img src="https://dxbhsrqyrr690.cloudfront.net/sidearm.nextgen.sites/gohorns.ca/images/2025/10/9/MBB-73.jpg" alt="Joseph Lemieux" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#4</text></svg>';">
+        <img src="https://dxbhsrqyrr690.cloudfront.net/sidearm.nextgen.sites/gohorns.ca/images/2025/10/9/MBB-73.jpg" alt="Joseph Lemieux" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%234%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#4 • Joseph Lemieux • F • 6-5 • N/A</div>
@@ -346,7 +352,7 @@
   
     <div class="card key">
       <div class="photo-tile">
-        <img src="https://dxbhsrqyrr690.cloudfront.net/sidearm.nextgen.sites/gohorns.ca/images/2025/10/9/MBB-87.jpg" alt="Cole Steele" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#8</text></svg>';">
+        <img src="https://dxbhsrqyrr690.cloudfront.net/sidearm.nextgen.sites/gohorns.ca/images/2025/10/9/MBB-87.jpg" alt="Cole Steele" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%238%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#8 • Cole Steele • F • 6-9 • N/A</div>
@@ -379,7 +385,7 @@
 
     <div class="card key">
       <div class="photo-tile">
-        <img src="data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>" alt="Cashton Mah" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+        <img src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%23N%2FA%3C%2Ftext%3E%3C%2Fsvg%3E" alt="Cashton Mah" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%23N%2FA%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#N/A • Cashton Mah • G • 6-1 • N/A</div>
@@ -412,7 +418,7 @@
 
     <div class="card key">
       <div class="photo-tile">
-        <img src="data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>" alt="Benedict Agyei" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#N%2FA</text></svg>';">
+        <img src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%23N%2FA%3C%2Ftext%3E%3C%2Fsvg%3E" alt="Benedict Agyei" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%23N%2FA%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#N/A • Benedict Agyei • F • 6-6 • N/A</div>
@@ -445,7 +451,7 @@
 
     <div class="card key">
       <div class="photo-tile">
-        <img src="https://dxbhsrqyrr690.cloudfront.net/sidearm.nextgen.sites/gohorns.ca/images/2025/10/9/MBB-77.jpg" alt="Brady Baines" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#1</text></svg>';">
+        <img src="https://dxbhsrqyrr690.cloudfront.net/sidearm.nextgen.sites/gohorns.ca/images/2025/10/9/MBB-77.jpg" alt="Brady Baines" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%231%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#1 • Brady Baines • G • 6-3 • N/A</div>
@@ -478,7 +484,7 @@
 
     <div class="card key">
       <div class="photo-tile">
-        <img src="https://dxbhsrqyrr690.cloudfront.net/sidearm.nextgen.sites/gohorns.ca/images/2025/10/9/MBB-71.jpg" alt="Mason Hoffman" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140"><rect width="120" height="140" fill="%23e0e0e0"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="%23555">#2</text></svg>';">
+        <img src="https://dxbhsrqyrr690.cloudfront.net/sidearm.nextgen.sites/gohorns.ca/images/2025/10/9/MBB-71.jpg" alt="Mason Hoffman" data-fallback="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22140%22%20viewBox%3D%220%200%20120%20140%22%3E%3Crect%20width%3D%22120%22%20height%3D%22140%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20font-weight%3D%22bold%22%20fill%3D%22%23555%22%3E%232%3C%2Ftext%3E%3C%2Fsvg%3E" onerror="this.onerror=null; this.src=this.dataset.fallback;">
       </div>
       <div class="card-info">
         <div class="player-header">#2 • Mason Hoffman • G • 6-1 • N/A</div>

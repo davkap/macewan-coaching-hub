@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 
-const ROOT = '/Users/davidkapinga/.gemini/antigravity/scratch/macewan-coaching-hub';
+const ROOT = require('path').join(__dirname, '..');
 
 function extractAndTestScripts(filename) {
   const filePath = path.join(ROOT, filename);

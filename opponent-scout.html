@@ -6,6 +6,7 @@
   <script src="site-tracking.js"></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/site-responsive.css">
   <title>Opponent Profile & Scout Editor | MacEwan Griffins</title>
   <style>
     :root {
@@ -439,6 +440,8 @@
         padding: 0 10px;
       }
     }
+    .doc-switch { margin: 8px 0 4px; font-size: 0.9em; line-height: 1.9; }
+    .doc-switch a { color: #98002e; font-weight: 600; }
   </style>
 </head>
 <body>
@@ -525,11 +528,16 @@
     
     // File Paths
     const teamNameFormatted = teamSlug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-    const fileLabel = fileType === 'profile' ? 'Profile Summary' : 'Scouting Report';
-    
-    const defaultFilePath = fileType === 'profile' 
-      ? `opponents/${teamSlug}/profile.md`
-      : `opponents/${teamSlug}/scouts/2025-26-scout.md`;
+    // type=scout is this season's report (rebuilt with live stats on every
+    // refresh); type=scout-2025-26 is last season's hand-written scout.
+    const FILE_TYPES = {
+      'profile':       { label: 'Profile Summary',            path: `opponents/${teamSlug}/profile.md` },
+      'scout':         { label: 'Scouting Report (2026-27)',  path: `opponents/${teamSlug}/scouts/2026-27-scout.md` },
+      'scout-2025-26': { label: 'Scouting Report (2025-26)',  path: `opponents/${teamSlug}/scouts/2025-26-scout.md` }
+    };
+    const fileInfo = FILE_TYPES[fileType] || FILE_TYPES['profile'];
+    const fileLabel = fileInfo.label;
+    const defaultFilePath = fileInfo.path;
 
     // Elements
     const pageTitle = document.getElementById('page-title');
@@ -555,6 +563,13 @@
     async function loadContent() {
       pageTitle.innerText = `${teamNameFormatted}: ${fileLabel}`;
       pageSubtitle.innerText = `File: ${defaultFilePath}`;
+      // Quick switch between this team's documents
+      const switcher = document.createElement('div');
+      switcher.className = 'doc-switch';
+      switcher.innerHTML = Object.keys(FILE_TYPES).map(t =>
+        t === fileType ? `<strong>${FILE_TYPES[t].label}</strong>`
+          : `<a href="?team=${encodeURIComponent(teamSlug)}&type=${t}">${FILE_TYPES[t].label}</a>`).join(' · ');
+      pageSubtitle.insertAdjacentElement('afterend', switcher);
 
       const savedLocal = localStorage.getItem(storageKey);
       

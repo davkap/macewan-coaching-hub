@@ -1,0 +1,43 @@
+/* Shared phone / tablet / laptop fixes, loaded on every page of the site.
+   Each page keeps its own design; this file only fixes the problems they
+   had in common. Keep it small and safe: no page-specific selectors. */
+
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+img, video { max-width: 100%; }
+
+/* Phones and tablets: pages with the slide-out side menu ---------------- */
+@media (max-width: 850px) {
+  /* The content column could be stretched past the screen edge by one wide
+     item (a table, a long title), making the whole page scroll sideways. */
+  .layout { grid-template-columns: minmax(0, 1fr) !important; }
+  main { min-width: 0; max-width: 100%; }
+
+  /* The closed menu sits just off-screen; its shadow showed as a grey strip
+     down the left edge. Only show the shadow while the menu is open. */
+  nav.side { box-shadow: none !important; }
+  .side-open nav.side { box-shadow: 5px 0 25px rgba(0, 0, 0, 0.8) !important; }
+
+  /* Wide tables scroll inside their box instead of widening the page. */
+  .tbl-wrap, .table-wrap, .table-container { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
+
+/* Touch screens: menu links and menu buttons big enough to tap ---------- */
+@media (pointer: coarse) {
+  nav.side a,
+  .drawer-nav-list a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+  }
+}
+@media (pointer: coarse) and (max-width: 850px) {
+  .menu-toggle,
+  .close-drawer {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

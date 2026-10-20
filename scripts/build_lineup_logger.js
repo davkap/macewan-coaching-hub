@@ -9,6 +9,7 @@ const htmlContent = `<!doctype html>
   <script src="auth-lock.js"></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="/site-responsive.css">
   <title>MacEwan Griffins: Live Game Lineup Logger</title>
   <style>
     :root {
@@ -485,6 +486,16 @@ const htmlContent = `<!doctype html>
       padding: 4px 8px;
       border-radius: 4px;
       font-size: 11px;
+    }
+
+    /* Phones/tablets at the scorer's table: big enough to hit mid-game */
+    @media (pointer: coarse) {
+      .btn-nudge, .btn-sub-out {
+        min-height: 40px;
+        min-width: 48px;
+        padding: 8px 12px;
+        font-size: 13px;
+      }
     }
 
     /* Bench Roster Section */

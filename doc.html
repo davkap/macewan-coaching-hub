@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/auth-lock.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/site-responsive.css">
+<title>Document | MacEwan Griffins Coaching Hub</title>
+<style>
+  :root { --maroon:#98002e; --gold:#d1ad7d; --ink:#1c1f24; --muted:#5c6470; --line:#e3e5e8; --bg:#f4f5f7; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.6; }
+  .top { background:#0d0f17; border-bottom:3px solid var(--maroon); padding:10px 16px; position:sticky; top:0; z-index:10; }
+  .top-inner { max-width:900px; margin:0 auto; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .brand { display:flex; align-items:center; gap:10px; color:#fff; text-decoration:none; font-weight:700; margin-right:auto; }
+  .brand img { width:36px; height:36px; background:#fff; border-radius:6px; padding:2px; }
+  .nav a { display:inline-flex; align-items:center; min-height:40px; padding:6px 12px; border:1px solid #3a3f4b;
+    border-radius:8px; color:#e6e7e9; text-decoration:none; font-size:.9em; font-weight:600; }
+  .nav a:hover { background:rgba(255,255,255,.08); }
+  .nav { display:flex; gap:8px; flex-wrap:wrap; }
+  main { max-width:900px; margin:20px auto 60px; padding:0 16px; }
+  .crumbs { font-size:.85em; color:var(--muted); margin-bottom:10px; }
+  .crumbs a { color:var(--maroon); }
+  article { background:#fff; border:1px solid var(--line); border-radius:12px; padding:22px 26px; }
+  article h1 { color:var(--maroon); font-size:1.7em; line-height:1.25; margin:.1em 0 .5em; }
+  article h2 { color:var(--maroon); font-size:1.3em; margin:1.4em 0 .5em; padding-bottom:4px; border-bottom:1px solid var(--line); }
+  article h3 { font-size:1.1em; margin:1.2em 0 .4em; }
+  article h4, article h5, article h6 { font-size:1em; margin:1em 0 .3em; }
+  article a { color:var(--maroon); font-weight:600; }
+  article blockquote { margin:1em 0; padding:10px 14px; background:#faf6ef; border-left:4px solid var(--gold); border-radius:4px; }
+  article blockquote p { margin:.3em 0; }
+  article code { background:#f1f2f4; padding:1px 5px; border-radius:4px; font-size:.92em; }
+  article pre { background:#f1f2f4; padding:12px; border-radius:6px; overflow-x:auto; }
+  article pre code { background:none; padding:0; }
+  article hr { border:0; border-top:1px solid var(--line); margin:1.5em 0; }
+  article img { max-width:100%; height:auto; }
+  .tbl { overflow-x:auto; -webkit-overflow-scrolling:touch; margin:1em 0; }
+  article table { border-collapse:collapse; width:100%; font-size:.92em; }
+  article th, article td { border:1px solid var(--line); padding:6px 9px; text-align:left; vertical-align:top; }
+  article th { background:#f4f6f7; }
+  .meta { margin-top:14px; font-size:.85em; color:var(--muted); display:flex; gap:14px; flex-wrap:wrap; }
+  .meta code, article code { word-break: break-all; }
+  article, .crumbs { overflow-wrap: anywhere; }
+  .meta a { color:var(--maroon); font-weight:600; }
+  .err { background:#fff3f3; border:1px solid #f0c4c4; color:#8a1c1c; padding:14px 16px; border-radius:8px; }
+  @media (max-width:600px) { article { padding:16px; border-radius:10px; } article h1 { font-size:1.4em; } }
+  @media print { .top, .crumbs, .meta { display:none; } article { border:0; padding:0; } body { background:#fff; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="/index.html"><img src="/macewan-logo.png" alt="MacEwan"> Griffins Hoops</a>
+    <nav class="nav">
+      <a href="/index.html">🏠 Coaching Hub</a>
+      <a href="/systems/">📘 Systems</a>
+      <a href="/templates/">📋 Templates</a>
+    </nav>
+  </div>
+</header>
+<main>
+  <div class="crumbs" id="crumbs"></div>
+  <article id="doc"><p>Loading…</p></article>
+  <div class="meta" id="meta"></div>
+</main>
+<script>
+/* Shows a Markdown file from this site as a readable page:
+   /doc.html?f=systems/offense/horns.md
+   Only .md files inside the site are allowed. */
+(function () {
+  const params = new URLSearchParams(location.search);
+  const file = (params.get('f') || '').replace(/^\/+/, '');
+  const docEl = document.getElementById('doc');
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
+  if (!/^[\w\-./]+\.md$/i.test(file) || file.split('/').some(p => p === '..' || p.startsWith('.'))) {
+    docEl.innerHTML = '<div class="err">That document link isn\'t valid. <a href="/index.html">Back to the Coaching Hub</a></div>';
+    return;
+  }
+  const dir = file.includes('/') ? file.slice(0, file.lastIndexOf('/') + 1) : '';
+
+  // Resolve a link written inside the document; route .md links through this viewer.
+  function resolveLink(href) {
+    if (/^(https?:|mailto:|#)/i.test(href)) return href;
+    let path = href.startsWith('/') ? href.slice(1) : dir + href;
+    const out = [];
+    path.split('/').forEach(p => { if (p === '..') out.pop(); else if (p !== '.') out.push(p); });
+    path = out.join('/');
+    const [base, hash] = path.split('#');
+    if (/\.md$/i.test(base)) return '/doc.html?f=' + encodeURIComponent(base) + (hash ? '#' + hash : '');
+    return '/' + path;
+  }
+
+  function inline(s) {
+    // s is already HTML-escaped
+    const codes = [];
+    s = s.replace(/`([^`]+)`/g, (m, c) => { codes.push(c); return '\u0000' + (codes.length - 1) + '\u0000'; });
+    s = s.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (m, alt, src) => '<img alt="' + alt + '" src="' + esc(resolveLink(src.replace(/&amp;/g, '&'))) + '">');
+    s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, txt, href) => {
+      const url = resolveLink(href.replace(/&amp;/g, '&'));
+      const ext = /^https?:/i.test(url) ? ' target="_blank" rel="noopener"' : '';
+      return '<a href="' + esc(url) + '"' + ext + '>' + txt + '</a>';
+    });
+    s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>').replace(/__([^_]+)__/g, '<strong>$1</strong>');
+    s = s.replace(/(^|[^*])\*([^*\s][^*]*)\*/g, '$1<em>$2</em>');
+    s = s.replace(/\u0000(\d+)\u0000/g, (m, i) => '<code>' + codes[+i] + '</code>');
+    return s;
+  }
+
+  function render(md) {
+    const lines = esc(md.replace(/\r\n?/g, '\n')).split('\n');
+    const html = [];
+    let i = 0;
+    const isTableRow = l => /^\s*\|.*\|\s*$/.test(l);
+    while (i < lines.length) {
+      const line = lines[i];
+      if (/^\s*$/.test(line)) { i++; continue; }
+      if (/^```/.test(line)) {                                   // code block
+        const buf = []; i++;
+        while (i < lines.length && !/^```/.test(lines[i])) buf.push(lines[i++]);
+        i++; html.push('<pre><code>' + buf.join('\n') + '</code></pre>'); continue;
+      }
+      let m = line.match(/^(#{1,6})\s+(.*)$/);                  // heading
+      if (m) { const n = m[1].length; html.push('<h' + n + '>' + inline(m[2].replace(/\s+#+\s*$/, '')) + '</h' + n + '>'); i++; continue; }
+      if (/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(line)) { html.push('<hr>'); i++; continue; }
+      if (/^\s*&gt;/.test(line)) {                               // blockquote
+        const buf = [];
+        while (i < lines.length && /^\s*&gt;/.test(lines[i])) buf.push(lines[i++].replace(/^\s*&gt;\s?/, ''));
+        html.push('<blockquote>' + render.inner(buf.join('\n')) + '</blockquote>'); continue;
+      }
+      if (isTableRow(line)) {                                    // table
+        const rows = [];
+        while (i < lines.length && isTableRow(lines[i])) rows.push(lines[i++]);
+        const cells = r => r.trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim());
+        const body = rows.filter(r => !cells(r).every(c => /^:?-+:?$/.test(c)));   // drop the |---| row
+        let t = '<div class="tbl"><table>';
+        body.forEach((r, k) => {
+          const tag = k === 0 ? 'th' : 'td';
+          t += '<tr>' + cells(r).map(c => '<' + tag + '>' + inline(c) + '</' + tag + '>').join('') + '</tr>';
+        });
+        html.push(t + '</table></div>'); continue;
+      }
+      if (/^\s*([-*+]|\d+[.)])\s+/.test(line)) {                 // list (one level, items may wrap)
+        const ordered = /^\s*\d+[.)]/.test(line);
+        const items = [];
+        while (i < lines.length && (/^\s*([-*+]|\d+[.)])\s+/.test(lines[i]) || (/^\s{2,}\S/.test(lines[i]) && items.length))) {
+          if (/^\s*([-*+]|\d+[.)])\s+/.test(lines[i])) items.push(lines[i].replace(/^\s*([-*+]|\d+[.)])\s+/, ''));
+          else items[items.length - 1] += ' ' + lines[i].trim();
+          i++;
+        }
+        html.push((ordered ? '<ol>' : '<ul>') + items.map(x => '<li>' + inline(x.replace(/^\[ \]\s*/, '☐ ').replace(/^\[x\]\s*/i, '☑ ')) + '</li>').join('') + (ordered ? '</ol>' : '</ul>'));
+        continue;
+      }
+      const buf = [];                                            // paragraph
+      while (i < lines.length && !/^\s*$/.test(lines[i]) && !/^(#{1,6}\s|```|\s*&gt;|\s*([-*+]|\d+[.)])\s+)/.test(lines[i]) && !isTableRow(lines[i])) buf.push(lines[i++]);
+      html.push('<p>' + inline(buf.join('<br>')) + '</p>');
+    }
+    return html.join('\n');
+  }
+  // Blockquote contents are already escaped: render them without escaping again.
+  render.inner = function (s) {
+    const unesc = s.replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&quot;/g, '"').replace(/&amp;/g, '&');
+    return render(unesc);
+  };
+
+  // Breadcrumbs: Coaching Hub › Systems › Offense › file
+  const parts = file.split('/');
+  const crumbs = ['<a href="/index.html">Coaching Hub</a>'];
+  if (parts[0] === 'systems') crumbs.push('<a href="/systems/">Systems</a>');
+  else if (parts[0] === 'templates') crumbs.push('<a href="/templates/">Templates</a>');
+  else if (parts[0] === 'my-team') crumbs.push('My Team');
+  else if (parts[0] === 'opponents' && parts[1]) crumbs.push('<a href="/canadawest-scout-2026-27.html#' + esc(parts[1]) + '">' + esc(parts[1].replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())) + '</a>');
+  if (parts[0] === 'systems' && parts.length > 2) crumbs.push(esc(parts[1].replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())));
+  document.getElementById('crumbs').innerHTML = crumbs.join(' › ');
+
+  fetch('/' + file, { cache: 'no-cache' })
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .then(md => {
+      docEl.innerHTML = render(md);
+      const h1 = docEl.querySelector('h1');
+      document.title = (h1 ? h1.textContent : file) + ' | MacEwan Griffins Coaching Hub';
+      document.getElementById('meta').innerHTML =
+        '<span>File: <code>' + esc(file) + '</code></span>' +
+        '<a href="/' + esc(file) + '" download>Download</a>' +
+        '<a href="https://github.com/davkap/macewan-coaching-hub/blob/main/' + esc(file) + '" target="_blank" rel="noopener">Edit on GitHub</a>';
+    })
+    .catch(() => {
+      docEl.innerHTML = '<div class="err">Couldn\'t load <code>' + esc(file) + '</code>. It may have been moved or renamed. <a href="/index.html">Back to the Coaching Hub</a></div>';
+    });
+})();
+</script>
+</body>
+</html>

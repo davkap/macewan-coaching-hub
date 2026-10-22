@@ -146,7 +146,7 @@ Graded quizzes for players. Each quiz is built in the browser from random questi
   (Blobs key `scout_scout_<slug>`, falling back to `scouts/2026-27-scout.md`; `[FILL…]` / TBD parts
   are skipped) and team stat leaders from `data/usports-rosters-stats.json`.
 - **Griffin Concepts quiz:** terms, mottos and beliefs from `griffin-concepts.html` (plus the saved
-  edit in Blobs key `griffin_basketball_concepts_v1`).
+  edit in Blobs key `griffin_basketball_concepts_v2`).
 
 - **Question bank:** starter questions in `data/quiz-bank-seed.json` (ids `s-…`, written from the
   Concepts page) plus coaches' questions and edits, saved by `netlify/functions/quiz-bank.js`
@@ -176,6 +176,16 @@ The S&C app (`offseason-sc-app/`) has no login of its own: a player logged into 
 in there (auth-lock.js sets `hoops-offseason:current-player`), and staff see the general program.
 The Profile tab only sets goal and injuries. The S&C program itself is paused for 2026-27 (new
 S&C coach): don't change it unless David asks.
+
+## Griffin Concepts page (`griffin-concepts.html`)
+
+Offense and Defense tabs of concept cards (content imported from David's
+"Griffin_Basketball_Concepts.html", Oct 2026). Admins edit in place (Edit Mode); edits are saved to
+Blobs key `griffin_basketball_concepts_v2` (the old `…_v1` copy is kept only as a backup).
+Search looks through both tabs, matching from the start of words, and shows only the matching
+terms/beliefs; concept chips filter the open tab; `?q=word` opens the page with a search.
+Search/filter state is stripped before saving. The automatic quiz questions read this same saved
+version, so changing a term changes its questions.
 
 ## Content saved from the site
 

@@ -1083,6 +1083,27 @@
         padding: 20px 16px;
       }
     }
+
+    /* Search & filter */
+    .filter-pills { flex-wrap: wrap; overflow: visible; }
+    .pill { min-height: 34px; display: inline-flex; align-items: center; }
+    .search-status { font-size: 0.85rem; color: var(--slate-gray); min-height: 1em; }
+    .search-status:empty { display: none; }
+    .search-status b { color: var(--maroon); }
+    .playbook-item.hidden, .formula-banner.hidden, .playbook-pane.hidden, .terms-pane.hidden { display: none !important; }
+    .concept-body.search-solo { grid-template-columns: 1fr !important; }
+    body.searching .tab-content { display: block !important; }
+    body.searching .tab-content.no-results { display: none !important; }
+    body.searching #offense-tab::before, body.searching #defense-tab::before {
+      display: block; font-family: 'Montserrat', sans-serif; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--maroon); font-size: 0.9rem; margin: 6px 0 12px;
+    }
+    body.searching #offense-tab::before { content: '⚡ Offense'; }
+    body.searching #defense-tab::before { content: '🛡️ Defense'; }
+    ::highlight(concept-search) { background-color: #fde68a; color: inherit; }
+    .concept-card.flash { box-shadow: 0 0 0 3px var(--gold); }
+    .search-empty { background: white; border: 1px dashed var(--border-color); border-radius: var(--radius); padding: 24px; text-align: center; color: var(--slate-gray); }
+    input[type=search].search-input { -webkit-appearance: none; appearance: none; font-size: 16px; }
   </style>
 </head>
 <body>
@@ -1139,7 +1160,7 @@
           <span>🏀 Coaching Manual &amp; Player Study Guide</span>
         </div>
         <div style="font-size: 0.82rem; color: var(--slate-gray);" id="roleSubText">
-          Interactive terminology database &amp; study quiz.
+          Search any word, or tap a concept to see just that one.
         </div>
       </div>
 
@@ -1153,9 +1174,9 @@
             <button class="tab-btn" id="btn-defense-tab" onclick="switchTab('defense')">
               🛡️ Defense
             </button>
-            <button class="tab-btn quiz-btn" id="btn-quiz-tab" onclick="switchTab('quiz')">
-              🏆 Interactive Quiz
-            </button>
+            <a class="tab-btn quiz-btn" id="quizLink" href="quiz.html?tags=offence" style="text-decoration:none">
+              🏆 Quiz me
+            </a>
           </div>
           
           <div class="right-controls">
@@ -1175,16 +1196,10 @@
         <div class="search-box-container" id="searchBoxContainer">
           <div class="search-input-wrapper">
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" id="conceptSearchInput" class="search-input" placeholder="Search any terminology, trigger, closeout, or defensive rotation..." onkeyup="filterTerminology()">
+            <input type="search" id="conceptSearchInput" class="search-input" placeholder="Search any word: a term, call, coverage or rule (e.g. RED, Dunker, closeout)…" autocomplete="off" aria-label="Search the concepts">
           </div>
-          <div class="filter-pills">
-            <span class="pill active" onclick="setCategoryFilter('all', this)">All Concepts</span>
-            <span class="pill" onclick="setCategoryFilter('pnr', this)">PNR &amp; DHO Reads</span>
-            <span class="pill" onclick="setCategoryFilter('closeout', this)">Closeouts &amp; Drives</span>
-            <span class="pill" onclick="setCategoryFilter('shell', this)">Shell &amp; Rotations</span>
-            <span class="pill" onclick="setCategoryFilter('post', this)">Post Game</span>
-            <span class="pill" onclick="setCategoryFilter('special', this)">Special Situations</span>
-          </div>
+          <div class="filter-pills" id="conceptChips" aria-label="Filter by concept"></div>
+          <div class="search-status" id="searchStatus" aria-live="polite"></div>
         </div>
       </div>
 
@@ -1193,7 +1208,7 @@
         
         <!-- OFFENSIVE CONCEPTS TAB -->
         <div id="offense-tab" class="tab-content active">
-          
+      
           <!-- Offensive Formula Banner -->
           <div class="formula-banner">
             <div class="formula-card">
@@ -1214,7 +1229,7 @@
           <div class="container">
 
             <!-- RACE / EARLY OFFENSE -->
-            <div class="concept-card" data-category="offense closeout">
+            <div class="concept-card">
               <div class="concept-header">
                 <div class="concept-title">
                   <h2 class="editable">Race</h2>
@@ -1250,7 +1265,7 @@
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
                       <div class="term-name editable">Spots</div>
-                      <div class="term-desc editable">All players sprint to the 5 spots (Deep Corners, Wings, &amp; Post) in 5 seconds or less. Post is either Big Ahead into Dunker or Big Above as a Trailer.</div>
+                      <div class="term-desc editable">All players sprint to the 5 spots (Deep Corners, Wings, & Post) in 5 seconds or less. Post is either Big Ahead into Dunker or Big Above as a Trailer.</div>
                     </div>
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
@@ -1275,7 +1290,7 @@
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
                       <div class="term-name editable">Drag</div>
-                      <div class="term-desc editable">Trailing post player sets a transition pick &amp; roll for the ball handler to use immediately after a defensive miss.</div>
+                      <div class="term-desc editable">Trailing post player sets a transition pick & roll for the ball handler to use immediately after a defensive miss.</div>
                     </div>
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
@@ -1289,7 +1304,7 @@
             </div>
 
             <!-- CORE / SECONDARY BREAKS -->
-            <div class="concept-card" data-category="offense pnr">
+            <div class="concept-card">
               <div class="concept-header">
                 <div class="concept-title">
                   <h2 class="editable">Core</h2>
@@ -1350,7 +1365,7 @@
             </div>
 
             <!-- DRIVE AND KICK -->
-            <div class="concept-card" data-category="offense closeout">
+            <div class="concept-card">
               <div class="concept-header">
                 <div class="concept-title">
                   <h2 class="editable">Drive &amp; Kick</h2>
@@ -1402,6 +1417,11 @@
                     </div>
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Follow Your Momentum</div>
+                      <div class="term-desc editable">When you break the paint across the nail and kick it out, run in the direction of your pass to relocate.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
                       <div class="term-name editable">.5 (Half-Second)</div>
                       <div class="term-desc editable">Once defense is scrambling, decide to shoot, drive, or pass in 0.5 seconds. Do not let the ball stick or hold.</div>
                     </div>
@@ -1411,8 +1431,153 @@
               </div>
             </div>
 
+            <!-- FLOW -->
+            <div class="concept-card">
+              <div class="concept-header">
+                <div class="concept-title">
+                  <h2 class="editable">Flow</h2>
+                  <span class="tagline editable">Continuity Offense</span>
+                </div>
+                <div class="concept-meta editable">Play After The Play</div>
+                <div class="card-controls edit-only-ui no-print">
+                  <button class="btn-card-action layout-toggle-btn" title="Toggle layout columns">Layout</button>
+                  <button class="btn-card-action delete-card-btn" title="Delete concept card">&times; Delete</button>
+                </div>
+              </div>
+              <div class="concept-body">
+                <div class="playbook-pane">
+                  <h3 class="editable">Continuity Phases</h3>
+                  <ul class="playbook-list">
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">1st Side = Trigger</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">2nd Side = 2-Man Game</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">3rd Side = Flash or Snap</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                  </ul>
+                  <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
+                </div>
+                <div class="terms-pane">
+                  <h3 class="editable">Flow &amp; Action Tag Terms</h3>
+                  <div class="terms-grid">
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">1st Side / 2nd Side</div>
+                      <div class="term-desc editable"><strong>1st:</strong> The initial trigger side. O5 rolls and spaces to opposite dunker. <br><strong>2nd:</strong> Ball crosses midline after 1st side. We run a 2-man game.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Ghost &amp; Slip</div>
+                      <div class="term-desc editable"><strong>Ghost:</strong> Fake screen and slip to 3-point line. <br><strong>Slip:</strong> Hard dive to the rim without setting the screen contact.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Get / Rifle</div>
+                      <div class="term-desc editable"><strong>Get:</strong> Handback PNR with O5. <br><strong>Rifle:</strong> Weakside corner big flashes out for Get game with small in slot.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Snap / Flash</div>
+                      <div class="term-desc editable"><strong>Snap:</strong> Slot Step-up Screen. <br><strong>Flash:</strong> Big flashes from dunker to high or low splits.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Side / Touch</div>
+                      <div class="term-desc editable"><strong>Side:</strong> Shift trigger to wing. <br><strong>Touch:</strong> Flip ball to small and get it back to drive downhill.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">C (Curl) / Twist</div>
+                      <div class="term-desc editable"><strong>C:</strong> Cutter curls off 2-man game; screener flashes to ball. <br><strong>Twist:</strong> Re-screening to punish defense going under.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Rocket / Cash</div>
+                      <div class="term-desc editable"><strong>Rocket:</strong> Spain PNR backscreen. <br><strong>Cash:</strong> Backdoor cut against overplay. Face cut if flat, backcut if up-line.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Color / Clear</div>
+                      <div class="term-desc editable"><strong>Color:</strong> Quick action pin rescreen. <br><strong>Clear:</strong> Empty weakside corner for lob.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Exit (Klay Action)</div>
+                      <div class="term-desc editable">Miami baseline pin screen while PNR occurs, pulling tags away from the roller.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Miami / Hammer</div>
+                      <div class="term-desc editable"><strong>Miami:</strong> Weakside rip slip followed by 5 screen. <br><strong>Hammer:</strong> Weakside flare screen during baseline drive.</div>
+                    </div>
+                  </div>
+                  <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- CLOSEOUT READS -->
+            <div class="concept-card">
+              <div class="concept-header">
+                <div class="concept-title">
+                  <h2 class="editable">Closeout Reads</h2>
+                  <span class="tagline editable">Attack Advantages</span>
+                </div>
+                <div class="concept-meta editable">.5 Decisions</div>
+                <div class="card-controls edit-only-ui no-print">
+                  <button class="btn-card-action layout-toggle-btn" title="Toggle layout columns">Layout</button>
+                  <button class="btn-card-action delete-card-btn" title="Delete concept card">&times; Delete</button>
+                </div>
+              </div>
+              <div class="concept-body full-terms">
+                <div class="playbook-pane">
+                  <h3 class="editable">Beliefs / Playbook</h3>
+                  <ul class="playbook-list"></ul>
+                  <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
+                </div>
+                <div class="terms-pane">
+                  <h3 class="editable">Offensive Closeout Terms</h3>
+                  <div class="terms-grid">
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">4 Point Line Spacing</div>
+                      <div class="term-desc editable">Space 3 feet behind the FIBA line in slots. Forces nail defender to cover longer distance, opening drive lines.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Stampede "Go"</div>
+                      <div class="term-desc editable">Catch on the run and rip through opposite of closeout to puncture gaps immediately.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Run Thru</div>
+                      <div class="term-desc editable">Face cut the defender on catch if they close out hard on your low shoulder.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Side Step 3</div>
+                      <div class="term-desc editable">If run off the line, take a side-dribble to open up a clean window for 3 instead of settling for a long 2.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Drift &amp; Drag</div>
+                      <div class="term-desc editable"><strong>Drift:</strong> Slide down baseline when ball drives toward you. <br><strong>Drag:</strong> Trail behind ball when driving away from you.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Dive</div>
+                      <div class="term-desc editable">When you see the back of your defender's head, immediately cut hard to the basket.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Circle / I-Cut (from Dunker)</div>
+                      <div class="term-desc editable"><strong>Circle Cut:</strong> Weakside 5 cuts around rim for drive space. <br><strong>I-Cut:</strong> Strongside 5 pops straight up to clear baseline drive path.</div>
+                    </div>
+                  </div>
+                  <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
+                </div>
+              </div>
+            </div>
+
             <!-- PICK & ROLL READS -->
-            <div class="concept-card" data-category="offense pnr">
+            <div class="concept-card">
               <div class="concept-header">
                 <div class="concept-title">
                   <h2 class="editable">Pick &amp; Roll Reads</h2>
@@ -1467,6 +1632,180 @@
                       <div class="term-name editable">Matchup Calls</div>
                       <div class="term-desc editable"><strong>Mouse in House:</strong> Small guarding big.<br><strong>Moose on Loose:</strong> Big guarding guard on perimeter.</div>
                     </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Blitz Attack</div>
+                      <div class="term-desc editable"><strong>4 S Passes:</strong> Short roll, Shake (drag), See (reversal), Skip.<br><strong>Advance It:</strong> Flow pass and quick drive.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Veer Attack</div>
+                      <div class="term-desc editable"><strong>Nash It:</strong> Keep dribble along baseline to pull out big.<br><strong>Warrior:</strong> Nash out, pass to wing, boomerang back.</div>
+                    </div>
+                  </div>
+                  <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- DHO READS -->
+            <div class="concept-card">
+              <div class="concept-header">
+                <div class="concept-title">
+                  <h2 class="editable">DHO Reads</h2>
+                  <span class="tagline editable">Dribble Hand-Offs</span>
+                </div>
+                <div class="concept-meta editable">"Create Advantages" | Keep the Flow &amp; Relieve Pressure</div>
+                <div class="card-controls edit-only-ui no-print">
+                  <button class="btn-card-action layout-toggle-btn" title="Toggle layout columns">Layout</button>
+                  <button class="btn-card-action delete-card-btn" title="Delete concept card">&times; Delete</button>
+                </div>
+              </div>
+              <div class="concept-body full-terms">
+                <div class="playbook-pane">
+                  <h3 class="editable">Beliefs / Playbook</h3>
+                  <ul class="playbook-list"></ul>
+                  <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
+                </div>
+                <div class="terms-pane">
+                  <h3 class="editable">Dribble Hand-Off Terms</h3>
+                  <div class="terms-grid">
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Under</div>
+                      <div class="term-desc editable">Race the Under or run a Twist screen action to create space for shooters.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Cash</div>
+                      <div class="term-desc editable">Backcut immediately if the defender plays on top side to prevent DHO catch.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Chase</div>
+                      <div class="term-desc editable">Get downhill to break the paint or space out 3s for shooters.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Switch</div>
+                      <div class="term-desc editable">Race the switch or drive the wake vs hard switch coverages.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Blitz</div>
+                      <div class="term-desc editable">Make a quick pocket pass to the rolling big or advance the ball immediately.</div>
+                    </div>
+                  </div>
+                  <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ISO OFFENSE -->
+            <div class="concept-card">
+              <div class="concept-header">
+                <div class="concept-title">
+                  <h2 class="editable">ISO Offense</h2>
+                  <span class="tagline editable">Isolation Attacks</span>
+                </div>
+                <div class="concept-meta editable">"Hunt Moose"</div>
+                <div class="card-controls edit-only-ui no-print">
+                  <button class="btn-card-action layout-toggle-btn" title="Toggle layout columns">Layout</button>
+                  <button class="btn-card-action delete-card-btn" title="Delete concept card">&times; Delete</button>
+                </div>
+              </div>
+              <div class="concept-body">
+                <div class="playbook-pane">
+                  <h3 class="editable">Isolation Steps</h3>
+                  <ul class="playbook-list">
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Identify the Moose (Weakest Link)</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Force the Switch</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Space the Floor</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Break the Paint (Engage 2)</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                  </ul>
+                  <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
+                </div>
+                <div class="terms-pane">
+                  <h3 class="editable">ISO Offense Terms</h3>
+                  <div class="terms-grid">
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Moose</div>
+                      <div class="term-desc editable">The weakest defender on the floor. Matchups we want to target and isolate.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">4:1 Spacing</div>
+                      <div class="term-desc editable">Ball in slot with target mismatch, corners filled, big in dunker to create a double gap.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Double Gap</div>
+                      <div class="term-desc editable">Moving an offensive player to drag the nearest gap defender away, opening space for drives.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Break the Paint</div>
+                      <div class="term-desc editable">Force rotation, put defense in the "Blender", engage 2 defenders, and kick for open shots.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Boomerang</div>
+                      <div class="term-desc editable">Pass on switch, back up 3 steps, create a runway for a catch &amp; go on pass back.</div>
+                    </div>
+                  </div>
+                  <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- SPLIT GAMES -->
+            <div class="concept-card">
+              <div class="concept-header">
+                <div class="concept-title">
+                  <h2 class="editable">Split Games</h2>
+                  <span class="tagline editable">2-Man Off-Ball Games</span>
+                </div>
+                <div class="concept-meta editable">Create Advantages &amp; Coverage Confusion</div>
+                <div class="card-controls edit-only-ui no-print">
+                  <button class="btn-card-action layout-toggle-btn" title="Toggle layout columns">Layout</button>
+                  <button class="btn-card-action delete-card-btn" title="Delete concept card">&times; Delete</button>
+                </div>
+              </div>
+              <div class="concept-body full-terms">
+                <div class="playbook-pane">
+                  <h3 class="editable">Beliefs / Playbook</h3>
+                  <ul class="playbook-list"></ul>
+                  <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
+                </div>
+                <div class="terms-pane">
+                  <h3 class="editable">Split Game Terms</h3>
+                  <div class="terms-grid">
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Hi Splits</div>
+                      <div class="term-desc editable">2-Man game in High Quad. Uphill DHO creates downhill drives and punishes switches.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Low Splits</div>
+                      <div class="term-desc editable">2-Man game in the corner to create a double gap, getting handler over top into low angle PNR.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">C (Curl)</div>
+                      <div class="term-desc editable">Tag meaning the cutter curls to basket, bringing the screener back to the ball.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">I Go / You Go</div>
+                      <div class="term-desc editable"><strong>I Go:</strong> I cut to the rim. <br><strong>You Go:</strong> You cut to the rim.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Yes / Twirl</div>
+                      <div class="term-desc editable"><strong>Yes:</strong> Accept the screen. <br><strong>Twirl:</strong> Receiver slips back to screen the screener's defender.</div>
+                    </div>
                   </div>
                   <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
                 </div>
@@ -1474,7 +1813,7 @@
             </div>
 
             <!-- POST FEED & CUTTERS -->
-            <div class="concept-card" data-category="offense post">
+            <div class="concept-card">
               <div class="concept-header">
                 <div class="concept-title">
                   <h2 class="editable">Post Feed &amp; Cutters</h2>
@@ -1493,6 +1832,7 @@
                     <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Catch-Chin-Check ➔ 2 Feet, 2 Hands, check shoulder</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
                     <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Score-Search-Skip ➔ Score, find cutter, skip opposite</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
                     <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Blast ➔ Uphill DHO to slip roll/pop</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Split Games ➔ 2-man game with post feeder</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
                   </ul>
                   <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
                 </div>
@@ -1527,15 +1867,15 @@
 
             <!-- Add Card Button (Offense) -->
             <div class="add-card-container edit-only-ui no-print">
-              <button class="add-card-btn">+ Add New Offensive Concept Card</button>
+              <button class="add-card-btn">+ Add New Concept Card</button>
             </div>
 
           </div>
         </div>
-        
+    
         <!-- DEFENSIVE CONCEPTS TAB -->
         <div id="defense-tab" class="tab-content">
-          
+      
           <!-- Defensive Formula Banner -->
           <div class="formula-banner">
             <div class="formula-card" style="background: linear-gradient(to right, white, rgba(209, 173, 125, 0.08)); border-left-color: var(--gold-dark);">
@@ -1556,7 +1896,7 @@
           <div class="container">
 
             <!-- D-TRANS -->
-            <div class="concept-card" data-category="defense shell">
+            <div class="concept-card">
               <div class="concept-header">
                 <div class="concept-title">
                   <h2 class="editable">D-Trans</h2>
@@ -1572,10 +1912,11 @@
                 <div class="playbook-pane">
                   <h3 class="editable">Beliefs / Playbook</h3>
                   <ul class="playbook-list">
-                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">TAG ➔ REBOUNDING SPOTS</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
-                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">SPRINT ➔ BALL LEVEL</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
-                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">RIM ➔ WIN AT RIM WITH VERTICALITY</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
-                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">BALL ➔ LATEST PICKUP = 4 PT LINE</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">TAG—&gt; REBOUNDING SPOTS</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">SPRINT —&gt; BALL LEVEL</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">RIM —&gt; WIN AT RIM WITH VERTICALITY</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">BALL —&gt; LATEST POINT OF PICKUP = 4 PT LINE OR HIGHER</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">WALL —&gt; LOAD &amp; LOCATE THREATS</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
                   </ul>
                   <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
                 </div>
@@ -1594,8 +1935,13 @@
                     </div>
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">Shooter</div>
+                      <div class="term-desc editable">Can follow his shot (help rebound) or pick up ball.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
                       <div class="term-name editable">SCRAM</div>
-                      <div class="term-desc editable">Pulling player out from mismatch in transition.</div>
+                      <div class="term-desc editable">Pulling player out from mismatch.</div>
                     </div>
                   </div>
                   <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
@@ -1604,7 +1950,7 @@
             </div>
 
             <!-- KYP CLOSEOUTS -->
-            <div class="concept-card" data-category="defense closeout">
+            <div class="concept-card">
               <div class="concept-header">
                 <div class="concept-title">
                   <h2 class="editable">KYP Closeouts</h2>
@@ -1623,6 +1969,9 @@
                     <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Stick Hand</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
                     <li class="playbook-item"><span class="bullet">★</span> <div class="editable">No Strong Hand</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
                     <li class="playbook-item"><span class="bullet">★</span> <div class="editable">No Paint</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Square Feet</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">High Hands But Gap The Drive and Absorb the First Dribble</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">Show Hands</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
                   </ul>
                   <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
                 </div>
@@ -1642,7 +1991,7 @@
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
                       <div class="term-name editable">KLAY - FLYBY</div>
-                      <div class="term-desc editable">Run at shooting shoulder with shooting hand (Right on Right) - Rear View Contest.</div>
+                      <div class="term-desc editable">Run at the shooting shoulder with shooting hand (Right on Right) - Come back and Rear View Contest the pull up jumper.</div>
                     </div>
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
@@ -1655,8 +2004,61 @@
               </div>
             </div>
 
+            <!-- 1-ON-1 -->
+            <div class="concept-card">
+              <div class="concept-header">
+                <div class="concept-title">
+                  <h2 class="editable">1-on-1 Defense</h2>
+                  <span class="tagline editable">On-Ball Principles</span>
+                </div>
+                <div class="concept-meta editable">"PRESSURE, GUARD THE SHELL, STAY IN FRONT W/O FOULING"</div>
+                <div class="card-controls edit-only-ui no-print">
+                  <button class="btn-card-action layout-toggle-btn" title="Toggle layout columns">Layout</button>
+                  <button class="btn-card-action delete-card-btn" title="Delete concept card">&times; Delete</button>
+                </div>
+              </div>
+              <div class="concept-body full-terms">
+                <div class="playbook-pane">
+                  <h3 class="editable">Beliefs / Playbook</h3>
+                  <ul class="playbook-list"></ul>
+                  <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
+                </div>
+                <div class="terms-pane">
+                  <h3 class="editable">On-Ball Techniques</h3>
+                  <div class="terms-grid">
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">GUARD SHELL</div>
+                      <div class="term-desc editable">Strong Hand Attack CHEST, Weak Hand Attack Run. Force "Flat Drives" outside the blocks and elbows.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">STICK HAND</div>
+                      <div class="term-desc editable">Early stick hand with inside hand on every closeout.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">CHEST</div>
+                      <div class="term-desc editable">Chest up to describe the act of absorbing physical contact with your chest once square. SHOW HANDS to avoid fouls.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">TRACE</div>
+                      <div class="term-desc editable">Keeping an active hand above the ball at all times to create pressure and reduce vision.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">VERTICALITY</div>
+                      <div class="term-desc editable">When helping from RIM on rotation, must stay vertical and show hands. Jump inside Restricted Area, stand ground outside it.</div>
+                    </div>
+                  </div>
+                  <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
+                </div>
+              </div>
+            </div>
+
             <!-- SHELL DEFENSE -->
-            <div class="concept-card" data-category="defense shell">
+            <div class="concept-card">
               <div class="concept-header">
                 <div class="concept-title">
                   <h2 class="editable">Shell Defense</h2>
@@ -1673,8 +2075,13 @@
                   <h3 class="editable">Beliefs / Playbook</h3>
                   <ul class="playbook-list">
                     <li class="playbook-item"><span class="bullet">★</span> <div class="editable">ORGANIZED HELP</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
-                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">SHRINK &amp; STUNT</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">SHRINK</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">APPROPRIATE HELP</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">ELC TALK</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">KYP CLOSEOUTS</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">SHOW HANDS</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
                     <li class="playbook-item"><span class="bullet">★</span> <div class="editable">MULTIPLE EFFORTS</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">GANG REBOUND</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
                   </ul>
                   <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
                 </div>
@@ -1689,22 +2096,77 @@
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
                       <div class="term-name editable">STRONG</div>
-                      <div class="term-desc editable">Defender guarding player next to ball. Responsible for shrinking and stunting.</div>
+                      <div class="term-desc editable">Defender guarding player next to ball (not "NAIL" though). Responsible for shrinking and stunting.</div>
                     </div>
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
                       <div class="term-name editable">RIM</div>
-                      <div class="term-desc editable">Defender responsible for RIM HELP on attacks. Learn how to stunt for help.</div>
+                      <div class="term-desc editable">Defender responsible for RIM HELP on attacks. Needs to learn how to stunt for help to make E2 decision harder.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">LOW</div>
+                      <div class="term-desc editable">Bottom weak side defender. Responsible for Top Foot help on Rim Offensive Player on paint attack. Has 2nd Pass on "X" rotation. Low Hole defender responsible for “FIRE” help.</div>
                     </div>
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
                       <div class="term-name editable">NAIL</div>
-                      <div class="term-desc editable">Top weak side defender. Sinks on baseline or slot drive, has 1st pass out.</div>
+                      <div class="term-desc editable">Top weak side defender. Sinks on baseline or slot drive, has 1st pass out. Stand outside paint near elbow to influence corner pass and take away slot cuts.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">SHRINK</div>
+                      <div class="term-desc editable">Show bodies in driving lanes and in the paint. Force offensive players to make plays through multiple defenders (using Blocks, Elbows, Nail).</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">BE IN TO GET OUT</div>
+                      <div class="term-desc editable">Your BODY is pulled "IN" to help so you can shrink the floor, but your MIND is intent on getting OUT to 3-point threats.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">PIVOT &amp; SPRINT</div>
+                      <div class="term-desc editable">When the ball moves, you sprint to help position on the ball's airtime. Be in proper position on the catch.</div>
                     </div>
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
                       <div class="term-name editable">B.E.N</div>
-                      <div class="term-desc editable">Our shrink spots: Blocks, Elbows, and Nail. Shrink floor when not guarding ball.</div>
+                      <div class="term-desc editable">Our shrink spots: Blocks, Elbows, and Nail. If you are not guarding the ball, you should be shrinking the floor.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">STUNT</div>
+                      <div class="term-desc editable">Hand and foot fake by a help defender to fake help but get back to a shooter. Stunt Up The Line.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">FIRE</div>
+                      <div class="term-desc editable">When we rotate from "RIM" to trap the box on a baseline or slot drive outside the paint.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">SINK</div>
+                      <div class="term-desc editable">Weakside NAIL sinks to centerfield on a North-South drive.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">X</div>
+                      <div class="term-desc editable">Any time we are X-ing out and doing a full rotation. When we X from the elbow to corner, close out to the high shoulder to take away swing pass.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">PEEL</div>
+                      <div class="term-desc editable">When a man is beat and his hips are open below recovery line, the next help defender calls "PEEL" signaling a jump or switch.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">HIT-FIND-GET</div>
+                      <div class="term-desc editable">Defensive rebounding technique. Shot goes up: HIT (man with forearm), FIND (Turn, Seal &amp; Find Ball), GET (Pursue Ball).</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">SANDWICH</div>
+                      <div class="term-desc editable">Send extra guard to double team weak side offensive rebounder. Guards check man—if he gets back, sprint to weakside.</div>
                     </div>
                   </div>
                   <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
@@ -1713,7 +2175,7 @@
             </div>
 
             <!-- PICK AND ROLL DEFENSE -->
-            <div class="concept-card" data-category="defense pnr">
+            <div class="concept-card">
               <div class="concept-header">
                 <div class="concept-title">
                   <h2 class="editable">Pick and Roll Defense</h2>
@@ -1729,9 +2191,11 @@
                 <div class="playbook-pane">
                   <h3 class="editable">The 5 Ts Framework</h3>
                   <ul class="playbook-list">
-                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">TALK: Big calls early (3x). "DROP", "ICE", "RED".</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
-                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">TOUCH: Guard impacts ball; Big up to touch.</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
-                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">TRACE: Big takes low pocket pass; Guard high.</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">TALK: Big calls early, loud, continuous (3x). "WEAK" or "ICE".</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">TOUCH: Guard impacts ball &amp; forces into coverage; Big up to touch.</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">TRACE: Big takes away low pocket pass; Guard takes high pocket.</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">TAKE: Guard calls "BACK" and Big recovers to his man.</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">TAG: Weakside NAIL in but fans out. Weakside BASE is ultimate tag.</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
                   </ul>
                   <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
                 </div>
@@ -1740,23 +2204,199 @@
                   <div class="terms-grid">
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
-                      <div class="term-name editable">DROP (Zone Drop)</div>
-                      <div class="term-desc editable">Big zones and drops toward basket. Plays centerfield between ball and rim.</div>
+                      <div class="term-name editable">DROP (Middle P/R Base)</div>
+                      <div class="term-desc editable">Big calls "LEFT/RIGHT" to direct on-ball defender. Big plays centerfield, stabs at ball while remaining square between ball &amp; rim. On flat middle screens, force to weak hand.</div>
                     </div>
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
-                      <div class="term-name editable">ICE</div>
-                      <div class="term-desc editable">On outer 1/3 of floor. Guard prevents ball from going middle. Big drops.</div>
+                      <div class="term-name editable">DROP (Zone Drop)</div>
+                      <div class="term-desc editable">Big zones and drops toward basket. Level of drop depends on KYP of the Big and the offensive player. First step is backward. No roller behind.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">FLAT</div>
+                      <div class="term-desc editable">Big at the level - Soft Show - Stab at ball and stay for a second. Low Hole activated for rolls. Used against elite 3-point threats.</div>
                     </div>
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
                       <div class="term-name editable">HOT (Blitz)</div>
-                      <div class="term-desc editable">Hard double team on ball until dribble is picked up or retreat dribble.</div>
+                      <div class="term-desc editable">Hard double team on ball—stay until dribble is picked up or retreat dribble. Guard forces into screen. Big traps, then sprints back to paint.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">ICE</div>
+                      <div class="term-desc editable">On outer 1/3 of floor. Guard prevents ball from going middle (chest on shoulder). Big drops keeping ball-you-rim relationship. Switch to Drop if ball enters middle.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">UNDER</div>
+                      <div class="term-desc editable">Get to the body, force into the screen direction, whip under and sprint ahead to get back to SQUARE.</div>
                     </div>
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
                       <div class="term-name editable">RED (Switch)</div>
-                      <div class="term-desc editable">Contact switch on screen. Screener's man calls RED early.</div>
+                      <div class="term-desc editable">TALK: Screener's man calls "RED" to switch. Force ball into screen to eliminate rejection. TOUCH: Chest on shoulder. TAKE: Switch up/under.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">PEEL</div>
+                      <div class="term-desc editable">Late switch in P/R below the PEEL line when guard cannot get back in front. Also used for emergency paint switches off pins &amp; staggers.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">PEEL VS PICK N POP</div>
+                      <div class="term-desc editable">PEEL after the ball crosses the 3-point line threshold. Guard takes the popping big, Big defends the ballhandler.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">SHOW (Hard Hedge)</div>
+                      <div class="term-desc editable">Guard goes over. Big gives 2 hard pumps to stall ball and recovers with high hands. Prevents bad matchup.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">SQUARE TO RED</div>
+                      <div class="term-desc editable">Used for like-size screening. "SQUARE" tells on-ball defender to square feet. "RED" on screen contact. Chest on shoulder to eliminate slips.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">SQUEEZE</div>
+                      <div class="term-desc editable">Big stays attached. Guard goes under vs pick-n-pop Big or non-shooting guard. Preserves matchups.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">PASS INTERFERENCE</div>
+                      <div class="term-desc editable">Defend lob at the rim—meet player at the rim and foul him in the air to make it a ground foul. No open dunks/layups.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">SHADOW</div>
+                      <div class="term-desc editable">Defender follows outside hip of offensive player through screens until they can get back to SQUARE or PEEL.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">GAP</div>
+                      <div class="term-desc editable">Big Gaps. Person guarding the receiver whips under late and gets back to SQUARE with a high hand.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">CHASE</div>
+                      <div class="term-desc editable">Big in KYP Drop. Person guarding the cutter BUSTS OVER the handoff and stays attached. Force everything UPHILL &amp; 1-WAY.</div>
+                    </div>
+                  </div>
+                  <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- OFF BALL SCREEN DEFENSE -->
+            <div class="concept-card">
+              <div class="concept-header">
+                <div class="concept-title">
+                  <h2 class="editable">Off Ball Screen Defense</h2>
+                  <span class="tagline editable">Off-Ball Screens</span>
+                </div>
+                <div class="concept-meta editable">"PRESS UP - ONE WAY - DEFEAT SCREENS"</div>
+                <div class="card-controls edit-only-ui no-print">
+                  <button class="btn-card-action layout-toggle-btn" title="Toggle layout columns">Layout</button>
+                  <button class="btn-card-action delete-card-btn" title="Delete concept card">&times; Delete</button>
+                </div>
+              </div>
+              <div class="concept-body full-terms">
+                <div class="playbook-pane">
+                  <h3 class="editable">Beliefs / Playbook</h3>
+                  <ul class="playbook-list"></ul>
+                  <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
+                </div>
+                <div class="terms-pane">
+                  <h3 class="editable">Off-Ball Screening Terms</h3>
+                  <div class="terms-grid">
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">CUTTER DEFENDER</div>
+                      <div class="term-desc editable">PRESS UP - ONE WAY (FORCE UPHILL) - GET THRU - GET BACK.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">SCREENER DEFENDER</div>
+                      <div class="term-desc editable">OPEN UP - GET FAT - DROP - READ.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">GAP</div>
+                      <div class="term-desc editable">Shoot the GAP vs drivers on pin-down screening actions.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">CHASE</div>
+                      <div class="term-desc editable">Attach and BUST OVER vs shooters.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">TOP LOCK</div>
+                      <div class="term-desc editable">Defender stays on high side of screen and forces everything toward the baseline.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">RED</div>
+                      <div class="term-desc editable">Contact Switch - Talk, Touch, Take.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">VEER</div>
+                      <div class="term-desc editable">Late paint switch on a bad beat to protect the rim.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">SHADOW (Off-Ball)</div>
+                      <div class="term-desc editable">Defender follows outside hip of offensive player through screens until they can get back to SQUARE.</div>
+                    </div>
+                  </div>
+                  <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ISO DEFENSE -->
+            <div class="concept-card">
+              <div class="concept-header">
+                <div class="concept-title">
+                  <h2 class="editable">ISO Defense</h2>
+                  <span class="tagline editable">Isolation Defense</span>
+                </div>
+                <div class="concept-meta editable">"SHADE - SHRINK - SHIFT - SHOW BODIES"</div>
+                <div class="card-controls edit-only-ui no-print">
+                  <button class="btn-card-action layout-toggle-btn" title="Toggle layout columns">Layout</button>
+                  <button class="btn-card-action delete-card-btn" title="Delete concept card">&times; Delete</button>
+                </div>
+              </div>
+              <div class="concept-body full-terms">
+                <div class="playbook-pane">
+                  <h3 class="editable">Beliefs / Playbook</h3>
+                  <ul class="playbook-list"></ul>
+                  <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
+                </div>
+                <div class="terms-pane">
+                  <h3 class="editable">ISO Defensive Tactics</h3>
+                  <div class="terms-grid">
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">WEAK</div>
+                      <div class="term-desc editable">Shade ball handler to weak hand when ball is in middle 1/3 of the floor. Away from ball, SHRINK THE FLOOR.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">SHIFT</div>
+                      <div class="term-desc editable">LOW and weak side loads to the ball early and pre-rotates. If ball is in outer 1/3, on-ball defender presses up and forces baseline.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">HIT (Double Team)</div>
+                      <div class="term-desc editable">Late run and jump double team to get the ball out of the hands of a dangerous player. Double comes from loaded side (or weak hand).</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">SHRINK (ISO)</div>
+                      <div class="term-desc editable">Show bodies in driving lanes and paint. Force offensive players to finish or play through multiple defenders (at Blocks, Elbows, Nail).</div>
                     </div>
                   </div>
                   <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
@@ -1765,7 +2405,7 @@
             </div>
 
             <!-- POST DEFENSE -->
-            <div class="concept-card" data-category="defense post">
+            <div class="concept-card">
               <div class="concept-header">
                 <div class="concept-title">
                   <h2 class="editable">Post Defense</h2>
@@ -1782,7 +2422,9 @@
                   <h3 class="editable">Beliefs / Playbook</h3>
                   <ul class="playbook-list">
                     <li class="playbook-item"><span class="bullet">★</span> <div class="editable">PREVENT THE CATCH</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
-                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">NO MIDDLE</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">PUSH OFF SPOTS</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">SHRINK ON CATCH</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
+                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">KYP &amp; NO MIDDLE</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
                   </ul>
                   <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
                 </div>
@@ -1792,17 +2434,37 @@
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
                       <div class="term-name editable">GOLD (Base Post)</div>
-                      <div class="term-desc editable">3/4 Top Denial. Slide behind on the pass. Wall off the shot and show hands.</div>
+                      <div class="term-desc editable">3/4 Top Denial. Slide behind on the pass. Wall off the shot and show hands to avoid fouls.</div>
                     </div>
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
                       <div class="term-name editable">NO MIDDLE</div>
-                      <div class="term-desc editable">Sit on inside shoulder to take away middle post moves. Feet pointed to sideline.</div>
+                      <div class="term-desc editable">Sit on inside shoulder to take away middle post moves. Keep feet pointed to sideline but square.</div>
                     </div>
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
                       <div class="term-name editable">DIG HELP</div>
-                      <div class="term-desc editable">Shrink on post catch - Dig with closest perimeter defender on the dribble bounce.</div>
+                      <div class="term-desc editable">Shrink on post catch - Dig with closest perimeter defender on the dribble bounce. Keep butt to baseline.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">WHITE TO FIRE</div>
+                      <div class="term-desc editable">Front post with weakside shift &amp; pressure. Fronting defender yells "WHITE-WHITE-WHITE" 3x to alert help side.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">WHITE - SCRAM</div>
+                      <div class="term-desc editable">"SCRAM" switch with big on weakside. Big yells "SCRAM" telling fronting guard to release to weakside corner.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">DIG TO HIT</div>
+                      <div class="term-desc editable">Trap on the first post dribble with the nearest defender in the scoring area.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">BLACK</div>
+                      <div class="term-desc editable">3/4 Top side Deny with an immediate base trap on ball's air time into the post.</div>
                     </div>
                   </div>
                   <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
@@ -1811,7 +2473,7 @@
             </div>
 
             <!-- SPECIAL SITUATIONS -->
-            <div class="concept-card" data-category="defense special">
+            <div class="concept-card">
               <div class="concept-header">
                 <div class="concept-title">
                   <h2 class="editable">Special Situations</h2>
@@ -1823,12 +2485,10 @@
                   <button class="btn-card-action delete-card-btn" title="Delete concept card">&times; Delete</button>
                 </div>
               </div>
-              <div class="concept-body">
+              <div class="concept-body full-terms">
                 <div class="playbook-pane">
                   <h3 class="editable">Beliefs / Playbook</h3>
-                  <ul class="playbook-list">
-                    <li class="playbook-item"><span class="bullet">★</span> <div class="editable">ASSIGNMENT EXCELLENCE</div><button class="delete-item-btn edit-only-ui no-print" title="Delete item">&times;</button></li>
-                  </ul>
+                  <ul class="playbook-list"></ul>
                   <button class="add-item-btn edit-only-ui no-print">+ Add Bullet</button>
                 </div>
                 <div class="terms-pane">
@@ -1836,18 +2496,28 @@
                   <div class="terms-grid">
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
-                      <div class="term-name editable">EOG UP 2</div>
-                      <div class="term-desc editable">"STAY BEFORE - SWITCH AFTER". No switches before inbound. Switch everything after ball is inbounded.</div>
-                    </div>
-                    <div class="term-box">
-                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
-                      <div class="term-name editable">EOG UP 3</div>
-                      <div class="term-desc editable">"SWITCH BEFORE AND AFTER". Switch all screens before inbound and after. Chop when possible to prevent 3s.</div>
+                      <div class="term-name editable">HIT (EOQ)</div>
+                      <div class="term-desc editable">Double team hot player at End of Quarter.</div>
                     </div>
                     <div class="term-box">
                       <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
                       <div class="term-name editable">CHOP (Intentional Foul)</div>
-                      <div class="term-desc editable">Foul when up by 3 points, or at end of quarter when we have a foul to give.</div>
+                      <div class="term-desc editable">Foul when up by 3 points, or at the end of a quarter when we have a foul to give.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">EOG UP 2</div>
+                      <div class="term-desc editable">"STAY BEFORE - SWITCH AFTER". No switches before inbound (to avoid slips). Switch everything after ball is inbounded.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">EOG UP 3</div>
+                      <div class="term-desc editable">"SWITCH BEFORE AND AFTER". Switch all screens before inbound and after. Chop when possible to prevent 3-point shots.</div>
+                    </div>
+                    <div class="term-box">
+                      <button class="delete-term-btn edit-only-ui no-print" title="Delete term">&times;</button>
+                      <div class="term-name editable">UOB DEFENSE</div>
+                      <div class="term-desc editable">Inbound defender protects basket and tracks inbounder. Force everything uphill. Fight over all screens—no switches.</div>
                     </div>
                   </div>
                   <button class="add-term-btn edit-only-ui no-print">+ Add Term</button>
@@ -1857,35 +2527,9 @@
 
             <!-- Add Card Button (Defense) -->
             <div class="add-card-container edit-only-ui no-print">
-              <button class="add-card-btn">+ Add New Defensive Concept Card</button>
+              <button class="add-card-btn">+ Add New Concept Card</button>
             </div>
 
-          </div>
-        </div>
-
-        <!-- INTERACTIVE QUIZ TAB -->
-        <div id="quiz-tab" class="tab-content">
-          <div class="quiz-card">
-            <div class="quiz-header">
-              <div>
-                <h2 style="font-family:'Montserrat',sans-serif; font-size:1.3rem; text-transform:uppercase;">Terminology Quiz</h2>
-                <p style="font-size:0.85rem; color:var(--slate-gray);">Test your knowledge on Griffin Basketball concepts &amp; tactical rules</p>
-              </div>
-              <div class="quiz-score-badge" id="quizScoreBadge">
-                Score: 0 / 0
-              </div>
-            </div>
-
-            <div class="quiz-question-box">
-              <div class="quiz-question-title" id="quizCategoryTag">Category: Pick &amp; Roll Reads</div>
-              <div class="quiz-question-text" id="quizQuestionText">Loading quiz question...</div>
-            </div>
-
-            <div class="quiz-options-grid" id="quizOptionsGrid">
-              <!-- Options populated dynamically -->
-            </div>
-
-            <button class="quiz-next-btn" id="btnNextQuizQuestion" onclick="generateQuizQuestion()">Next Question ➔</button>
           </div>
         </div>
 
@@ -1903,13 +2547,12 @@
   <script>
     let isEditing = false;
     let originalHTML = "";
-    let activeCategoryFilter = 'all';
+    let activeTab = 'offense';
+    let activeConcept = 'all';      // concept-card title picked with a chip, or 'all'
 
-    // Quiz State
-    let quizTotal = 0;
-    let quizCorrect = 0;
-    let currentQuizTerm = null;
-    let currentQuizCorrectOption = "";
+    // Saved edits live under this key (in Netlify Blobs and this browser).
+    // v2 = the concepts imported in Oct 2026; the older v1 copy is kept as a backup.
+    const STORE_KEY = 'griffin_basketball_concepts_v2';
 
     window.addEventListener('DOMContentLoaded', () => {
       // Check role authorization
@@ -1920,6 +2563,15 @@
 
       // Load saved content if it exists
       loadSavedContent();
+
+      // Search box: filter as you type; Esc clears. ?q=word opens with a search.
+      const input = document.getElementById('conceptSearchInput');
+      input.addEventListener('input', applyFilters);
+      input.addEventListener('keydown', e => { if (e.key === 'Escape') { input.value = ''; applyFilters(); } });
+      const q = new URLSearchParams(location.search).get('q');
+      if (q) input.value = q;
+      buildChips();
+      applyFilters();
       
       // Auto-save when clicking outside of editable items
       document.addEventListener('focusout', (e) => {
@@ -2076,153 +2728,151 @@
     }
 
     function switchTab(tabName) {
-      const buttons = document.querySelectorAll('.tab-btn');
-      buttons.forEach(btn => {
-        if (btn.id === 'btn-' + tabName + '-tab') btn.classList.add('active');
-        else btn.classList.remove('active');
-      });
-
-      const contents = document.querySelectorAll('.tab-content');
-      contents.forEach(content => {
-        if (content.id === tabName + '-tab') content.classList.add('active');
-        else content.classList.remove('active');
-      });
-
-      const searchContainer = document.getElementById('searchBoxContainer');
-      if (tabName === 'quiz') {
-        if (searchContainer) searchContainer.style.display = 'none';
-        generateQuizQuestion();
-      } else {
-        if (searchContainer) searchContainer.style.display = 'flex';
-      }
+      activeTab = tabName;
+      activeConcept = 'all';
+      document.querySelectorAll('.tab-btn[id$="-tab"]').forEach(btn => btn.classList.toggle('active', btn.id === 'btn-' + tabName + '-tab'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === tabName + '-tab'));
+      const quiz = document.getElementById('quizLink');
+      if (quiz) quiz.href = 'quiz.html?tags=' + (tabName === 'defense' ? 'defence' : 'offence');
+      buildChips();
+      applyFilters();
     }
 
-    function filterTerminology() {
-      const query = document.getElementById('conceptSearchInput').value.toLowerCase().trim();
-      const termBoxes = document.querySelectorAll('.term-box');
+    // ---------- Search & filter ----------
+    // Chips: one per concept card on the open tab. Search looks through both
+    // tabs at once (term names, definitions, beliefs, titles, mottos) and
+    // shows only the matching pieces. Nothing here changes the saved content.
+    const norm = t => String(t || '').toLowerCase().replace(/[’‘]/g, "'").replace(/[“”]/g, '"').replace(/\s+/g, ' ').trim();
+    const cardTitle = card => (card.querySelector('.concept-title h2') || {}).textContent ? card.querySelector('.concept-title h2').textContent.trim() : '';
 
-      termBoxes.forEach(box => {
-        const text = box.innerText.toLowerCase();
-        const matchesQuery = !query || text.includes(query);
-        
-        let matchesCategory = true;
-        if (activeCategoryFilter !== 'all') {
-          const card = box.closest('.concept-card');
-          if (card) {
-            const cardCat = (card.getAttribute('data-category') || '').toLowerCase();
-            matchesCategory = cardCat.includes(activeCategoryFilter);
+    function buildChips() {
+      const box = document.getElementById('conceptChips');
+      if (!box) return;
+      const tab = document.getElementById(activeTab + '-tab');
+      const titles = tab ? Array.from(tab.querySelectorAll('.concept-card')).map(cardTitle).filter(Boolean) : [];
+      box.innerHTML = '';
+      const chip = (label, value) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'pill' + (activeConcept === value ? ' active' : '');
+        b.textContent = label;
+        b.onclick = () => {
+          activeConcept = value;
+          const input = document.getElementById('conceptSearchInput');
+          if (input.value) input.value = '';
+          buildChips();
+          applyFilters();
+          if (value !== 'all') {
+            const card = Array.from(tab.querySelectorAll('.concept-card')).find(c => cardTitle(c) === value);
+            if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
-        }
-
-        if (matchesQuery && matchesCategory) {
-          box.classList.remove('hidden');
-        } else {
-          box.classList.add('hidden');
-        }
-      });
-
-      // Show/Hide Concept Cards if all child terms are hidden
-      const cards = document.querySelectorAll('.concept-card');
-      cards.forEach(card => {
-        const visibleTerms = card.querySelectorAll('.term-box:not(.hidden)');
-        const cardTitle = card.querySelector('.concept-title')?.innerText.toLowerCase() || '';
-        if (visibleTerms.length > 0 || (query && cardTitle.includes(query))) {
-          card.classList.remove('hidden');
-        } else {
-          card.classList.add('hidden');
-        }
-      });
+        };
+        box.appendChild(b);
+      };
+      chip(activeTab === 'defense' ? 'All defense' : 'All offense', 'all');
+      titles.forEach(t => chip(t, t));
     }
 
-    function setCategoryFilter(cat, pillEl) {
-      activeCategoryFilter = cat;
-      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-      if (pillEl) pillEl.classList.add('active');
-      filterTerminology();
-    }
+    function applyFilters() {
+      const input = document.getElementById('conceptSearchInput');
+      const query = norm(input ? input.value : '');
+      const words = query ? query.split(' ') : [];
+      // Each word must start a word in the text ("red" finds RED, not "covered").
+      const res = words.map(wordRe);
+      const matches = text => { const t = norm(text); return res.every(re => re.test(t)); };
+      const searching = words.length > 0;
+      document.body.classList.toggle('searching', searching);
+      document.querySelectorAll('.pill').forEach(p => p.classList.toggle('dim', searching));
+      let hitItems = 0, hitCards = 0;
+      const hitEls = [];
 
-    /* QUIZ SYSTEM */
-    function getAllVocabularyTerms() {
-      const terms = [];
-      document.querySelectorAll('.term-box').forEach(box => {
-        const nameEl = box.querySelector('.term-name');
-        const descEl = box.querySelector('.term-desc');
-        const cardTitleEl = box.closest('.concept-card')?.querySelector('h2');
-
-        if (nameEl && descEl) {
-          const name = nameEl.innerText.trim();
-          const desc = descEl.innerText.trim();
-          const category = cardTitleEl ? cardTitleEl.innerText.trim() : "Concepts";
-
-          if (name && desc) {
-            terms.push({ name, desc, category });
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        let tabHits = 0;
+        const banner = tab.querySelector('.formula-banner');
+        if (banner) banner.classList.toggle('hidden', searching || activeConcept !== 'all');
+        tab.querySelectorAll('.concept-card').forEach(card => {
+          const items = Array.from(card.querySelectorAll('.term-box, .playbook-item'));
+          const panes = Array.from(card.querySelectorAll('.playbook-pane, .terms-pane'));
+          const body = card.querySelector('.concept-body');
+          let show = true;
+          if (!searching) {
+            show = activeConcept === 'all' || tab.id !== activeTab + '-tab' || cardTitle(card) === activeConcept;
+            items.forEach(el => el.classList.remove('hidden'));
+            panes.forEach(el => el.classList.remove('hidden'));
+            if (body) body.classList.remove('search-solo');
+          } else {
+            const head = card.querySelector('.concept-header');
+            const headHit = head && matches(head.textContent);
+            let n = 0;
+            items.forEach(el => {
+              const hit = headHit || matches(el.textContent);
+              el.classList.toggle('hidden', !hit);
+              if (hit && !headHit) { n++; hitEls.push(el); }
+            });
+            if (headHit) { hitEls.push(head); n = Math.max(n, 1); }
+            // Hide a column with nothing left in it.
+            panes.forEach(p => {
+              const any = p.querySelectorAll('.term-box, .playbook-item').length;
+              const vis = p.querySelectorAll('.term-box:not(.hidden), .playbook-item:not(.hidden)').length;
+              p.classList.toggle('hidden', !headHit && any > 0 ? vis === 0 : !headHit && any === 0);
+            });
+            if (body) body.classList.toggle('search-solo', panes.filter(p => !p.classList.contains('hidden')).length < 2);
+            show = n > 0;
+            hitItems += headHit ? 0 : n;
+            if (show) { hitCards++; tabHits++; }
           }
-        }
-      });
-      return terms;
-    }
-
-    function generateQuizQuestion() {
-      const terms = getAllVocabularyTerms();
-      if (terms.length < 4) {
-        document.getElementById('quizQuestionText').innerText = "Not enough terminology items to generate quiz.";
-        return;
-      }
-
-      // Pick random target term
-      const randomIndex = Math.floor(Math.random() * terms.length);
-      currentQuizTerm = terms[randomIndex];
-
-      document.getElementById('quizCategoryTag').innerText = `Category: ${currentQuizTerm.category}`;
-      document.getElementById('quizQuestionText').innerText = `What is the definition of "${currentQuizTerm.name}"?`;
-      currentQuizCorrectOption = currentQuizTerm.desc;
-
-      // Pick 3 random distractor options
-      const distractors = terms.filter(t => t.name !== currentQuizTerm.name);
-      shuffleArray(distractors);
-
-      const options = [currentQuizTerm.desc, distractors[0].desc, distractors[1].desc, distractors[2].desc];
-      shuffleArray(options);
-
-      const grid = document.getElementById('quizOptionsGrid');
-      grid.innerHTML = "";
-
-      options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'quiz-option-btn';
-        btn.innerText = opt;
-        btn.onclick = () => selectQuizAnswer(btn, opt);
-        grid.appendChild(btn);
-      });
-    }
-
-    function selectQuizAnswer(btnEl, selectedText) {
-      const options = document.querySelectorAll('.quiz-option-btn');
-      options.forEach(opt => opt.disabled = true);
-
-      quizTotal++;
-      if (selectedText === currentQuizCorrectOption) {
-        quizCorrect++;
-        btnEl.classList.add('correct');
-        btnEl.innerHTML += ' <span>✓ Correct</span>';
-      } else {
-        btnEl.classList.add('incorrect');
-        btnEl.innerHTML += ' <span>✗ Incorrect</span>';
-        options.forEach(opt => {
-          if (opt.innerText.trim() === currentQuizCorrectOption) {
-            opt.classList.add('correct');
-          }
+          card.classList.toggle('hidden', !show);
         });
-      }
+        tab.classList.toggle('no-results', searching && tabHits === 0);
+      });
 
-      document.getElementById('quizScoreBadge').innerText = `Score: ${quizCorrect} / ${quizTotal} (${Math.round((quizCorrect / quizTotal) * 100)}%)`;
+      const status = document.getElementById('searchStatus');
+      let empty = document.getElementById('searchEmpty');
+      if (searching && hitCards === 0) {
+        if (!empty) {
+          empty = document.createElement('div');
+          empty.id = 'searchEmpty';
+          empty.className = 'search-empty';
+          document.getElementById('playbook-data-container').before(empty);
+        }
+        empty.textContent = 'Nothing matches "' + input.value.trim() + '". Try a shorter word.';
+      } else if (empty) empty.remove();
+      if (status) status.innerHTML = !searching ? '' : hitCards
+        ? `<b>${hitCards}</b> concept${hitCards === 1 ? '' : 's'} match${hitItems ? ` (${hitItems} term${hitItems === 1 ? '' : 's'} / belief${hitItems === 1 ? '' : 's'})` : ''}. Press Esc or clear the box to see everything.`
+        : '';
+      highlight(searching ? words : [], hitEls);
     }
 
-    function shuffleArray(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
+    // Yellow highlight on the matching words (CSS Custom Highlight API, so the
+    // page content itself is never changed; older browsers just skip it).
+    function wordRe(w, flags) {
+      return new RegExp('(^|[^a-z0-9])' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags || '');
+    }
+
+    function highlight(words, els) {
+      if (!window.CSS || !CSS.highlights || typeof Highlight === 'undefined') return;
+      CSS.highlights.delete('concept-search');
+      if (!words.length) return;
+      const ranges = [];
+      els.forEach(el => {
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+        let node;
+        while ((node = walker.nextNode())) {
+          const text = node.nodeValue.toLowerCase().replace(/[’‘]/g, "'");
+          words.forEach(w => {
+            const re = wordRe(w, 'g');
+            let m;
+            while ((m = re.exec(text)) && ranges.length < 2000) {
+              const start = m.index + m[1].length;
+              const r = new Range();
+              r.setStart(node, start); r.setEnd(node, start + w.length);
+              ranges.push(r);
+              if (re.lastIndex === m.index) re.lastIndex++;
+            }
+          });
+        }
+      });
+      if (ranges.length) CSS.highlights.set('concept-search', new Highlight(...ranges));
     }
 
     function toggleEditMode() {
@@ -2235,6 +2885,13 @@
       }
 
       isEditing = !isEditing;
+      if (isEditing) {
+        const input = document.getElementById('conceptSearchInput');
+        input.value = '';
+        activeConcept = 'all';
+        buildChips();
+        applyFilters();
+      }
       const body = document.body;
       const editBtn = document.getElementById('btn-toggle-edit');
       const resetBtn = document.getElementById('btn-reset-default');
@@ -2268,7 +2925,7 @@
       fetch('/.netlify/functions/save-content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key: 'griffin_basketball_concepts_v1', content: content })
+        body: JSON.stringify({ key: STORE_KEY, content: content })
       })
       .then(res => res.json())
       .then(data => {
@@ -2279,26 +2936,40 @@
       .catch(err => console.error("Cloud sync error:", err));
     }
 
+    // What gets saved: the concepts without any search/filter state.
+    function cleanContainerHTML() {
+      const clone = document.getElementById('playbook-data-container').cloneNode(true);
+      clone.querySelectorAll('.hidden').forEach(el => el.classList.remove('hidden'));
+      clone.querySelectorAll('.search-solo').forEach(el => el.classList.remove('search-solo'));
+      clone.querySelectorAll('.no-results').forEach(el => el.classList.remove('no-results'));
+      clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+      return clone.innerHTML;
+    }
+
     function saveContent() {
-      const containerHTML = document.getElementById('playbook-data-container').innerHTML;
-      localStorage.setItem('griffin_basketball_concepts_v1', containerHTML);
+      const containerHTML = cleanContainerHTML();
+      try { localStorage.setItem(STORE_KEY, containerHTML); } catch (e) {}
       syncConceptsToCloud(containerHTML);
+      buildChips();
     }
 
     function loadSavedContent() {
-      const savedHTML = localStorage.getItem('griffin_basketball_concepts_v1');
+      let savedHTML = null;
+      try { savedHTML = localStorage.getItem(STORE_KEY); } catch (e) {}
       if (savedHTML) {
         document.getElementById('playbook-data-container').innerHTML = savedHTML;
       }
 
-      fetch('/.netlify/functions/get-content?key=griffin_basketball_concepts_v1')
+      fetch('/.netlify/functions/get-content?key=' + STORE_KEY)
         .then(res => res.json())
         .then(data => {
           if (data && data.success && data.content) {
+            if (isEditing) return;   // don't wipe out an edit in progress
             document.getElementById('playbook-data-container').innerHTML = data.content;
-            localStorage.setItem('griffin_basketball_concepts_v1', data.content);
+            try { localStorage.setItem(STORE_KEY, data.content); } catch (e) {}
             const editables = document.querySelectorAll('.editable');
             editables.forEach(el => el.setAttribute('contenteditable', 'false'));
+            switchTab(activeTab);
           }
         })
         .catch(err => console.log('Cloud sync fetch notice:', err));
@@ -2315,9 +2986,11 @@
       }
 
       if (confirm("Revert all terminology and cards to the original coaching manual defaults? Custom edits will be cleared.")) {
-        localStorage.removeItem('griffin_basketball_concepts_v1');
+        try { localStorage.removeItem(STORE_KEY); } catch (e) {}
         document.getElementById('playbook-data-container').innerHTML = originalHTML;
         syncConceptsToCloud('');
+        buildChips();
+        applyFilters();
         
         const editables = document.querySelectorAll('.editable');
         editables.forEach(el => el.setAttribute('contenteditable', isEditing ? 'true' : 'false'));

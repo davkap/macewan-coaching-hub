@@ -189,7 +189,7 @@
       const r = await fetch('/griffin-concepts.html');
       const html = await r.text();
       const doc = new DOMParser().parseFromString(html, 'text/html');
-      const saved = await getContent('griffin_basketball_concepts_v1');
+      const saved = await getContent('griffin_basketball_concepts_v2');
       const box = doc.getElementById('playbook-data-container');
       if (saved && box) box.innerHTML = saved;
       const read = (tabId, side) => Array.from(doc.querySelectorAll('#' + tabId + ' .concept-card')).map(c => ({

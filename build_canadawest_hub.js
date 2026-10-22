@@ -265,15 +265,26 @@ function parseProfile(md, slug){
   return {teamName: teamShort, raw: teamName, fields, identity, coachNote, rosterMd, usportsMd, sourcesMd, sections};
 }
 
+// Tab number (TAB_LABELS below) for each scout report section title.
+const SCOUT_TAB_BY_TITLE = [
+  [/^personnel/i, 1], [/^offen[cs]e/i, 2], [/^defen[cs]e/i, 3], [/^how we attack/i, 4],
+  [/^how we defend/i, 5], [/^special situations/i, 6], [/^keys to victory/i, 7], [/^practice points/i, 8],
+  [/^completed games|^upcoming schedule/i, -1]
+];
 // Parse scout.md, return map of section number -> body
 function parseScout(md){
   const {sections} = splitByH2(md);
   const out = {};
   let sources = '';
   for(const s of sections){
-    const m = s.title.match(/^(\d+)\.\s*(.*)$/);
-    if(m){ out[Number(m[1])] = {title: m[2].trim(), body: s.body}; }
-    else if(/^Sources\b/i.test(s.title)){ sources = s.body; }
+    // Match by title (the 2026-27 reports put Keys to victory first and
+    // Personnel near the end), falling back to the section number.
+    const m = s.title.match(/^(?:(\d+)\.\s*)?(.*)$/);
+    const title = m[2].trim();
+    const byTitle = SCOUT_TAB_BY_TITLE.find(x => x[0].test(title));
+    const n = byTitle ? byTitle[1] : (m[1] ? Number(m[1]) : 0);
+    if(/^Sources\b/i.test(title)){ sources = s.body; }
+    else if(n > 0 && !out[n]){ out[n] = {title, body: s.body}; }
   }
   return {sections: out, sources};
 }

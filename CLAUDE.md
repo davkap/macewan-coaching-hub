@@ -208,6 +208,17 @@ returns (`sessionStorage.griffin_member_token`).
   Game Week, and a Synergy line under each player's stats on the scout cards (matched by jersey
   number + surname/initial; `.synergy-box` is stripped before a scout-card edit is saved).
 
+## Opponent pages
+
+- Home-page team tiles open the team's scouting report (`opponent-scout.html?team=<slug>&type=scout`);
+  the report and the scout cards link to each other. The Profile Summary is still reachable from the
+  report's document switcher.
+- Scouting report section order (David, Oct 2026): overview, Synergy panel, 1. Keys to victory,
+  Offense, Defense, How we attack their D, How we defend their O, Special situations, Practice points,
+  Personnel, Completed Games, Upcoming Schedule, Sources. `scripts/generate_season_reports.js` writes
+  it; `reorderScout` in `opponent-scout.html` applies it to coach-saved versions too.
+  `build_canadawest_hub.js` matches report sections to its tabs by title, not number.
+
 ## Content saved from the site
 
 Scout notes and other edits made in the site's editors are saved to Netlify Blobs through

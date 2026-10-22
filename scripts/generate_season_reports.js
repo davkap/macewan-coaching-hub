@@ -168,25 +168,23 @@ function updateOpponentScout(slug, oppData) {
   md += `> **2026-27 Overview:** ${generateIdentityParagraph(oppData.usportsName, oppData)}\n\n`;
   md += `---\n\n`;
 
-  md += `## 1. Personnel (USportsHoops 2026-27 Stats)\n${personnelTable}\n\n`;
-
-  md += `## 2. Completed Games (2026-27)\n${completedGamesTable}\n\n`;
-  md += `## 3. Upcoming Schedule (2026-27)\n${upcomingGamesTable}\n\n`;
-
   // Preserve Film scouting sections (Carried over from 2025-26 with Option A tag)
+  // Order agreed with David (Oct 2026): Keys to victory first, then the film
+  // sections, then Personnel / Completed Games / Upcoming Schedule at the end.
+  // opponent-scout.html applies the same order to coach-saved versions.
   const filmSections = [
+    "Keys to victory",
     "Offense",
     "Defense",
     "How we attack their D",
     "How we defend their O",
     "Special situations",
-    "Keys to victory",
     "Practice points this week"
   ];
 
   for (let i = 0; i < filmSections.length; i++) {
     const secTitle = filmSections[i];
-    const secNum = i + 4; // 4. Offense, 5. Defense, etc.
+    const secNum = i + 1; // 1. Keys to victory, 2. Offense, etc.
     let secBody = `*(Carried over from 2025-26, verify on film)*\n- [FILL FROM FILM]`;
 
     // Regex match from old scout report
@@ -201,6 +199,11 @@ function updateOpponentScout(slug, oppData) {
 
     md += `## ${secNum}. ${secTitle}\n${secBody}\n\n`;
   }
+
+  const n = filmSections.length;
+  md += `## ${n + 1}. Personnel (USportsHoops 2026-27 Stats)\n${personnelTable}\n\n`;
+  md += `## ${n + 2}. Completed Games (2026-27)\n${completedGamesTable}\n\n`;
+  md += `## ${n + 3}. Upcoming Schedule (2026-27)\n${upcomingGamesTable}\n\n`;
 
   md += `## Sources\n`;
   md += `- http://usportshoops.ca/history/teamseason.php?Gender=MBB&Season=2026-27&Team=${encodeURIComponent(oppData.usportsName)}\n`;

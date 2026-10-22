@@ -573,6 +573,11 @@
         t === fileType ? `<strong>${FILE_TYPES[t].label}</strong>`
           : `<a href="?team=${encodeURIComponent(teamSlug)}&type=${t}">${FILE_TYPES[t].label}</a>`).join(' · ');
       pageSubtitle.insertAdjacentElement('afterend', switcher);
+      // Jump to this team's player scout cards (they link back here).
+      const cardsLink = document.createElement('div');
+      cardsLink.className = 'doc-switch';
+      cardsLink.innerHTML = `<a class="btn btn-primary" style="color:#fff;text-decoration:none" href="opponents/${encodeURIComponent(teamSlug)}/scout-cards.html">🃏 Player scout cards →</a>`;
+      switcher.insertAdjacentElement('afterend', cardsLink);
 
       const savedLocal = localStorage.getItem(storageKey);
       
@@ -633,8 +638,40 @@
     }
 
     // Render markdown to output container
+    // This season's scouting report reads in the staff's order (Oct 2026):
+    // Keys to victory, Offense, Defense, How we attack their D, How we defend their O,
+    // Special situations, Practice points, Personnel, Completed Games, Upcoming Schedule,
+    // Sources. Applied to saved (coach-edited) versions too; sections are renumbered.
+    const SCOUT_ORDER = [/^keys to victory/i, /^offen[cs]e/i, /^defen[cs]e/i, /^how we attack/i, /^how we defend/i,
+      /^special situations/i, /^practice points/i, /^personnel/i, /^completed games/i, /^upcoming schedule/i];
+    function reorderScout(md) {
+      if (fileType !== 'scout' || !md) return md;
+      const parts = md.replace(/\r/g, '').split(/\n(?=## )/);
+      const pre = /^## /.test(parts[0]) ? '' : parts.shift();
+      const secs = parts.map((body, i) => {
+        const h = body.match(/^##\s*(\d+\.\s*)?([^\n]*)/);
+        const title = h[2].trim();
+        let rank = SCOUT_ORDER.findIndex(r => r.test(title));
+        if (rank < 0) rank = /^sources\b/i.test(title) ? 99 : 6.5; // other sections: after Practice points
+        return { body: body.trimEnd(), numbered: !!h[1], rank, i };
+      });
+      secs.sort((a, b) => a.rank - b.rank || a.i - b.i);
+      let k = 0;
+      const out = secs.map(x => x.numbered ? x.body.replace(/^##\s*\d+\.\s*/, `## ${++k}. `) : x.body);
+      return (pre ? pre.trimEnd() + '\n\n' : '') + out.join('\n\n') + '\n';
+    }
+
+    // The Synergy panel sits right after the overview, before the first section.
+    const synPanel = document.getElementById('synergyPanel');
+    const synHome = synPanel.parentNode;
+
+    // Render markdown to output container
     function renderView() {
+      rawContent = reorderScout(rawContent);
+      if (synPanel.parentNode !== synHome) synHome.insertBefore(synPanel, renderedContent);
       renderedContent.innerHTML = parseMarkdown(rawContent);
+      const firstH2 = renderedContent.querySelector('h2');
+      if (firstH2 && synPanel.hasAttribute('data-synergy-team')) firstH2.parentNode.insertBefore(synPanel, firstH2);
     }
 
     // Switch between write and preview modes on mobile editor

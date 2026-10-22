@@ -479,6 +479,7 @@ function generateScoutCardsHtml(teamItem) {
     <a href="../../index.html" style="color: var(--mac-maroon); font-weight: 700; text-decoration: none; margin-right: 15px;">🏠 Coaching Hub</a>
     <a href="../../canadawest-scout-2026-27.html" style="color: #555; font-weight: 700; text-decoration: none;">🏀 Scouting Hub</a>
   </div>
+  ${teamItem.slug === 'macewan-griffins' ? '' : `<a class="no-print" href="../../opponent-scout.html?team=${teamItem.slug}&type=scout" style="display:inline-flex;align-items:center;min-height:44px;margin-bottom:10px;padding:0 16px;border-radius:8px;background:var(--mac-maroon);color:#fff;font-weight:700;font-size:14px;text-decoration:none;">📋 Team scouting report →</a>`}
   <h1>${teamItem.title}: Player Scout Cards</h1>
   <p>MacEwan Griffins Men's Basketball &middot; 2026-27 Canada West &middot; Tactical Prep Packet</p>
 </header>

@@ -111,6 +111,7 @@
           <li><b>Every Monday</b> a scheduled task asks Claude to read Synergy in the Claude app's browser on your computer and update every team here. Your computer needs to be on with the Claude app open and logged into Synergy.</li>
           <li><b>Any time:</b> ask Claude "update Synergy for Calgary" (or all teams).</li>
         </ol>
+        <p class="muted">If the Monday update can't run (computer off, or Synergy logged out), Claude sends a notification, and the Coaching Hub home page shows coaches a reminder once the numbers are more than a week old.</p>
         <p class="muted">Both need this browser approved once (the approval lasts 120 days):</p>
         ${allowed ? `<p class="ok">✓ This browser is approved to send Synergy updates.</p><button class="btn ghost" id="revoke">Remove approval from this browser</button>`
           : `<p><input type="password" id="pw" placeholder="${isAdmin ? 'Admin' : 'Coach'} password" autocomplete="current-password"> <button class="btn" id="allowBtn">Approve this browser</button></p><p class="muted" id="allowState"></p>`}

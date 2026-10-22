@@ -203,7 +203,8 @@ returns (`sessionStorage.griffin_member_token`).
   `synergy.html` with `GriffinSynergyImport.put(slug, data)`. That tab needs a staff pass: a coach
   approves the browser once on `synergy.html` (120-day pass in `localStorage.griffin_synergy_token`).
   extract.js only reads the pages a coach can see; it doesn't call Synergy's private API.
-- Display: `synergy-view.js` draws the team panel on `opponent-scout.html?type=scout` and
+  If the newest pull is 8+ days old, `index.html` shows staff a reminder to ask Claude for an update.
+- Display: `synergy-view.js` draws the team panel on `opponent-scout.html` (profile and scout views) and
   Game Week, and a Synergy line under each player's stats on the scout cards (matched by jersey
   number + surname/initial; `.synergy-box` is stripped before a scout-card edit is saved).
 

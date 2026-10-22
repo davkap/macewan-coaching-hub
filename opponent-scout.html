@@ -520,7 +520,7 @@
     const teamSlug = params.get('team');
     const fileType = params.get('type') || 'profile'; // 'profile' or 'scout'
     // Synergy panel (synergy-view.js) on the scouting reports.
-    if (fileType === 'scout' && teamSlug) document.getElementById('synergyPanel').setAttribute('data-synergy-team', teamSlug);
+    if ((fileType === 'scout' || fileType === 'profile') && teamSlug) document.getElementById('synergyPanel').setAttribute('data-synergy-team', teamSlug);
 
     if (!teamSlug) {
       document.getElementById('rendered-content').innerHTML = '<p class="btn-danger" style="padding: 15px; border-radius: 4px; color: white;">Error: No opponent team specified in URL query. Go back to Home Dashboard.</p>';

@@ -1,0 +1,24 @@
+{
+  "season": "2026-27",
+  "seasonId": "6a7de6ec9654df0a914765ab",
+  "competitionKey": "54457dce300969b132fcfb37:ALL",
+  "teams": {
+    "alberta-golden-bears": "54457dd7300969b132fd027f",
+    "brandon-bobcats": "54457dd7300969b132fd0285",
+    "calgary-dinos": "54457dd7300969b132fd0266",
+    "fraser-valley-cascades": "54457dd7300969b132fd0265",
+    "lethbridge-pronghorns": "54457dd7300969b132fd026b",
+    "manitoba-bisons": "54457dd7300969b132fd0281",
+    "mount-royal-cougars": "54457dd8300969b132fd0349",
+    "regina-cougars": "54457dd6300969b132fd0115",
+    "saskatchewan-huskies": "54457dd7300969b132fd027e",
+    "thompson-rivers-wolfpack": "54457dd7300969b132fd0271",
+    "trinity-western-spartans": "54457dd7300969b132fd0264",
+    "ubc-thunderbirds": "54457dd7300969b132fd0280",
+    "ubco-heat": "54457dd7300969b132fd0284",
+    "unbc-timberwolves": "54457dd8300969b132fd034c",
+    "victoria-vikes": "54457dd7300969b132fd0267",
+    "winnipeg-wesmen": "54457dd7300969b132fd0282",
+    "macewan-griffins": "54457dda300969b132fd0476"
+  }
+}

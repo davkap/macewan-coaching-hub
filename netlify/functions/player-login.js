@@ -141,7 +141,7 @@ exports.handler = async function (event) {
     if (rec && rec.hash) {
       if (!pinMatches(pin, rec)) return failed(slug, rec);
       await putRec(slug, clean(rec));
-      return reply(200, { ok: true, mustChange: false, profile: await sheetProfile(slug) });
+      return reply(200, { ok: true, mustChange: false, memberToken: staffToken.issue('player', 14, { slug }), profile: await sheetProfile(slug) });
     }
     if (rec && rec.reset) {
       if (pin !== DEFAULT_PIN) return failed(slug, rec);
@@ -162,7 +162,7 @@ exports.handler = async function (event) {
     }
     const salt = crypto.randomBytes(16).toString('hex');
     await putRec(slug, { hash: hashPin(pin, salt), salt, setAt: new Date().toISOString(), from: 'sheet' });
-    return reply(200, { ok: true, mustChange: false, profile });
+    return reply(200, { ok: true, mustChange: false, memberToken: staffToken.issue('player', 14, { slug }), profile });
   }
 
   if (body.action === 'setPin') {
@@ -171,7 +171,7 @@ exports.handler = async function (event) {
     if (!validNewPin(newPin)) return reply(400, { ok: false, message: 'Pick 4 to 6 digits. Not 1234, and not the same digit repeated.' });
     const salt = crypto.randomBytes(16).toString('hex');
     await putRec(slug, { hash: hashPin(newPin, salt), salt, setAt: new Date().toISOString(), from: 'player' });
-    return reply(200, { ok: true });
+    return reply(200, { ok: true, memberToken: staffToken.issue('player', 14, { slug }) });
   }
 
   if (body.action === 'reset') {

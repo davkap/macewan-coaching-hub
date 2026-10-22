@@ -20,14 +20,17 @@ function sign(payload) {
   return crypto.createHmac('sha256', secret()).update(payload).digest('base64url');
 }
 
-function issue(role) {
+// role: 'coach' | 'admin' (staff pass) or 'player' (member pass, from player-login.js).
+function issue(role, days, extra) {
   if (!secret()) return null;
-  const payload = b64(JSON.stringify({ role, exp: Date.now() + DAYS * 86400000 }));
+  const payload = b64(JSON.stringify(Object.assign({ role, exp: Date.now() + (days || DAYS) * 86400000 }, extra || {})));
   return `${payload}.${sign(payload)}`;
 }
 
-// Returns { role } for a valid, unexpired pass, otherwise null.
-function check(token) {
+// Returns { role } for a valid, unexpired pass whose role is allowed
+// (staff only by default), otherwise null.
+function check(token, roles) {
+  const allowed = roles || ['coach', 'admin'];
   if (!token || !secret()) return null;
   const [payload, sig] = String(token).split('.');
   if (!payload || !sig) return null;
@@ -37,11 +40,14 @@ function check(token) {
   try {
     const data = JSON.parse(Buffer.from(payload, 'base64url').toString());
     if (!data.exp || data.exp < Date.now()) return null;
-    if (data.role !== 'coach' && data.role !== 'admin') return null;
-    return { role: data.role };
+    if (allowed.indexOf(data.role) < 0) return null;
+    return { role: data.role, slug: data.slug };
   } catch (e) {
     return null;
   }
 }
 
-module.exports = { issue, check };
+// Anyone logged into the Hub: staff or a player.
+const checkMember = token => check(token, ['coach', 'admin', 'player']);
+
+module.exports = { issue, check, checkMember };

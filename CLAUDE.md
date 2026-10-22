@@ -187,6 +187,26 @@ terms/beliefs; concept chips filter the open tab; `?q=word` opens the page with 
 Search/filter state is stripped before saving. The automatic quiz questions read this same saved
 version, so changing a term changes its questions.
 
+## Synergy numbers (`synergy.html`, `synergy-view.js`)
+
+MacEwan's licensed Synergy data (team play types offence/defence, situations, shot types,
+and each opponent player's play types and shot types). **Never commit Synergy numbers to this
+public repo.** They live only in the Blobs store `synergy` behind `netlify/functions/synergy.js`,
+readable with a Hub pass: a staff pass, or the player "member pass" that `player-login.js` now
+returns (`sessionStorage.griffin_member_token`).
+
+- Pulling: Synergy needs David's login, so the build can't fetch it. Claude (on request, or the
+  weekly scheduled task) loads `scripts/synergy/extract.js` into a logged-in Synergy tab in the
+  Claude app's browser (`<script src="https://macewan-coaching-hub.netlify.app/scripts/synergy/extract.js">`),
+  runs `GriffinSynergy.teams([[slug, synergyId], …])` (IDs in `scripts/synergy/teams.json`;
+  ~90 s a team; results in `window.__syn`), then uploads each team from a Hub tab on
+  `synergy.html` with `GriffinSynergyImport.put(slug, data)`. That tab needs a staff pass: a coach
+  approves the browser once on `synergy.html` (120-day pass in `localStorage.griffin_synergy_token`).
+  extract.js only reads the pages a coach can see; it doesn't call Synergy's private API.
+- Display: `synergy-view.js` draws the team panel on `opponent-scout.html?type=scout` and
+  Game Week, and a Synergy line under each player's stats on the scout cards (matched by jersey
+  number + surname/initial; `.synergy-box` is stripped before a scout-card edit is saved).
+
 ## Content saved from the site
 
 Scout notes and other edits made in the site's editors are saved to Netlify Blobs through

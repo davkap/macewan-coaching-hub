@@ -487,6 +487,7 @@
         <div class="info-banner" id="storage-status" style="display:none;">
           <strong>Device Persistence active:</strong> Showing locally edited version. Click "Reset to Default" to restore the original repository version.
         </div>
+        <div id="synergyPanel"></div>
         <div class="markdown-body" id="rendered-content">
           Loading report content...
         </div>
@@ -518,6 +519,8 @@
     const params = new URLSearchParams(window.location.search);
     const teamSlug = params.get('team');
     const fileType = params.get('type') || 'profile'; // 'profile' or 'scout'
+    // Synergy panel (synergy-view.js) on the scouting reports.
+    if (fileType === 'scout' && teamSlug) document.getElementById('synergyPanel').setAttribute('data-synergy-team', teamSlug);
 
     if (!teamSlug) {
       document.getElementById('rendered-content').innerHTML = '<p class="btn-danger" style="padding: 15px; border-radius: 4px; color: white;">Error: No opponent team specified in URL query. Go back to Home Dashboard.</p>';
@@ -852,5 +855,6 @@
     // Trigger initial load
     if (teamSlug) loadContent();
   </script>
+<script src="/synergy-view.js"></script>
 </body>
 </html>

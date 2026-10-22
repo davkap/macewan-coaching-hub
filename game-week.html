@@ -64,6 +64,9 @@
     .ld .v { font-weight: 700; margin-top: 2px; }
     .ld .s { font-size: 13px; color: var(--gold); }
     .loading { color: var(--mute); padding: 30px 0; }
+    .syn-gw { margin-top: 6px; font-size: 12px; color: #d1d5db; line-height: 1.45; }
+    .syn-gw b { color: var(--gold); }
+    .syn-gw .lbl { font-weight: 800; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mute); margin-right: 4px; }
     /* Staff form */
     .form .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
     label.lbl { font-size: 12px; font-weight: 600; color: var(--mute); text-transform: uppercase; letter-spacing: 0.06em; }
@@ -95,6 +98,7 @@
 </div>
 
 <script src="quiz-data.js"></script>
+<script src="synergy-view.js"></script>
 <script>
 (function () {
   'use strict';
@@ -128,6 +132,11 @@
       G.loadReport(team.slug, true).catch(() => ({ labels: {}, plan: [], keys: [], practice: [] })),
       G.loadStats().catch(() => null)
     ]);
+    // Synergy (private, logged-in only): team panel + each player's top play types.
+    const SV = window.GriffinSynergyView;
+    const syn = SV ? await SV.load(team.slug) : { error: 'none' };
+    const synPlayers = syn && !syn.error ? SV.byPlayer(syn, cards) : {};
+    if (SV) SV.css();
     const quizIsThis = assignment && assignment.type === 'scout' && assignment.team === team.slug;
     const labelsIn = re => Object.entries(report.labels).filter(([, v]) => re.test(v.section));
     const list = (items, numbered) => items.length
@@ -155,7 +164,8 @@
         <div class="info"><div class="nm">${esc(G.shortName(c))}</div>
         <div class="meta">${esc([c.pos, c.ht].filter(x => x && x !== 'N/A').join(' · '))}</div>
         <div class="calls">${calls(c)}</div>
-        ${note ? `<div class="nt">${esc(note.length > 240 ? note.slice(0, 237) + '…' : note)}</div>` : ''}</div></div>`;
+        ${note ? `<div class="nt">${esc(note.length > 240 ? note.slice(0, 237) + '…' : note)}</div>` : ''}
+        ${synPlayers[c.name] ? `<div class="syn-gw">${SV.playerSummary(synPlayers[c.name])}</div>` : ''}</div></div>`;
     };
     const L = G.statLeaders(team, stats);
     const leader = (k, list, fmt) => list && list.length ? `<div class="ld"><div class="k">${k}</div><div class="v">${esc(list[0].p.name)}</div><div class="s">${fmt(list[0])}</div></div>` : '';
@@ -177,6 +187,7 @@
         <div class="card"><h2>How we attack their D</h2>${list(report.plan.map(x => x.full), true)}</div>
       </div>
       <div class="card"><h2>How we defend their O</h2>${labelList(labelsIn(/defend their O/i))}</div>
+      ${syn && !syn.error ? SV.teamPanel(syn, { dark: true }) : ''}
       <div class="card"><h2>Their starters <small>from the scout cards</small></h2>
         ${starters.length ? `<div class="players">${starters.map(playerCard).join('')}</div>` : '<p class="empty">No scout cards yet.</p>'}</div>
       ${bench.length ? `<div class="card"><h2>Rotation &amp; bench</h2><div class="players">${bench.map(playerCard).join('')}</div></div>` : ''}

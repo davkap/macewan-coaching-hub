@@ -703,7 +703,8 @@
     const container = getCardsContainer();
     if (!container) return '';
     const clone = container.cloneNode(true);
-    clone.querySelectorAll('.delete-card-btn, .role-toggle-btn, .card-reorder-group, .photo-upload-overlay, .edit-profile-btn').forEach(el => el.remove());
+    // .synergy-box: Synergy numbers drawn live by synergy-view.js, never saved.
+    clone.querySelectorAll('.delete-card-btn, .role-toggle-btn, .card-reorder-group, .photo-upload-overlay, .edit-profile-btn, .synergy-box').forEach(el => el.remove());
     clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
     return clone.outerHTML;
   }

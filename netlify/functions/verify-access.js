@@ -33,10 +33,12 @@ exports.handler = async function (event) {
 
   let role = '';
   let password = '';
+  let long = false;
   try {
     const body = JSON.parse(event.body || '{}');
     role = String(body.role || '');
     password = String(body.password || '');
+    long = body.long === true;   // 120-day pass for a browser that sends Synergy updates
   } catch (e) {
     return reply(400, { ok: false, message: 'Bad request.' });
   }
@@ -70,5 +72,5 @@ exports.handler = async function (event) {
   }
 
   // A signed staff pass, used to open staff-only data such as quiz grades.
-  return reply(200, { ok: true, role, token: staffToken.issue(role) });
+  return reply(200, { ok: true, role, token: staffToken.issue(role, long ? 120 : 14) });
 };

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="auth-lock.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/site-responsive.css">
+  <title>Synergy Data | MacEwan Griffins Coaching Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --maroon: #98002e; --gold: #d1ad7d; --bg: #0f1219; --card: #181d28; --card-2: #1f2533; --line: rgba(209,173,125,0.22); --text: #f3f4f6; --mute: #9ca3af; --good: #2ecc71; --bad: #ff5e5e; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--text); }
+    body { font-family: Inter, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 15px; line-height: 1.5; }
+    a { color: var(--gold); }
+    .wrap { max-width: 900px; margin: 0 auto; padding: 18px 16px 60px; }
+    .topbar a { text-decoration: none; font-weight: 700; font-size: 14px; display: inline-flex; min-height: 44px; align-items: center; }
+    h1 { font-family: Montserrat, sans-serif; font-size: 26px; margin: 4px 0; }
+    h1 span { color: var(--gold); }
+    h2 { font-family: Montserrat, sans-serif; font-size: 16px; margin: 0 0 10px; }
+    .sub { color: var(--mute); margin: 0 0 18px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+    .btn { background: var(--maroon); color: #fff; border: none; border-radius: 8px; padding: 11px 16px; font: 700 14px Inter, sans-serif; min-height: 44px; cursor: pointer; }
+    .btn.ghost { background: transparent; border: 1px solid var(--line); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--mute); }
+    .tbl-wrap { overflow-x: auto; }
+    .ok { color: var(--good); font-weight: 700; } .no { color: var(--bad); font-weight: 700; } .muted { color: var(--mute); }
+    input[type=password] { width: 100%; max-width: 320px; background: var(--card-2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 11px 12px; font: 16px Inter, sans-serif; min-height: 44px; }
+    ol li { margin-bottom: 6px; }
+    code { background: var(--card-2); padding: 1px 5px; border-radius: 4px; font-size: 13px; overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar"><a href="index.html">🏠 Coaching Hub</a></div>
+  <h1>Synergy <span>data</span></h1>
+  <p class="sub">Synergy play-type numbers shown on the scout cards, team scouting reports and Game Week. Staff only.</p>
+  <div id="app"><div class="card muted">Loading…</div></div>
+</div>
+<script src="synergy-view.js"></script>
+<script src="quiz-data.js"></script>
+<script>
+(function () {
+  'use strict';
+  const isStaff = typeof window.isCoachOrAdmin === 'function' ? window.isCoachOrAdmin() : false;
+  const isAdmin = typeof window.isAdminOnly === 'function' ? window.isAdminOnly() : false;
+  const app = document.getElementById('app');
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const fmt = iso => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }); };
+  const ls = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return null; } };
+  // Pass used to send updates: a 120-day pass saved in this browser, or this tab's staff pass.
+  const uploadToken = () => ls('griffin_synergy_token') || sessionStorage.getItem('griffin_staff_token') || '';
+  const readToken = () => sessionStorage.getItem('griffin_staff_token') || ls('griffin_synergy_token') || '';
+
+  // Used by Claude (or the weekly scheduled task) after reading Synergy:
+  //   await GriffinSynergyImport.put('calgary-dinos', data)
+  window.GriffinSynergyImport = {
+    ready: () => !!uploadToken(),
+    async put(slug, data) {
+      const r = await fetch('/.netlify/functions/synergy', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Hub-Token': uploadToken() },
+        body: JSON.stringify({ action: 'put', team: slug, data })
+      });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok || !d.ok) throw new Error(d.message || ('HTTP ' + r.status));
+      return true;
+    },
+    refresh: () => draw()
+  };
+
+  async function allow() {
+    const role = isAdmin ? 'admin' : 'coach';
+    const pw = document.getElementById('pw').value;
+    const st = document.getElementById('allowState');
+    st.textContent = 'Checking…';
+    try {
+      const r = await fetch('/.netlify/functions/verify-access', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role, password: pw, long: true }) });
+      const d = await r.json().catch(() => ({}));
+      if (d.ok && d.token) { ls('griffin_synergy_token', d.token); sessionStorage.setItem('griffin_staff_token', d.token); draw(); }
+      else st.textContent = d.message || 'That password did not work.';
+    } catch (e) { st.textContent = 'Could not reach the server.'; }
+  }
+
+  async function draw() {
+    if (!isStaff) { app.innerHTML = '<div class="card">This page is for coaches. Players see Synergy numbers on the scout cards and Game Week.</div>'; return; }
+    const teams = (await fetch('/scripts/synergy/teams.json').then(r => r.json()).catch(() => ({ teams: {} }))).teams;
+    let index = {};
+    const t = readToken();
+    if (t) {
+      const r = await fetch('/.netlify/functions/synergy?list=1', { headers: { 'X-Hub-Token': t }, cache: 'no-store' });
+      if (r.ok) index = (await r.json()).teams || {};
+    }
+    const names = (window.GriffinData && GriffinData.TEAMS) || [];
+    const title = slug => (names.find(x => x.slug === slug) || {}).title || slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    const allowed = !!ls('griffin_synergy_token');
+    app.innerHTML = `
+      <div class="card"><h2>What's loaded</h2>
+        ${t ? '' : '<p class="muted">Approve this browser below to see the status.</p>'}
+        <div class="tbl-wrap"><table><thead><tr><th>Team</th><th>Synergy games logged</th><th>Last updated</th><th></th></tr></thead><tbody>
+        ${Object.keys(teams).filter(s => s !== 'macewan-griffins').map(s => {
+          const i = index[s];
+          return `<tr><td>${esc(title(s))}</td><td>${i ? i.games : '<span class="no">none yet</span>'}</td><td>${i ? esc(fmt(i.pulledAt)) : ''}</td>
+            <td><a href="opponent-scout.html?team=${s}&type=scout">view</a></td></tr>`;
+        }).join('')}
+        </tbody></table></div></div>
+      <div class="card"><h2>Updating the numbers</h2>
+        <p>Synergy needs your login, so the weekly stats button can't fetch it. Instead:</p>
+        <ol>
+          <li><b>Every Monday</b> a scheduled task asks Claude to read Synergy in the Claude app's browser on your computer and update every team here. Your computer needs to be on with the Claude app open and logged into Synergy.</li>
+          <li><b>Any time:</b> ask Claude "update Synergy for Calgary" (or all teams).</li>
+        </ol>
+        <p class="muted">Both need this browser approved once (the approval lasts 120 days):</p>
+        ${allowed ? `<p class="ok">✓ This browser is approved to send Synergy updates.</p><button class="btn ghost" id="revoke">Remove approval from this browser</button>`
+          : `<p><input type="password" id="pw" placeholder="${isAdmin ? 'Admin' : 'Coach'} password" autocomplete="current-password"> <button class="btn" id="allowBtn">Approve this browser</button></p><p class="muted" id="allowState"></p>`}
+      </div>
+      <div class="card"><h2>Keep it private</h2>
+        <p class="muted" style="margin:0">Synergy is a paid subscription. Its numbers are kept only in the Hub's private storage (never in the public GitHub code) and only load for people logged into the Hub. Please don't screenshot them outside the team.</p>
+      </div>`;
+    const a = document.getElementById('allowBtn'); if (a) a.onclick = allow;
+    const rv = document.getElementById('revoke'); if (rv) rv.onclick = () => { ls('griffin_synergy_token', null); draw(); };
+  }
+  draw();
+})();
+</script>
+</body>
+</html>

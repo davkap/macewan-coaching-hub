@@ -39,6 +39,7 @@
       sessionStorage.removeItem('griffin_hub_role');
       sessionStorage.removeItem('griffin_coaches_authorized');
       sessionStorage.removeItem('griffin_staff_token');
+      sessionStorage.removeItem('griffin_member_token');
       sessionStorage.removeItem('hoops-hub:tracking-session-id');
       sessionStorage.removeItem('hoops-hub:tracking-player-name');
       sessionStorage.removeItem('hoops-hub:tracking-accumulated-seconds');
@@ -379,7 +380,9 @@
       return players.find(n => toSlug(n) === val) || val;
     }
 
-    function finishPlayerLogin(val, prof) {
+    function finishPlayerLogin(val, prof, memberToken) {
+      // Member pass: lets the player load private team data (Synergy numbers).
+      if (memberToken) sessionStorage.setItem('griffin_member_token', memberToken);
       const name = (prof && prof.name) || playerName(val);
       let cached = null;
       try { cached = JSON.parse(localStorage.getItem(`hoops-offseason:profile:${val}`)); } catch (e) {}
@@ -427,7 +430,7 @@
           submitBtn.innerText = originalText;
           submitBtn.disabled = false;
           if (d && d.ok && d.mustChange) return showSetPin(val, d.changeToken, d.profile);
-          if (d && d.ok) return finishPlayerLogin(val, d.profile);
+          if (d && d.ok) return finishPlayerLogin(val, d.profile, d.memberToken);
           showError((d && d.message) || 'Incorrect PIN. Please try again.');
           input.value = '';
           input.focus();
@@ -471,7 +474,7 @@
         })
           .then(r => r.json().catch(() => ({ ok: false })))
           .then(d => {
-            if (d && d.ok) return finishPlayerLogin(val, prof);
+            if (d && d.ok) return finishPlayerLogin(val, prof, d.memberToken);
             btn.disabled = false; btn.innerText = 'Save PIN and go in';
             fail((d && d.message) || 'Could not save your PIN. Try again.');
           })

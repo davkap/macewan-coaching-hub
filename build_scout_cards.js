@@ -503,6 +503,7 @@ ${bench.length > 0 ? `
 </footer>
 
 <script src="../../scout-cards-editor.js"></script>
+<script src="../../synergy-view.js"></script>
 </body>
 </html>`;
 }

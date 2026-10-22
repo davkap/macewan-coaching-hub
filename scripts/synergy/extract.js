@@ -178,8 +178,22 @@
   // Pull several teams one after another; results land in window.__syn[slug].
   async function teams(list) {
     window.__syn = window.__syn || {}; window.__synErr = window.__synErr || {};
+    let prev = [];
     for (const [slug, id] of list) {
-      try { window.__syn[slug] = compact(await team(id)); } catch (e) { window.__synErr[slug] = String(e); }
+      try {
+        const d = compact(await team(id));
+        // Synergy sometimes leaves the previous team's player columns in the table
+        // (seen Oct 2026: UBC players inside UBCO's pull). A player can't be on two
+        // teams, so drop anyone who was in the team pulled just before.
+        const bare = p => p.replace(/^#\d+\s*/, '');
+        const dropped = [];
+        ['pp', 'ps'].forEach(k => Object.keys(d[k] || {}).forEach(p => {
+          if (prev.indexOf(bare(p)) >= 0) { delete d[k][p]; if (dropped.indexOf(p) < 0) dropped.push(p); }
+        }));
+        if (dropped.length) d.dropped = dropped;
+        prev = Object.keys(d.pp || {}).map(bare);
+        window.__syn[slug] = d;
+      } catch (e) { window.__synErr[slug] = String(e); }
     }
     window.__synDone = true;
   }

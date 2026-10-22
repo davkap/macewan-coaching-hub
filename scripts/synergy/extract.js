@@ -155,9 +155,24 @@
       });
       return out;
     };
-    return { v: 1, synergyId: r.synergyId, pulledAt: r.pulledAt, gp: r.gp, games: r.games,
+    return trim({ v: 1, synergyId: r.synergyId, pulledAt: r.pulledAt, gp: r.gp, games: r.games,
       sit: rows(r.situations), pt: rows(r.playTypes), st: rows(r.shotTypes),
-      pp: pairs(r.players.playTypes, 'poss', 'pts'), ps: pairs(r.players.shotTypes, 'fga', 'fgm') };
+      pp: pairs(r.players.playTypes, 'poss', 'pts'), ps: pairs(r.players.shotTypes, 'fga', 'fgm') });
+  }
+
+  // Keep only what synergy-view.js shows: rows -> [name, poss, %time, ppp, percentile, rating, fga, fg%].
+  const SIT = ['All Possessions', 'Transition', 'Overall Half Court', 'After Time Outs', 'Last 4 Sec. of Shot Clock', 'Against Zone', 'Press', 'Out of Bounds (Side)', 'Out of Bounds (End)'];
+  const SHOT = ['All Field Goal Attempts', 'Catch and Shoot', 'Dribble Jumper', 'At Rim', 'Runner', 'Long 3 pts', 'Short to 17', 'Medium 17 to < 3 Pts'];
+  function trim(d) {
+    const cut = (rows, keep) => (rows || []).filter(x => !keep || keep.indexOf(x[0]) >= 0).map(x => x.slice(0, 8));
+    const side = (o, keep) => ({ off: cut(o.off, keep), def: cut(o.def, keep) });
+    const ps = {};
+    Object.entries(d.ps || {}).forEach(([p, t]) => {
+      const k = {};
+      SHOT.forEach(n => { if (t[n]) k[n] = t[n]; });
+      if (Object.keys(k).length) ps[p] = k;
+    });
+    return Object.assign({}, d, { sit: side(d.sit, SIT), pt: side(d.pt), st: side(d.st, SHOT), ps });
   }
 
   // Pull several teams one after another; results land in window.__syn[slug].
@@ -169,5 +184,5 @@
     window.__synDone = true;
   }
 
-  window.GriffinSynergy = { team, teams, compact, go, readMain, readBreakdown, metric, tables };
+  window.GriffinSynergy = { team, teams, compact, trim, go, readMain, readBreakdown, metric, tables };
 })();

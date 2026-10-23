@@ -146,10 +146,13 @@ Graded quizzes for players. Each quiz is built in the browser from random questi
   (Blobs key `scout_scout_<slug>`, falling back to `scouts/2026-27-scout.md`; `[FILL…]` / TBD parts
   are skipped) and team stat leaders from `data/usports-rosters-stats.json`.
 - **Griffin Concepts quiz:** terms, mottos and beliefs from `griffin-concepts.html` (plus the saved
-  edit in Blobs key `griffin_basketball_concepts_v2`).
+  edit in Blobs key `griffin_basketball_concepts_v3`). Bold labels inside a term (`<strong>Hang:</strong> …`)
+  are options: each becomes its own question ("what is Hang?", "which option is this?"; player labels such
+  as Big/Dhandler/LOW ask "whose job is this?"). Beliefs written "call = meaning" (or ➔ / :) become
+  "what does this call mean?" questions.
 
-- **Question bank:** starter questions in `data/quiz-bank-seed.json` (ids `s-…`, written from the
-  Concepts page) plus coaches' questions and edits, saved by `netlify/functions/quiz-bank.js`
+- **Question bank:** starter questions in `data/quiz-bank-seed.json` (ids `c-…`, game-situation questions written from
+  David's Oct 23 2026 concept PDFs; the older `s-…` set was retired) plus coaches' questions and edits, saved by `netlify/functions/quiz-bank.js`
   (Blobs store `quiz-bank`; an edit of a starter question is saved under the same id and wins, a
   deleted starter is saved as `{ id, deleted: true }`). Every question has tags (`offence`,
   `pnr`, `transition`…); a team slug tag (e.g. `calgary-dinos`) puts it in that team's scouting
@@ -179,9 +182,11 @@ S&C coach): don't change it unless David asks.
 
 ## Griffin Concepts page (`griffin-concepts.html`)
 
-Offense and Defense tabs of concept cards (content imported from David's
-"Griffin_Basketball_Concepts.html", Oct 2026). Admins edit in place (Edit Mode); edits are saved to
-Blobs key `griffin_basketball_concepts_v2` (the old `…_v1` copy is kept only as a backup).
+Offense and Defense tabs of concept cards (content from David's Griffin_Off_Concepts.pdf and
+Griffin_Def_Concepts.pdf, Oct 23 2026). Admins edit in place (Edit Mode); edits save 2 seconds after
+typing stops, on leaving a box, and on "Lock Layout", to Blobs key `griffin_basketball_concepts_v3`
+(`…_v2` and `…_v1` are old backups). Editing a downloaded copy of the page on a computer saves nothing:
+always edit on the live site. In term descriptions, write options as bold "Label:" lines (see quizzes).
 Search looks through both tabs, matching from the start of words, and shows only the matching
 terms/beliefs; concept chips filter the open tab; `?q=word` opens the page with a search.
 Search/filter state is stripped before saving. The automatic quiz questions read this same saved

@@ -90,7 +90,7 @@ exports.handler = async function (event) {
     const id = safeId(body.id);
     if (!id) return reply(400, { ok: false, message: 'Bad id.' });
     // Starter questions (from the repo) need a "deleted" marker; coach questions are just removed.
-    if (/^s-/.test(id)) await put('q_' + id, { id, deleted: true, updatedAt: new Date().toISOString() });
+    if (/^[sc]-/.test(id)) await put('q_' + id, { id, deleted: true, updatedAt: new Date().toISOString() });
     else await del('q_' + id);
     return reply(200, { ok: true });
   }

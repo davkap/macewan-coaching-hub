@@ -184,12 +184,31 @@
     return out;
   }
 
+  // A term's description can list options in bold: "<strong>Hang:</strong> Float dribble…".
+  // Returns { intro, options: [{ label, text }] } (text before the first bold label = intro).
+  const PLACEHOLDER = /^definition (to come|of the new)|coach to fill in|\[fill/i;
+  function termOptions(el) {
+    const res = { intro: '', options: [] };
+    if (!el) return res;
+    let cur = null;
+    el.childNodes.forEach(n => {
+      if (n.nodeType === 1 && /^(STRONG|B)$/.test(n.tagName)) {
+        cur = { label: squash(n.textContent).replace(/:$/, ''), text: '' };
+        res.options.push(cur);
+      } else if (cur) cur.text += ' ' + n.textContent;
+      else res.intro += ' ' + n.textContent;
+    });
+    res.intro = squash(res.intro);
+    res.options = res.options.map(o => ({ label: o.label, text: squash(o.text).replace(/^[:\-–—]\s*/, '') })).filter(o => o.label && o.text);
+    return res;
+  }
+
   function loadConcepts() {
     return once('concepts', async () => {
       const r = await fetch('/griffin-concepts.html');
       const html = await r.text();
       const doc = new DOMParser().parseFromString(html, 'text/html');
-      const saved = await getContent('griffin_basketball_concepts_v2');
+      const saved = await getContent('griffin_basketball_concepts_v3');   // same key as griffin-concepts.html
       const box = doc.getElementById('playbook-data-container');
       if (saved && box) box.innerHTML = saved;
       const read = (tabId, side) => Array.from(doc.querySelectorAll('#' + tabId + ' .concept-card')).map(c => ({
@@ -197,10 +216,10 @@
         title: squash((c.querySelector('.concept-title h2') || {}).textContent),
         slogan: squash((c.querySelector('.concept-meta') || {}).textContent).replace(/^["“”']+|["“”']+$/g, ''),
         beliefs: Array.from(c.querySelectorAll('.playbook-item .editable')).map(e => squash(e.textContent)).filter(Boolean),
-        terms: Array.from(c.querySelectorAll('.term-box')).map(t => ({
-          name: squash((t.querySelector('.term-name') || {}).textContent),
-          desc: squash((t.querySelector('.term-desc') || {}).textContent)
-        })).filter(t => t.name && t.desc)
+        terms: Array.from(c.querySelectorAll('.term-box')).map(t => {
+          const d = t.querySelector('.term-desc');
+          return { name: squash((t.querySelector('.term-name') || {}).textContent), desc: squash((d || {}).textContent), ...termOptions(d) };
+        }).filter(t => t.name && t.desc && !PLACEHOLDER.test(t.desc))
       })).filter(c => c.title);
       return { offense: read('offense-tab', 'offence'), defense: read('defense-tab', 'defence') };
     });
@@ -415,6 +434,10 @@
     return tags;
   }
 
+  // Option labels that name a player/role ("Big: …") or an aspect ("Who: …") get their own wording.
+  const ROLE = /^(big|guard|dhandler|dscreener|dreceiver|dpost|dball|low|nail|rim|low hole|strong ?side( defender)?|weak ?side( defender)?)$/i;
+  const ASPECT = { who: 'who is it for?', closeout: 'how do we close out?', talk: 'what is the TALK part?', touch: 'what is the TOUCH part?', take: 'what is the TAKE part?' };
+
   async function conceptQuestions() {
     const data = await loadConcepts();
     const qs = [];
@@ -428,7 +451,41 @@
         const src = `Griffin Concepts: ${c.title}`;
         const add = q => { if (q) { q.tags = tags; qs.push(q); } };
         const near = c.terms.map(t => t.desc);
+        // Options inside terms ("Drop/Over Attack" -> Hostage, Hang, Gortat…).
+        const cardOpts = [].concat(...c.terms.map(t => (t.options || []).map(o => Object.assign({ term: t.name }, o))));
+        const sideOpts = [].concat(...concepts.map(x => [].concat(...x.terms.map(t => t.options || []))));
+        for (const t0 of c.terms) {
+          if ((t0.options || []).length < 2) continue;
+          // Same term name on two cards (Peel, Gap, Shrink…): say which card.
+          const t = allTerms.filter(x => norm(x.name) === norm(t0.name)).length > 1 ? Object.assign({}, t0, { name: `${t0.name} (${c.title})` }) : t0;
+          for (const o of t.options) {
+            const isRole = ROLE.test(o.label);
+            const aspect = ASPECT[norm(o.label)];
+            const ask = aspect ? `${t.name}: ${aspect}` : isRole ? `${t.name}: what is the ${o.label}'s job?` : `${t.name}: what is "${o.label}"?`;
+            const textPool = t.options.filter(x => x !== o).map(x => x.text)
+              .concat(cardOpts.filter(x => x.term !== t0.name && (!(isRole || aspect) || norm(x.label) === norm(o.label))).map(x => x.text))
+              .concat(sideOpts.map(x => x.text));
+            add(makeQ('opt-' + c.title, src, ask, o.text, textPool.slice(0, 40)));
+            if (!isRole && !aspect) {
+              const labelPool = t.options.filter(x => x !== o).map(x => x.label)
+                .concat(cardOpts.filter(x => !ROLE.test(x.label) && !ASPECT[norm(x.label)]).map(x => x.label));
+              add(makeQ('optname-' + c.title, src, `${t.name}: which option is this?`, o.label, labelPool, { quote: o.text }));
+            } else if (isRole) {
+              const roles = ['Big', 'Guard', 'Dhandler', 'Dscreener', 'Dreceiver', 'Dpost', 'LOW', 'NAIL', 'Low Hole', 'Strong side defender']
+                .filter(r => !t.options.some(x => norm(x.label) === norm(r) && x !== o) || norm(r) === norm(o.label));
+              add(makeQ('optrole-' + c.title, src, `${t.name}: whose job is this?`, o.label, roles.filter(r => norm(r) !== norm(o.label)), { quote: o.text }));
+            }
+          }
+        }
+        // Beliefs written as a call and its meaning: "4 Down" = Block Mover, TAG ➔ High Side, TALK: …
+        const pairs = c.beliefs.map(b => { const m = b.match(/^(.{1,40}?)\s*(?:=|➔|⇒|->|—>|-->|:)\s*(.+)$/); return m ? { call: m[1].trim(), means: m[2].trim() } : null; }).filter(Boolean);
+        const sidePairs = [].concat(...concepts.map(x => x.beliefs)).map(b => (b.match(/(?:=|➔|⇒|:)\s*(.+)$/) || [])[1]).filter(Boolean);
+        for (const p of pairs) {
+          add(makeQ('call-' + c.title, src, `${c.title}: what does ${/^["“]/.test(p.call) ? p.call : `"${p.call}"`} mean?`, p.means, pairs.filter(x => x !== p).map(x => x.means).concat(sidePairs)));
+          if (pairs.length >= 3) add(makeQ('callname-' + c.title, src, `${c.title}: which call is this?`, p.call.replace(/^["“]|["”]$/g, ''), pairs.filter(x => x !== p).map(x => x.call.replace(/^["“]|["”]$/g, '')), { quote: p.means }));
+        }
         for (const t of c.terms) {
+          if ((t.options || []).length >= 2 && t.desc.length > 160) continue;   // long multi-option terms: asked option by option above
           const sameCard = near.filter(d => d !== t.desc);
           const pool = sameCard.length >= 3 ? sameCard : sameCard.concat(allTerms.filter(x => x.concept !== c.title).map(x => x.desc));
           add(makeQ('term-' + c.title, src, `${c.title}: what does "${t.name}" mean?`, t.desc, pool));

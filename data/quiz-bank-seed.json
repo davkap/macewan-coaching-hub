@@ -1,81 +1,1593 @@
 [
-  {"id": "s-001", "tags": ["offence", "transition"], "q": "We just got scored on and our 5 is taking the ball out. What spacing do we run up the floor?", "answer": "5 Out, with the 5 trailing (Big Above)", "wrong": ["4 Out, with the 5 rim running (Big Ahead)", "Walk it up and wait for a call", "2 Back, 2 Basket"], "explain": "Closest Man Inbounds: if the 5 inbounds, he trails and we are 5 Out."},
-  {"id": "s-002", "tags": ["offence", "transition"], "q": "Someone other than the 5 inbounds after a make. What does the 5 do?", "answer": "Rim runs (Big Ahead) and we set 4 Out", "wrong": ["Trails behind the play (Big Above)", "Sets a Drag screen at half court", "Spots up in the corner"], "explain": "If anyone else inbounds, the 5 rim runs and we play 4 Out."},
-  {"id": "s-003", "tags": ["offence", "transition"], "q": "Pace 21: by when does the ball need to be across half court?", "answer": "21 seconds on the shot clock", "wrong": ["24 seconds on the shot clock", "18 seconds on the shot clock", "14 seconds on the shot clock"]},
-  {"id": "s-004", "tags": ["offence", "transition"], "q": "You're the Deep Outlet. Where do you catch the ball?", "answer": "Butt to the sideline at free-throw line extended", "wrong": ["Inside the key, facing the inbounder", "At the top of the key in the backcourt", "In the backcourt corner"], "explain": "Sneak a peek down court to see numbers before you receive the pass."},
-  {"id": "s-005", "tags": ["offence", "transition"], "q": "Where does the Dunker sit?", "answer": "Short corner: heels on the baseline, outside the hash, opposite the ball", "wrong": ["On the block, same side as the ball", "In the deep corner behind the 3-point line", "At the elbow, facing the ball"]},
-  {"id": "s-006", "tags": ["offence", "transition", "pnr"], "q": "After a defensive miss, our trailing big sets a transition ball screen right away. What is that called?", "answer": "Drag", "wrong": ["77", "Blender", "Blast"]},
-  {"id": "s-007", "tags": ["offence", "transition", "pnr"], "q": "What is \"77\"?", "answer": "Double Drag: staggered transition ball screens, O5 sets the second one", "wrong": ["A single Drag set by the 4", "5 Out Single Pin", "Horns side into Pistol"]},
-  {"id": "s-008", "tags": ["offence", "transition"], "q": "Race: what are we hunting in the first 6 seconds?", "answer": "Layups, 3s or fouls", "wrong": ["A post touch for the 5", "Running the clock to 20", "A called set every time"]},
-  {"id": "s-009", "tags": ["offence", "core"], "q": "The defence has all 5 back, loaded to the ball, and the ball defender is square to the handler. We are…", "answer": "Neutralized: flow straight into a Core Trigger", "wrong": ["In transition: keep attacking the rim", "In Flow: play off the last action", "Out of time: just get a shot up"]},
-  {"id": "s-010", "tags": ["offence", "core"], "q": "Core call \"2\" means…", "answer": "Stagger", "wrong": ["5 Out Single Pin", "4 Out DHO into Step Up", "5 Out Split (O5 handling)"]},
-  {"id": "s-011", "tags": ["offence", "core"], "q": "Core call \"1\" means…", "answer": "5 Out Single Pin", "wrong": ["Stagger", "Block Mover", "Continuous PNR"]},
-  {"id": "s-012", "tags": ["offence", "core", "dho"], "q": "Core call \"4\" means…", "answer": "4 Out DHO into Step Up", "wrong": ["5 Out Split (O5 handling)", "5 Out Pistol", "Stagger"]},
-  {"id": "s-013", "tags": ["offence", "core", "pnr"], "q": "The point guard twirls his finger (\"Motion\"). What are we running?", "answer": "Continuous PNR", "wrong": ["Block Mover", "5 Out Single Pin", "A press break"]},
-  {"id": "s-014", "tags": ["offence", "core"], "q": "Who makes the Early Call, and what does he decide?", "answer": "The point guard: 4 Out or 5 Out, are we neutralized, which Core Trigger", "wrong": ["The 5: which side to post up", "The coach: every set from the bench", "The first wing: whether to shoot"]},
-  {"id": "s-015", "tags": ["offence", "drive & kick"], "q": "You drive and two defenders come to you (E2). What do you do?", "answer": "Pass quickly to the open teammate", "wrong": ["Finish through the contact", "Pick up the ball and pivot out", "Dribble back out and reset"]},
-  {"id": "s-016", "tags": ["offence", "drive & kick"], "q": "You drive the paint and kick it out. What's your next job?", "answer": "Exit cut out faster than you came in (Kick Out Get Out)", "wrong": ["Stay in the paint for the rebound", "Set a screen for the shooter", "Post up on the block"]},
-  {"id": "s-017", "tags": ["offence", "drive & kick"], "q": "The defence is scrambling. How long do you have to shoot, drive or pass?", "answer": "Half a second (.5)", "wrong": ["One full second", "Two seconds", "Until a play is called"]},
-  {"id": "s-018", "tags": ["offence", "drive & kick"], "q": "Drive & Kick order of attacks: 1st side, 2nd side, 3rd side?", "answer": "Trigger, then 2-man game, then flash or snap", "wrong": ["2-man game, then trigger, then post feed", "Flash, then trigger, then 2-man game", "Post feed, then skip, then trigger"]},
-  {"id": "s-019", "tags": ["offence", "drive & kick"], "q": "Drive, kick out, then one more quick pass to punish the rotation. What's that?", "answer": "Drive Kick Swing (the extra pass)", "wrong": ["Blast", "Boomerang", "Speed Cut"]},
-  {"id": "s-020", "tags": ["offence", "pnr"], "q": "You come off the ball screen and nobody engages you. Your read?", "answer": "Score", "wrong": ["Search for the roll", "Skip to the weak side", "Reject the screen"], "explain": "Score: no one engages the handler. Search: E2 engages. Skip: tags collapse."},
-  {"id": "s-021", "tags": ["offence", "pnr"], "q": "Off the ball screen two defenders engage you (E2). Your read?", "answer": "Search: find the roll or the pop", "wrong": ["Score: keep driving", "Pick up the ball", "Reset and call it again"]},
-  {"id": "s-022", "tags": ["offence", "pnr"], "q": "In the PNR, the weak-side tags collapse on the roll. Your read?", "answer": "Skip to the open shooter", "wrong": ["Throw it to the roller anyway", "Score at the rim", "Re-screen"]},
-  {"id": "s-023", "tags": ["offence", "pnr"], "q": "Their big is in drop. Which is one of our counters?", "answer": "Hang: float dribble to freeze the drop big", "wrong": ["Race the Under", "Slip Roll", "Boomerang"]},
-  {"id": "s-024", "tags": ["offence", "pnr"], "q": "The ball defender goes under the screen. What do we do?", "answer": "Twist (re-screen) or race the under to the paint", "wrong": ["Pull up from 30 feet", "Pass back to the top and reset", "Post up the guard"]},
-  {"id": "s-025", "tags": ["offence", "pnr"], "q": "They ICE our side ball screen. What does the screener do?", "answer": "Slip roll: dive straight to the rim", "wrong": ["Pop to the corner", "Hold the screen longer", "Set a back screen"]},
-  {"id": "s-026", "tags": ["offence", "pnr"], "q": "They switch the ball screen with a soft switch. Our first attack?", "answer": "Race the switch: drive it downhill", "wrong": ["Post up the guard every time", "Reset and run a new action", "Pull up for a long 3"]},
-  {"id": "s-027", "tags": ["offence", "pnr", "iso"], "q": "A small guard ends up guarding our big. We call…", "answer": "Mouse in the House", "wrong": ["Moose on the Loose", "Gortat", "Hostage"]},
-  {"id": "s-028", "tags": ["offence", "pnr", "iso"], "q": "Their big ends up guarding our guard on the perimeter. We call…", "answer": "Moose on the Loose", "wrong": ["Mouse in the House", "Hang", "Race Switch"]},
-  {"id": "s-029", "tags": ["offence", "pnr"], "q": "Where do we screen to force the defender over the top?", "answer": "The lower third of his body", "wrong": ["His shoulders", "Wherever he is facing", "Behind his back foot"]},
-  {"id": "s-030", "tags": ["offence", "post"], "q": "You catch in the post. What are your first three things?", "answer": "Catch on 2 feet with 2 hands, chin it, check your inside shoulder", "wrong": ["Dribble once, spin, shoot", "Face up, jab, pass out", "Hold it high and wait for the double"]},
-  {"id": "s-031", "tags": ["offence", "post", "dho"], "q": "The post has no advantage. What's the call?", "answer": "Blast: DHO uphill, then slip or pop", "wrong": ["Force the shot over the top", "Kick it back to the feeder and stand", "Call timeout"]},
-  {"id": "s-032", "tags": ["offence", "post"], "q": "You feed the post. What cut do you make?", "answer": "Speed cut: baseline side, to the rim, out to the opposite corner", "wrong": ["Stand and wait for the kick out", "Cut to the elbow and screen", "Back cut to the same corner"]},
-  {"id": "s-033", "tags": ["defence", "transition"], "q": "The shot goes up. Who gets back?", "answer": "The 2 guards (2 Back), through the elbows if in the corner", "wrong": ["Everyone except the shooter", "Only the point guard", "The 2 bigs"]},
-  {"id": "s-034", "tags": ["defence", "transition"], "q": "What's the latest point we pick up the ball in transition D?", "answer": "The 4-point line or higher", "wrong": ["Half court", "The 3-point line", "The free-throw line"]},
-  {"id": "s-035", "tags": ["defence", "transition"], "q": "D-Trans: what do we take away in the first 6 seconds?", "answer": "No key, no free 3s", "wrong": ["No post touches", "No fouls on the shooter only", "No offensive rebounds"]},
-  {"id": "s-036", "tags": ["defence", "transition"], "q": "In transition you're stuck in a mismatch and a teammate pulls you out. That's…", "answer": "SCRAM", "wrong": ["RED", "HOT", "CHOP"]},
-  {"id": "s-037", "tags": ["defence", "closeouts", "scouting"], "q": "Closeout on a KLAY (knockdown shooter)?", "answer": "Fly by: run at his shooting shoulder with your shooting hand", "wrong": ["Stop short and absorb the drive", "Stay in the paint and help", "Close out to his body"]},
-  {"id": "s-038", "tags": ["defence", "closeouts", "scouting"], "q": "Closeout on a SHAQ (driver, not a shooter)?", "answer": "Absorb the drive: give him space, no paint", "wrong": ["Fly by his shooting hand", "Close out to his body with high hands", "Jump at the pump fake"]},
-  {"id": "s-039", "tags": ["defence", "closeouts"], "q": "Which three rules go with every closeout?", "answer": "Stick hand, no strong hand, no paint", "wrong": ["Jump, contest, foul", "Help, recover, rebound", "Talk, touch, trace"]},
-  {"id": "s-040", "tags": ["defence", "shell"], "q": "You're guarding the player next to the ball. Your role in the shell?", "answer": "STRONG: shrink and stunt", "wrong": ["NAIL: take the first pass out", "RIM: protect the rim", "BALL: point and declare"]},
-  {"id": "s-041", "tags": ["defence", "shell"], "q": "You're the top weak-side defender. Your job?", "answer": "NAIL: sink on baseline or slot drives, you have the first pass out", "wrong": ["STRONG: deny the next pass", "Stay attached to your man at the 3-point line", "Trap the ball"]},
-  {"id": "s-042", "tags": ["defence", "shell"], "q": "What are our shrink spots (B.E.N.)?", "answer": "Blocks, Elbows, Nail", "wrong": ["Baseline, Edge, Nail", "Ball, Elbow, Net", "Blocks, Edges, Notch"]},
-  {"id": "s-043", "tags": ["defence", "shell"], "q": "Shell Defense motto?", "answer": "Force tough 2s: one & done", "wrong": ["No key, no free 3s", "Do your work early", "Assignment excellence"]},
-  {"id": "s-044", "tags": ["defence", "pnr"], "q": "Side ball screen on the outer third of the floor, call is ICE. Guard's job?", "answer": "Keep the ball from going middle (the big drops)", "wrong": ["Go under and let him shoot", "Switch onto the screener", "Double the ball with the big"]},
-  {"id": "s-045", "tags": ["defence", "pnr"], "q": "The big calls \"RED\". What happens?", "answer": "Contact switch on the screen", "wrong": ["Hard double on the ball", "Big drops to the rim", "Guard goes under"], "explain": "RED = switch. The screener's man calls it early."},
-  {"id": "s-046", "tags": ["defence", "pnr"], "q": "What is HOT?", "answer": "Blitz: hard double on the ball until he picks it up or retreats", "wrong": ["Switch everything", "Zone drop to the rim", "Ice the side screen"]},
-  {"id": "s-047", "tags": ["defence", "pnr"], "q": "The 5 Ts of ball-screen defence are…", "answer": "Talk, Touch, Trace, Take, Tag", "wrong": ["Talk, Trap, Turn, Take, Tag", "Touch, Trail, Trap, Tag, Tip", "Talk, Trace, Trap, Turn, Take"]},
-  {"id": "s-048", "tags": ["defence", "pnr"], "q": "In DROP, where does the big play?", "answer": "Centerfield between the ball and the rim", "wrong": ["Up at the level of the screen", "Switched onto the ball", "In the corner with the shooter"]},
-  {"id": "s-049", "tags": ["defence", "pnr"], "q": "TALK: who calls the ball-screen coverage, and how?", "answer": "The big: early, loud and continuous (3x), \"WEAK\" or \"ICE\"", "wrong": ["The guard, once, after the screen", "The coach from the bench only", "Nobody: we read it"]},
-  {"id": "s-050", "tags": ["defence", "post"], "q": "GOLD is our base post coverage. What is it?", "answer": "3/4 top denial, slide behind on the pass", "wrong": ["Full front", "Play behind every time", "Double on the catch"]},
-  {"id": "s-051", "tags": ["defence", "post"], "q": "The post catches and puts it on the floor. Who digs?", "answer": "The closest perimeter defender, on the dribble bounce", "wrong": ["The weak-side big", "Nobody: single coverage", "The defender guarding the passer, on the catch"]},
-  {"id": "s-052", "tags": ["defence", "post"], "q": "NO MIDDLE in post D means…", "answer": "Sit on his inside shoulder, feet pointed to the sideline", "wrong": ["Front him from the baseline side", "Play straight behind him", "Let him go middle into help"]},
-  {"id": "s-053", "tags": ["defence", "special situations"], "q": "End of game, we're up 2. Screens?", "answer": "Stay before the inbound, switch everything after", "wrong": ["Switch before and after", "Never switch", "Foul right away"]},
-  {"id": "s-054", "tags": ["defence", "special situations"], "q": "End of game, we're up 3. Screens?", "answer": "Switch before and after, and chop (foul) when possible to stop a 3", "wrong": ["Stay before, switch after", "Drop the big and protect the rim", "Never foul"]},
-  {"id": "s-055", "tags": ["defence", "special situations"], "q": "When do we CHOP (intentional foul)?", "answer": "Up 3 late, or end of quarter when we have a foul to give", "wrong": ["Any time they're in the bonus", "Down 3 late", "On every drive in the last minute"]},
-  {"id": "s-056", "tags": ["offence", "flow"], "q": "Flow: what is a Ghost?", "answer": "Fake the screen and slip out to the 3-point line", "wrong": ["Hard dive to the rim without making contact (Slip)", "Re-screen when the defence goes under (Twist)", "Backdoor cut against an overplay (Cash)"]},
-  {"id": "s-057", "tags": ["offence", "flow", "pnr"], "q": "Exit (Klay action) is…", "answer": "A baseline pin screen during the PNR that pulls the tags away from the roller", "wrong": ["A Spain PNR backscreen", "Emptying the weak-side corner for a lob", "A handback PNR with O5"]},
-  {"id": "s-058", "tags": ["offence", "flow", "pnr"], "q": "What is Rocket?", "answer": "Spain PNR: a backscreen in the ball screen", "wrong": ["A quick pin rescreen (Color)", "A weak-side flare screen on a baseline drive (Hammer)", "A handback PNR with O5 (Get)"]},
-  {"id": "s-059", "tags": ["offence", "closeouts"], "q": "4 Point Line Spacing: where do you stand in the slot?", "answer": "About 3 feet behind the 3-point line", "wrong": ["Right on the 3-point line", "At the elbow", "In the short corner"], "explain": "It makes the nail defender cover more ground and opens drive lines."},
-  {"id": "s-060", "tags": ["offence", "closeouts"], "q": "You get run off the 3-point line. Your read?", "answer": "Side Step 3: one side dribble for a clean 3", "wrong": ["Take the long 2", "Pass it straight back", "Pump fake and hold it"]},
-  {"id": "s-061", "tags": ["offence", "closeouts"], "q": "You see the back of your defender's head. What do you do?", "answer": "Dive: cut hard to the basket", "wrong": ["Drift deeper to the corner", "Call for the ball", "Set a screen for the ball handler"]},
-  {"id": "s-062", "tags": ["offence", "closeouts", "drive & kick"], "q": "The ball is driven toward you. Your move?", "answer": "Drift: slide down toward the baseline", "wrong": ["Drag: trail behind the ball", "Cut to the elbow", "Stand still and wait"], "explain": "Drift when the drive comes at you, Drag when it goes away from you."},
-  {"id": "s-063", "tags": ["offence", "dho"], "q": "On a DHO your defender plays on the top side. Read?", "answer": "Cash: backcut right away", "wrong": ["Chase: get downhill", "Under: race the under", "Blitz: pocket pass to the big"]},
-  {"id": "s-064", "tags": ["offence", "iso"], "q": "In ISO offence, who is the Moose?", "answer": "Their weakest defender: the matchup we hunt", "wrong": ["Their best shot blocker", "The player who calls their coverages", "Our best scorer"]},
-  {"id": "s-065", "tags": ["offence", "iso"], "q": "What is 4:1 spacing?", "answer": "Ball in the slot vs the mismatch, corners filled, big in the dunker", "wrong": ["Four players on the ball side, one weak side", "Four out, one big at the high post", "Four players back on defence, one crashing"]},
-  {"id": "s-066", "tags": ["defence", "1-on-1"], "q": "GUARD THE SHELL: how do you play strong-hand and weak-hand attacks?", "answer": "Strong hand: attack his chest. Weak hand: make him run", "wrong": ["Strong hand: make him run. Weak hand: attack his chest", "Force everything middle", "Give space on both"], "explain": "Force flat drives outside the blocks and elbows."},
-  {"id": "s-067", "tags": ["defence", "1-on-1", "shell"], "q": "Helping from RIM: what is VERTICALITY?", "answer": "Stay vertical with hands up: jump inside the restricted area, stand your ground outside it", "wrong": ["Swipe down at the ball", "Take a charge every time", "Jump at every pump fake"]},
-  {"id": "s-068", "tags": ["defence", "shell"], "q": "What is the LOW defender's job?", "answer": "Top-foot help on the rim player on paint attacks, and the 2nd pass on an X rotation", "wrong": ["Pressure the ball", "First pass out on a drive", "Deny the wing"]},
-  {"id": "s-069", "tags": ["defence", "shell", "rebounding"], "q": "HIT-FIND-GET when the shot goes up means…", "answer": "Hit your man with your forearm, turn and find the ball, go get it", "wrong": ["Find the ball first, then hit someone", "Get back on defence right away", "Hit the glass, find an outlet, get running"]},
-  {"id": "s-070", "tags": ["defence", "shell"], "q": "A teammate is beat with his hips open below the recovery line. The next help defender calls…", "answer": "PEEL", "wrong": ["SCRAM", "FIRE", "RED"]},
-  {"id": "s-071", "tags": ["defence", "shell"], "q": "What is FIRE?", "answer": "RIM rotates to trap a baseline or slot drive outside the paint", "wrong": ["Fronting the post", "A full switch on every screen", "Doubling the hot player at end of quarter"]},
-  {"id": "s-072", "tags": ["defence", "pnr"], "q": "Their ball handler is an elite 3-point shooter. Which coverage puts our big at the level of the screen?", "answer": "FLAT (soft show)", "wrong": ["DROP", "UNDER", "ICE"]},
-  {"id": "s-073", "tags": ["defence", "pnr"], "q": "What is SQUEEZE?", "answer": "The big stays attached and the guard goes under (vs a pick-and-pop big or non-shooting guard)", "wrong": ["Both defenders trap the ball", "The big switches onto the guard", "The guard goes over and the big drops"]},
-  {"id": "s-074", "tags": ["defence", "off-ball screens"], "q": "Guarding the cutter on an off-ball screen, you…", "answer": "Press up, force him one way (uphill), get through, get back", "wrong": ["Open up, get fat, drop, read", "Switch every screen", "Sag into the paint"], "explain": "Open up - get fat - drop - read is the screener's defender's job."},
-  {"id": "s-075", "tags": ["defence", "off-ball screens"], "q": "A shooter comes off a pin-down. Your coverage?", "answer": "CHASE: attach and bust over", "wrong": ["GAP: shoot the gap", "VEER: late switch", "Go under the screen"], "explain": "GAP is for drivers."},
-  {"id": "s-076", "tags": ["defence", "iso"], "q": "ISO D: the ball is in the middle third. What's the call?", "answer": "WEAK: shade him to his weak hand", "wrong": ["Force him baseline", "HIT: double right away", "Play him straight up"]},
-  {"id": "s-077", "tags": ["defence", "post"], "q": "The fronting defender yells \"WHITE\" 3 times. What is it?", "answer": "WHITE TO FIRE: we front the post, weak side shifts and pressures", "wrong": ["The post scored: switch matchups", "Time to double on the dribble", "Black: deny and trap on the pass"]},
-  {"id": "s-078", "tags": ["defence", "special situations"], "q": "How do we guard screens on an under-out-of-bounds play (UOB)?", "answer": "Fight over every screen, no switches", "wrong": ["Switch everything", "Zone it up", "Go under every screen"], "explain": "The inbound defender protects the basket and tracks the inbounder."},
-  {"id": "s-079", "tags": ["defence", "special situations"], "q": "HIT at the end of a quarter means…", "answer": "Double team their hot player", "wrong": ["Foul right away", "Switch every screen", "Protect the rim and give up 3s"]}
+ {
+  "id": "c-001",
+  "tags": [
+   "offence",
+   "transition"
+  ],
+  "q": "We just got scored on and our 5 takes the ball out. What spacing do we run up the floor?",
+  "answer": "5 Out, with the 5 trailing (Big Above)",
+  "wrong": [
+   "4 Out, with the 5 rim running (Big Ahead)",
+   "Walk it up and wait for a call",
+   "Horns side"
+  ],
+  "explain": "Closest Man Inbounds/Outlets: if the 5 inbounds, he trails and we are 5 Out."
+ },
+ {
+  "id": "c-002",
+  "tags": [
+   "offence",
+   "transition"
+  ],
+  "q": "Someone other than the 5 inbounds. What does the 5 do?",
+  "answer": "Rim runs (Big Ahead) and we set 4 Out",
+  "wrong": [
+   "Trails as the Big Above",
+   "Sets a Fist right away",
+   "Inbounds again"
+  ],
+  "explain": "If anyone else inbounds, the 5 rim runs (Big Ahead) and we set 4 Out spacing."
+ },
+ {
+  "id": "c-003",
+  "tags": [
+   "offence",
+   "transition"
+  ],
+  "q": "Pace is 1-3-8. What is the \"3\"?",
+  "answer": "The ball crosses half court within 3 seconds (pass ahead or dribble)",
+  "wrong": [
+   "3 passes before a shot",
+   "Three players sprint wide",
+   "3 seconds to inbound"
+  ],
+  "explain": "1-3-8: inbound in 1 sec, ball crosses half in 3 secs."
+ },
+ {
+  "id": "c-004",
+  "tags": [
+   "offence",
+   "transition"
+  ],
+  "q": "You're the guard and you can't get the deep outlet. What do you do?",
+  "answer": "C Cut: curve toward the ball, keeping your momentum going toward half court",
+  "wrong": [
+   "Stop and post up your defender",
+   "Run to the opposite corner",
+   "Call for a ball screen"
+  ],
+  "explain": "C Cut Outlet."
+ },
+ {
+  "id": "c-005",
+  "tags": [
+   "offence",
+   "transition"
+  ],
+  "q": "Where do you catch the ball as the Deep Outlet?",
+  "answer": "Butt to the sideline at free-throw line extended, after a peek down court",
+  "wrong": [
+   "In the middle of the floor at the top of the key",
+   "Under the basket",
+   "In the corner"
+  ],
+  "explain": "Deep Outlet."
+ },
+ {
+  "id": "c-006",
+  "tags": [
+   "offence",
+   "transition"
+  ],
+  "q": "Where does the Dunker sit?",
+  "answer": "Short corner: heels on the baseline, outside the hash, wide and flat, weakside",
+  "wrong": [
+   "At the elbow",
+   "In the deep corner behind the 3-point line",
+   "On the block, ball side"
+  ],
+  "explain": "Dunker."
+ },
+ {
+  "id": "c-007",
+  "tags": [
+   "offence",
+   "transition"
+  ],
+  "q": "After a defensive miss our trailing big sets a transition ball screen right away. What is it called?",
+  "answer": "Fist",
+  "wrong": [
+   "2up",
+   "Snap",
+   "Head Man"
+  ],
+  "explain": "Fist = Transition PNR."
+ },
+ {
+  "id": "c-008",
+  "tags": [
+   "offence",
+   "transition",
+   "pnr"
+  ],
+  "q": "What is \"2up\"?",
+  "answer": "Double Drag: staggered transition ball screens, O5 sets the second one",
+  "wrong": [
+   "Two guards back on defence",
+   "Two passes up the floor",
+   "A ball screen with two shooters in the corner"
+  ],
+  "explain": "2up = Double Drag."
+ },
+ {
+  "id": "c-009",
+  "tags": [
+   "offence",
+   "transition"
+  ],
+  "q": "Race: what are we hunting in the first 6 seconds?",
+  "answer": "Keys, 3s and frees (free throws)",
+  "wrong": [
+   "A post touch",
+   "A set play",
+   "Three passes"
+  ],
+  "explain": "\"Keys, 3s, Frees in first 6 seconds.\""
+ },
+ {
+  "id": "c-010",
+  "tags": [
+   "offence",
+   "transition"
+  ],
+  "q": "In early offence, how do we sprint to our spots?",
+  "answer": "WIDE then LONG, to the 5 spots in 5 seconds or less",
+  "wrong": [
+   "LONG then WIDE, in 8 seconds",
+   "Straight to the paint",
+   "Wait at half court for the call"
+  ],
+  "explain": "Spots."
+ },
+ {
+  "id": "c-011",
+  "tags": [
+   "offence",
+   "core"
+  ],
+  "q": "The defence has all 5 back, loaded to the ball, and the ball defender is square. We are…",
+  "answer": "Neutralized: flow into a Trigger right away",
+  "wrong": [
+   "In a Scramble: make a .5 decision",
+   "In a Big Advantage (Blaze)",
+   "In Grid Spacing"
+  ],
+  "explain": "Neutralized."
+ },
+ {
+  "id": "c-012",
+  "tags": [
+   "offence",
+   "core"
+  ],
+  "q": "The point guard calls \"4 Down\". What are we running?",
+  "answer": "Block Mover",
+  "wrong": [
+   "Stagger",
+   "5 Out Single Pin",
+   "Open corner ball screen"
+  ],
+  "explain": "Point Guard Calls."
+ },
+ {
+  "id": "c-013",
+  "tags": [
+   "offence",
+   "core"
+  ],
+  "q": "The point guard calls \"2 side\". What is it?",
+  "answer": "Stagger",
+  "wrong": [
+   "5 Out Pistol",
+   "Block Mover",
+   "Ghost screen"
+  ],
+  "explain": "Point Guard Calls."
+ },
+ {
+  "id": "c-014",
+  "tags": [
+   "offence",
+   "core"
+  ],
+  "q": "The point guard calls \"Horns side\". What is it?",
+  "answer": "5 Out Pistol",
+  "wrong": [
+   "Stagger",
+   "5 Out Split",
+   "5 Out Single Pin"
+  ],
+  "explain": "Point Guard Calls."
+ },
+ {
+  "id": "c-015",
+  "tags": [
+   "offence",
+   "core",
+   "pnr"
+  ],
+  "q": "The point guard calls \"0\". What is it?",
+  "answer": "Ball screen toward the open corner",
+  "wrong": [
+   "Ball screen toward the filled corner",
+   "No screen: isolation",
+   "Ghost screen"
+  ],
+  "explain": "\"0\" = open corner BS."
+ },
+ {
+  "id": "c-016",
+  "tags": [
+   "offence",
+   "core",
+   "pnr"
+  ],
+  "q": "Ball screen where the handler goes toward 3 teammates. What is the call?",
+  "answer": "C",
+  "wrong": [
+   "Step",
+   "Fist",
+   "0"
+  ],
+  "explain": "0 = open side, Step = 1 teammate, Fist = 2, C = 3."
+ },
+ {
+  "id": "c-017",
+  "tags": [
+   "offence",
+   "core"
+  ],
+  "q": "Who makes the Early Call, and what does he decide?",
+  "answer": "The point guard: 4 Out or 5 Out, are we neutralized, which Core Trigger",
+  "wrong": [
+   "The 5: which side to screen",
+   "The coach from the bench",
+   "Whoever gets the rebound"
+  ],
+  "explain": "Early Call."
+ },
+ {
+  "id": "c-018",
+  "tags": [
+   "offence",
+   "drive & kick"
+  ],
+  "q": "You drive and two defenders come to you (E2). What do you do?",
+  "answer": "Pass quickly to the open teammate",
+  "wrong": [
+   "Finish through contact",
+   "Pick up your dribble and pivot",
+   "Back it out and reset"
+  ],
+  "explain": "E2 (Engage 2)."
+ },
+ {
+  "id": "c-019",
+  "tags": [
+   "offence",
+   "drive & kick"
+  ],
+  "q": "You drive the paint and kick it out. What's your next job?",
+  "answer": "Sprint and exit cut faster than you came in (KOGO)",
+  "wrong": [
+   "Stay in the paint for the rebound",
+   "Set a screen for the shooter",
+   "Walk to the corner"
+  ],
+  "explain": "Kick Out Get Out."
+ },
+ {
+  "id": "c-020",
+  "tags": [
+   "offence",
+   "drive & kick"
+  ],
+  "q": "The defence is scrambling. How long do you have to shoot, drive or pass?",
+  "answer": "Half a second (.5)",
+  "wrong": [
+   "2 seconds",
+   "Until a teammate calls for it",
+   "5 seconds"
+  ],
+  "explain": ".5 (Half-Second)."
+ },
+ {
+  "id": "c-021",
+  "tags": [
+   "offence",
+   "drive & kick"
+  ],
+  "q": "Grid Spacing: when can two players be in the same sector?",
+  "answer": "Only during a purposeful action: a screen, hand-off or cut",
+  "wrong": [
+   "Any time the ball is in the post",
+   "Never",
+   "When the shot clock is under 10"
+  ],
+  "explain": "Grid Spacing."
+ },
+ {
+  "id": "c-022",
+  "tags": [
+   "offence",
+   "drive & kick"
+  ],
+  "q": "1v1 Advantage means…",
+  "answer": "The defender's chest is not square to you",
+  "wrong": [
+   "Chest to chest with your defender",
+   "You are taller than your man",
+   "Your teammate is open"
+  ],
+  "explain": "Attack Phases."
+ },
+ {
+  "id": "c-023",
+  "tags": [
+   "offence",
+   "flow"
+  ],
+  "q": "Flow: what is the 2nd side?",
+  "answer": "The ball crosses midline after the 1st side and we run a 2-man game",
+  "wrong": [
+   "The initial trigger side",
+   "A flash or snap",
+   "A post-up for O5"
+  ],
+  "explain": "Continuity phases."
+ },
+ {
+  "id": "c-024",
+  "tags": [
+   "offence",
+   "flow",
+   "pnr"
+  ],
+  "q": "A ball screen is happening on the wing. What is a Burn cut?",
+  "answer": "A baseline cut",
+  "wrong": [
+   "A wing cut",
+   "A cut to the elbow",
+   "A back screen"
+  ],
+  "explain": "Burn: baseline cut. Jazz: wing cut."
+ },
+ {
+  "id": "c-025",
+  "tags": [
+   "offence",
+   "flow"
+  ],
+  "q": "You see the back of your defender's head. What do you do?",
+  "answer": "Dive: cut hard to the basket right away",
+  "wrong": [
+   "Call for the ball",
+   "Set a back screen",
+   "Drift to the corner"
+  ],
+  "explain": "Dive."
+ },
+ {
+  "id": "c-026",
+  "tags": [
+   "offence",
+   "flow",
+   "pnr"
+  ],
+  "q": "Exit (Klay Action) is…",
+  "answer": "A Miami baseline pin screen during the PNR that pulls the tags away from the roller",
+  "wrong": [
+   "A flare screen for the handler",
+   "A handback to O5",
+   "A backdoor cut against overplay"
+  ],
+  "explain": "Exit."
+ },
+ {
+  "id": "c-027",
+  "tags": [
+   "offence",
+   "flow",
+   "pnr"
+  ],
+  "q": "Their defence keeps going under our ball screen. Which tag punishes it?",
+  "answer": "Twist: re-screen",
+  "wrong": [
+   "Flip",
+   "Cash",
+   "Burn"
+  ],
+  "explain": "Twist."
+ },
+ {
+  "id": "c-028",
+  "tags": [
+   "offence",
+   "flow"
+  ],
+  "q": "What is Stack?",
+  "answer": "Spain PNR backscreen",
+  "wrong": [
+   "A stagger for the shooter",
+   "A pitch handoff",
+   "A back screen for the big"
+  ],
+  "explain": "Stack / Cash."
+ },
+ {
+  "id": "c-029",
+  "tags": [
+   "offence",
+   "closeouts"
+  ],
+  "q": "4 Point Line Spacing: where do you stand in the slot?",
+  "answer": "About 3 feet behind the FIBA 3-point line",
+  "wrong": [
+   "On the 3-point line",
+   "At the free-throw line extended",
+   "In the short corner"
+  ],
+  "explain": "Forces the nail defender to cover a longer distance."
+ },
+ {
+  "id": "c-030",
+  "tags": [
+   "offence",
+   "closeouts"
+  ],
+  "q": "You get run off the 3-point line. Your read?",
+  "answer": "Side Step 3: one side dribble for a clean 3 (not a long 2)",
+  "wrong": [
+   "Pull up from 18 feet",
+   "Pass back to the guard",
+   "Drive into the big"
+  ],
+  "explain": "Side Step 3."
+ },
+ {
+  "id": "c-031",
+  "tags": [
+   "offence",
+   "closeouts"
+  ],
+  "q": "The defender closes out hard on your low shoulder. What do you do?",
+  "answer": "Run Thru / Cash: face cut him on the catch",
+  "wrong": [
+   "Shoot over him",
+   "Pass to the corner",
+   "Hold and reset"
+  ],
+  "explain": "Run Thru / Cash (Catch n Go)."
+ },
+ {
+  "id": "c-032",
+  "tags": [
+   "offence",
+   "closeouts",
+   "drive & kick"
+  ],
+  "q": "The ball is driven toward you on the perimeter. Your move?",
+  "answer": "Drift: slide away from the ball",
+  "wrong": [
+   "Drag: trail behind the ball",
+   "Cut to the rim",
+   "Stand still"
+  ],
+  "explain": "Wheel in Perimeter: Drift."
+ },
+ {
+  "id": "c-033",
+  "tags": [
+   "offence",
+   "closeouts",
+   "drive & kick"
+  ],
+  "q": "A baseline drive is coming at our strongside 5 in the dunker. What does he do?",
+  "answer": "I-Cut: pop straight up to clear the baseline path",
+  "wrong": [
+   "Circle cut around the rim",
+   "Seal his man on the block",
+   "Run to the corner"
+  ],
+  "explain": "Wheel in Dunker."
+ },
+ {
+  "id": "c-034",
+  "tags": [
+   "offence",
+   "pnr"
+  ],
+  "q": "You come off the ball screen and nobody engages you. Your read?",
+  "answer": "Score",
+  "wrong": [
+   "Search",
+   "Skip",
+   "Reset"
+  ],
+  "explain": "Handler Reads."
+ },
+ {
+  "id": "c-035",
+  "tags": [
+   "offence",
+   "pnr"
+  ],
+  "q": "Off the ball screen, two defenders engage you (E2). Your read?",
+  "answer": "Search: find the roll or the pop",
+  "wrong": [
+   "Score",
+   "Skip to the corner",
+   "Retreat dribble"
+  ],
+  "explain": "Handler Reads."
+ },
+ {
+  "id": "c-036",
+  "tags": [
+   "offence",
+   "pnr"
+  ],
+  "q": "Their big is in drop. Which counter floats a dribble to freeze him?",
+  "answer": "Hang",
+  "wrong": [
+   "Hostage",
+   "Gortat",
+   "Engage Big"
+  ],
+  "explain": "Drop/Over Attack."
+ },
+ {
+  "id": "c-037",
+  "tags": [
+   "offence",
+   "pnr"
+  ],
+  "q": "They ICE our side ball screen. What does the screener do?",
+  "answer": "Slip Roll: dive to the rim",
+  "wrong": [
+   "Pop to the corner",
+   "Re-screen",
+   "Post up"
+  ],
+  "explain": "Ice Attack."
+ },
+ {
+  "id": "c-038",
+  "tags": [
+   "offence",
+   "pnr"
+  ],
+  "q": "They soft switch the ball screen. Our attack?",
+  "answer": "Race Switch: drive it downhill",
+  "wrong": [
+   "Pass back to the screener",
+   "Reset the play",
+   "Post the guard"
+  ],
+  "explain": "Switch Attack."
+ },
+ {
+  "id": "c-039",
+  "tags": [
+   "offence",
+   "pnr"
+  ],
+  "q": "They blitz the ball screen. What are the 4 S passes?",
+  "answer": "Short roll, Shake, See, Skip",
+  "wrong": [
+   "Score, Search, Skip, Slip",
+   "Spin, Step, Shoot, Swing",
+   "Short, Side, Snap, Stack"
+  ],
+  "explain": "Blitz Attack."
+ },
+ {
+  "id": "c-040",
+  "tags": [
+   "offence",
+   "pnr"
+  ],
+  "q": "What does \"Wait for 2\" mean?",
+  "answer": "The handler waits for the screener to get on 2 feet (no moving screen)",
+  "wrong": [
+   "Wait for 2 defenders to engage",
+   "Wait 2 seconds before using the screen",
+   "Two screens are coming"
+  ],
+  "explain": "Screening Basics."
+ },
+ {
+  "id": "c-041",
+  "tags": [
+   "offence",
+   "pnr",
+   "iso"
+  ],
+  "q": "A small guard ends up guarding our big in the post. We call…",
+  "answer": "Mouse in House",
+  "wrong": [
+   "Moose on Loose",
+   "Double Gap",
+   "Boomerang"
+  ],
+  "explain": "Matchup Calls."
+ },
+ {
+  "id": "c-042",
+  "tags": [
+   "offence",
+   "pnr",
+   "iso"
+  ],
+  "q": "Their big ends up guarding our guard on the perimeter. We call…",
+  "answer": "Moose on Loose",
+  "wrong": [
+   "Mouse in House",
+   "Hostage",
+   "Veer"
+  ],
+  "explain": "Matchup Calls."
+ },
+ {
+  "id": "c-043",
+  "tags": [
+   "offence",
+   "dho"
+  ],
+  "q": "On a DHO your defender plays on the top side to stop the catch. Read?",
+  "answer": "Dive: backcut right away",
+  "wrong": [
+   "Chase",
+   "Race the under",
+   "Call for a ball screen"
+  ],
+  "explain": "DHO Reads."
+ },
+ {
+  "id": "c-044",
+  "tags": [
+   "offence",
+   "iso"
+  ],
+  "q": "What is 4:1 spacing?",
+  "answer": "Ball in the slot vs the mismatch, corners filled, big in the dunker (double gap)",
+  "wrong": [
+   "4 players on one side",
+   "Four passes then a drive",
+   "Big at the top, guards in the corners"
+  ],
+  "explain": "ISO Offense."
+ },
+ {
+  "id": "c-045",
+  "tags": [
+   "offence",
+   "iso"
+  ],
+  "q": "You pass on a switch. What is Boomerang?",
+  "answer": "Back up 3 steps to create a runway, then catch & go on the pass back",
+  "wrong": [
+   "Cut to the rim right away",
+   "Set a screen for the passer",
+   "Post up the switch"
+  ],
+  "explain": "Boomerang."
+ },
+ {
+  "id": "c-046",
+  "tags": [
+   "offence",
+   "post"
+  ],
+  "q": "You catch in the post. What are your first three things?",
+  "answer": "Catch on 2 feet with 2 hands, chin it, check your inside shoulder",
+  "wrong": [
+   "Dribble, spin, shoot",
+   "Face up, jab, shoot",
+   "Kick it out right away"
+  ],
+  "explain": "Catch-Chin-Check."
+ },
+ {
+  "id": "c-047",
+  "tags": [
+   "offence",
+   "post",
+   "dho"
+  ],
+  "q": "The post has no advantage. What do we run?",
+  "answer": "Grenade: DHO uphill to a perimeter teammate, then slip or pop",
+  "wrong": [
+   "Speed cut",
+   "Twirl",
+   "Back it down anyway"
+  ],
+  "explain": "Grenade."
+ },
+ {
+  "id": "c-048",
+  "tags": [
+   "offence",
+   "post"
+  ],
+  "q": "You feed the post. What cut do you make?",
+  "answer": "Speed cut: baseline side, sprint to the rim, out to the opposite corner",
+  "wrong": [
+   "Stand and wait for the kick-out",
+   "Screen for the post",
+   "Cut to the top of the key"
+  ],
+  "explain": "Speed Cut."
+ },
+ {
+  "id": "c-049",
+  "tags": [
+   "offence",
+   "split games"
+  ],
+  "q": "Twirl means…",
+  "answer": "The receiver slips back to screen the screener's defender",
+  "wrong": [
+   "The screener rolls to the rim",
+   "The receiver curls to the basket",
+   "A dribble hand-off in the corner"
+  ],
+  "explain": "Split Game Terms."
+ },
+ {
+  "id": "c-050",
+  "tags": [
+   "defence",
+   "transition"
+  ],
+  "q": "The shot goes up on our end. What is TAG?",
+  "answer": "Every one of our players gets top side of his defender as we shoot, ready for transition D",
+  "wrong": [
+   "Box out and crash",
+   "Leak out for a layup",
+   "Foul to stop the break"
+  ],
+  "explain": "TAG ➔ High Side."
+ },
+ {
+  "id": "c-051",
+  "tags": [
+   "defence",
+   "transition"
+  ],
+  "q": "D-Trans: what do we take away in the first 6 seconds?",
+  "answer": "Keys, free throws and 3s",
+  "wrong": [
+   "Mid-range jumpers",
+   "Post-ups",
+   "Offensive rebounds"
+  ],
+  "explain": "\"No Key, Free, 3s in first 6 seconds.\""
+ },
+ {
+  "id": "c-052",
+  "tags": [
+   "defence",
+   "transition"
+  ],
+  "q": "Transition D: what is the WALL?",
+  "answer": "Sprint to ball level to create a barrier that supports the ball",
+  "wrong": [
+   "Everyone back under the basket",
+   "Two guards back at half court",
+   "Double the ball at half court"
+  ],
+  "explain": "Wall."
+ },
+ {
+  "id": "c-053",
+  "tags": [
+   "defence",
+   "transition"
+  ],
+  "q": "You're a help defender in the full court. What is PLUG?",
+  "answer": "Weak and strong side help, parallel to your man on the ball's drive line",
+  "wrong": [
+   "Deny your man the ball full court",
+   "Trap the ball at half court",
+   "Run back to the rim"
+  ],
+  "explain": "Plug."
+ },
+ {
+  "id": "c-054",
+  "tags": [
+   "defence",
+   "transition"
+  ],
+  "q": "Ball defender in transition: what is your job?",
+  "answer": "Contain him and push him to his weak hand",
+  "wrong": [
+   "Steal the ball",
+   "Let him go and protect the rim",
+   "Force him to his strong hand"
+  ],
+  "explain": "Ball."
+ },
+ {
+  "id": "c-055",
+  "tags": [
+   "defence",
+   "closeouts"
+  ],
+  "q": "Closeout on a KLAY?",
+  "answer": "Flyby: run at his shooting shoulder with your shooting hand (right on right), then rear-view contest",
+  "wrong": [
+   "Close out arm length away",
+   "Absorb the drive",
+   "Forearm to his body"
+  ],
+  "explain": "Klay - Flyby."
+ },
+ {
+  "id": "c-056",
+  "tags": [
+   "defence",
+   "closeouts"
+  ],
+  "q": "Closeout on a SHAQ (driver)?",
+  "answer": "Absorb the drive",
+  "wrong": [
+   "Flyby",
+   "Forearm to his body",
+   "Run him off the line"
+  ],
+  "explain": "Shaq."
+ },
+ {
+  "id": "c-057",
+  "tags": [
+   "defence",
+   "closeouts"
+  ],
+  "q": "Closeout on a ROSE (shooter & driver)?",
+  "answer": "Square: close out arm length away",
+  "wrong": [
+   "Flyby the shooting shoulder",
+   "Absorb the drive from far away",
+   "Forearm to his body"
+  ],
+  "explain": "Rose - Square."
+ },
+ {
+  "id": "c-058",
+  "tags": [
+   "defence",
+   "closeouts"
+  ],
+  "q": "Closeout on a BOOK (shooter)?",
+  "answer": "Body: forearm to his body",
+  "wrong": [
+   "Flyby",
+   "Arm length away",
+   "Give him space"
+  ],
+  "explain": "Book - Body."
+ },
+ {
+  "id": "c-059",
+  "tags": [
+   "defence",
+   "closeouts"
+  ],
+  "q": "You're in a 2v1 and have to close out. What is SLICE?",
+  "answer": "Close out on an angle that takes away the next pass, inviting the catch & go drive",
+  "wrong": [
+   "Close out straight and contest",
+   "Stay home on your man",
+   "Foul right away"
+  ],
+  "explain": "Slice."
+ },
+ {
+  "id": "c-060",
+  "tags": [
+   "defence",
+   "1-on-1"
+  ],
+  "q": "GUARD SHELL: how do you play strong-hand and weak-hand attacks?",
+  "answer": "Strong hand: CHEST. Weak hand: RUN (force flat drives outside the blocks and elbows)",
+  "wrong": [
+   "Strong hand: RUN. Weak hand: CHEST",
+   "Force everything middle",
+   "Give space on both"
+  ],
+  "explain": "Guard Shell."
+ },
+ {
+  "id": "c-061",
+  "tags": [
+   "defence",
+   "1-on-1"
+  ],
+  "q": "What is TRACE on the ball?",
+  "answer": "An active hand above the ball at all times to pressure and block his vision",
+  "wrong": [
+   "Following his hip through screens",
+   "Reaching for the steal",
+   "Hands down to avoid fouls"
+  ],
+  "explain": "Trace."
+ },
+ {
+  "id": "c-062",
+  "tags": [
+   "defence",
+   "1-on-1",
+   "shell"
+  ],
+  "q": "Helping from RIM on a scramble: VERTICALITY means…",
+  "answer": "Stay vertical with hands up: jump inside the restricted area, stand your ground outside it",
+  "wrong": [
+   "Take the charge everywhere",
+   "Swipe down at the ball",
+   "Jump at every pump fake"
+  ],
+  "explain": "Verticality."
+ },
+ {
+  "id": "c-063",
+  "tags": [
+   "defence",
+   "shell"
+  ],
+  "q": "Who is NAIL, and what does he take on a paint drive?",
+  "answer": "The top weak-side defender: he sinks and takes the 1st pass out",
+  "wrong": [
+   "The bottom weak-side defender: he takes the 2nd pass",
+   "The defender next to the ball: he stunts",
+   "The ball defender: he stays on the ball"
+  ],
+  "explain": "Nail / Stay Rotation."
+ },
+ {
+  "id": "c-064",
+  "tags": [
+   "defence",
+   "shell"
+  ],
+  "q": "Who is LOW, and what is his job on rim help?",
+  "answer": "The bottom weak-side defender: top-foot help and the 2nd pass",
+  "wrong": [
+   "The top weak-side defender: the 1st pass",
+   "The rim protector: blocks the shot",
+   "The strong-side corner: shrinks"
+  ],
+  "explain": "Low / Stay Rotation."
+ },
+ {
+  "id": "c-065",
+  "tags": [
+   "defence",
+   "shell"
+  ],
+  "q": "What are our shrink spots (BEN)?",
+  "answer": "Blocks, Elbows, Nail",
+  "wrong": [
+   "Baseline, Elbow, Nose",
+   "Ball, Edge, Net",
+   "Boxes, Ends, Notch"
+  ],
+  "explain": "Shrink."
+ },
+ {
+  "id": "c-066",
+  "tags": [
+   "defence",
+   "shell"
+  ],
+  "q": "\"Be In to Get Out\" means…",
+  "answer": "Your body is IN to help, but your mind is on getting OUT to 3-point threats",
+  "wrong": [
+   "Get in the paint and stay there",
+   "Deny everything",
+   "Get out to the shooter before helping"
+  ],
+  "explain": "Be In to Get Out."
+ },
+ {
+  "id": "c-067",
+  "tags": [
+   "defence",
+   "shell"
+  ],
+  "q": "A help defender fakes help with his hands and feet, then gets back to his shooter. That is…",
+  "answer": "Stunt",
+  "wrong": [
+   "Peel",
+   "Sink",
+   "Gap"
+  ],
+  "explain": "Stunt."
+ },
+ {
+  "id": "c-068",
+  "tags": [
+   "defence",
+   "shell"
+  ],
+  "q": "A teammate is beat with his hips open below the recovery line. The next help defender calls…",
+  "answer": "PEEL",
+  "wrong": [
+   "SCRAM",
+   "BALL",
+   "STAY"
+  ],
+  "explain": "Peel."
+ },
+ {
+  "id": "c-069",
+  "tags": [
+   "defence",
+   "shell",
+   "rebounding"
+  ],
+  "q": "The shot goes up. What is HIT-FIND-GET?",
+  "answer": "Hit your man with your forearm, turn and find the ball, go get it",
+  "wrong": [
+   "Hit the floor, find your man, get back",
+   "Box out with your hands, then leak out",
+   "Jump first, then find your man"
+  ],
+  "explain": "Hit-Find-Get."
+ },
+ {
+  "id": "c-070",
+  "tags": [
+   "defence",
+   "shell",
+   "rebounding"
+  ],
+  "q": "What is SANDWICH on the glass?",
+  "answer": "An extra guard doubles their weak-side offensive rebounder",
+  "wrong": [
+   "Two bigs box out the same man",
+   "Everyone crashes the rim",
+   "The guard leaks out for a layup"
+  ],
+  "explain": "Sandwich."
+ },
+ {
+  "id": "c-071",
+  "tags": [
+   "defence",
+   "shell"
+  ],
+  "q": "The ball is swung. What is PIVOT & SPRINT?",
+  "answer": "Sprint to your help spot during the ball's airtime so you're right on the catch",
+  "wrong": [
+   "Pivot and wait for the catch",
+   "Sprint at the ball",
+   "Deny the next pass from where you are"
+  ],
+  "explain": "Pivot & Sprint."
+ },
+ {
+  "id": "c-072",
+  "tags": [
+   "defence",
+   "pnr"
+  ],
+  "q": "The 5 Ts of ball-screen defence are…",
+  "answer": "Talk, Touch, Trace, Take, Tag",
+  "wrong": [
+   "Talk, Trap, Trace, Turn, Tag",
+   "Touch, Turn, Take, Tag, Trust",
+   "Talk, Touch, Turn, Trap, Take"
+  ],
+  "explain": "The 5 Ts."
+ },
+ {
+  "id": "c-073",
+  "tags": [
+   "defence",
+   "pnr"
+  ],
+  "q": "TAKE: what does the guard call, and what does the big do?",
+  "answer": "Guard calls \"BACK\", the big recovers to his man",
+  "wrong": [
+   "Guard calls \"SWITCH\", the big stays",
+   "Big calls \"ICE\", the guard goes under",
+   "Guard calls \"PEEL\", the big doubles"
+  ],
+  "explain": "TAKE."
+ },
+ {
+  "id": "c-074",
+  "tags": [
+   "defence",
+   "pnr"
+  ],
+  "q": "TRACE: who takes the low pocket pass, and who takes the high pocket?",
+  "answer": "Big takes the low pocket; guard takes the high pocket",
+  "wrong": [
+   "Guard takes the low; big takes the high",
+   "Weak-side tag takes both",
+   "Nobody: we switch"
+  ],
+  "explain": "TRACE."
+ },
+ {
+  "id": "c-075",
+  "tags": [
+   "defence",
+   "pnr"
+  ],
+  "q": "What colour is our DROP coverage?",
+  "answer": "Brown",
+  "wrong": [
+   "Grey",
+   "Blue",
+   "Green"
+  ],
+  "explain": "Drop/Brown."
+ },
+ {
+  "id": "c-076",
+  "tags": [
+   "defence",
+   "pnr"
+  ],
+  "q": "What colour is our ICE coverage?",
+  "answer": "Blue",
+  "wrong": [
+   "Pink",
+   "Brown",
+   "Gold"
+  ],
+  "explain": "Ice/Blue."
+ },
+ {
+  "id": "c-077",
+  "tags": [
+   "defence",
+   "pnr"
+  ],
+  "q": "What colour is our SWITCH coverage?",
+  "answer": "Gold",
+  "wrong": [
+   "Green",
+   "Red",
+   "Grey"
+  ],
+  "explain": "Switch/Gold."
+ },
+ {
+  "id": "c-078",
+  "tags": [
+   "defence",
+   "pnr"
+  ],
+  "q": "Their ball handler is an elite 3-point shooter. Which coverage puts our big at the level of the screen?",
+  "answer": "Flat/Grey",
+  "wrong": [
+   "Drop/Brown",
+   "Under/Green",
+   "Ice/Blue"
+  ],
+  "explain": "Flat/Grey: used against elite 3-point threats."
+ },
+ {
+  "id": "c-079",
+  "tags": [
+   "defence",
+   "pnr"
+  ],
+  "q": "Side ball screen on the outer third of the floor, call is ICE. Guard's job?",
+  "answer": "Keep the ball from going middle (chest on his middle-side hip)",
+  "wrong": [
+   "Go under the screen",
+   "Switch onto the screener",
+   "Trap with the big"
+  ],
+  "explain": "Ice/Blue."
+ },
+ {
+  "id": "c-080",
+  "tags": [
+   "defence",
+   "pnr"
+  ],
+  "q": "In ICE, the ball gets into the middle anyway. What do we do?",
+  "answer": "Switch to Drop",
+  "wrong": [
+   "Blitz",
+   "Stay in Ice",
+   "Peel"
+  ],
+  "explain": "Ice/Blue: switch to Drop if ball enters middle."
+ },
+ {
+  "id": "c-081",
+  "tags": [
+   "defence",
+   "pnr"
+  ],
+  "q": "In DROP, what does the big call, and where does he play?",
+  "answer": "\"LEFT/RIGHT\", playing centerfield between ball and rim (Ball-You-Basket)",
+  "wrong": [
+   "\"SWITCH\", at the level of the screen",
+   "\"BACK\", in the corner",
+   "\"ICE\", trapping the ball"
+  ],
+  "explain": "Drop/Brown."
+ },
+ {
+  "id": "c-082",
+  "tags": [
+   "defence",
+   "pnr"
+  ],
+  "q": "In BLITZ/PINK, how long does the big stay on the ball?",
+  "answer": "Until the dribble is picked up or retreats, then he sprints back with high hands",
+  "wrong": [
+   "One second, then recovers",
+   "All possession",
+   "He doesn't: the guard does"
+  ],
+  "explain": "Blitz/Pink (Hard Hedge)."
+ },
+ {
+  "id": "c-083",
+  "tags": [
+   "defence",
+   "pnr"
+  ],
+  "q": "Switch/Gold: what does the Dscreener call?",
+  "answer": "\"TBD\"",
+  "wrong": [
+   "\"BACK\"",
+   "\"ICE\"",
+   "\"PEEL\""
+  ],
+  "explain": "Switch/Gold."
+ },
+ {
+  "id": "c-084",
+  "tags": [
+   "defence",
+   "pnr"
+  ],
+  "q": "Peel vs a pick and pop: who takes who?",
+  "answer": "The guard takes the popping big, the big defends the ball handler",
+  "wrong": [
+   "Big stays with the popper",
+   "Both go to the ball",
+   "The weak-side tag takes the popper"
+  ],
+  "explain": "Peel vs Pick n Pop."
+ },
+ {
+  "id": "c-085",
+  "tags": [
+   "defence",
+   "pnr"
+  ],
+  "q": "Pick-n-pop big or a non-shooting guard. Which coverage keeps matchups (big stays, guard goes under)?",
+  "answer": "Squeeze",
+  "wrong": [
+   "Blitz",
+   "Switch",
+   "Flat"
+  ],
+  "explain": "Squeeze."
+ },
+ {
+  "id": "c-086",
+  "tags": [
+   "defence",
+   "pnr",
+   "dho"
+  ],
+  "q": "Their big is in KYP Drop on a handoff. What does the receiver's defender do in CHASE?",
+  "answer": "Bust over the handoff, stay attached, force everything uphill & 1-way",
+  "wrong": [
+   "Go under and wait",
+   "Switch",
+   "Double the ball"
+  ],
+  "explain": "Chase."
+ },
+ {
+  "id": "c-087",
+  "tags": [
+   "defence",
+   "off-ball screens"
+  ],
+  "q": "A shooter comes off a down screen. Our coverage for the Dreceiver?",
+  "answer": "Chase: attach and bust over",
+  "wrong": [
+   "Under",
+   "Drop and read",
+   "Shadow from the paint"
+  ],
+  "explain": "Chase vs Off-Ball Screen."
+ },
+ {
+  "id": "c-088",
+  "tags": [
+   "defence",
+   "off-ball screens"
+  ],
+  "q": "TOP LOCK vs an off-ball screen means…",
+  "answer": "Stay on the high side of the screen and force everything to the baseline",
+  "wrong": [
+   "Go under the screen",
+   "Switch on contact",
+   "Trail his hip"
+  ],
+  "explain": "Top Lock."
+ },
+ {
+  "id": "c-089",
+  "tags": [
+   "defence",
+   "off-ball screens"
+  ],
+  "q": "Off-ball screens: where is the Dscreener's hand, and why?",
+  "answer": "On the screener's back, in case we need to switch if the Dreceiver gets hit",
+  "wrong": [
+   "In the passing lane",
+   "Up to contest",
+   "On the cutter's hip"
+  ],
+  "explain": "Stay/Switch."
+ },
+ {
+  "id": "c-090",
+  "tags": [
+   "defence",
+   "off-ball screens"
+  ],
+  "q": "A late paint switch on a bad beat to protect the rim is…",
+  "answer": "Veer",
+  "wrong": [
+   "Peel",
+   "Scram",
+   "Squeeze"
+  ],
+  "explain": "Veer."
+ },
+ {
+  "id": "c-091",
+  "tags": [
+   "defence",
+   "iso"
+  ],
+  "q": "ISO D: what is WEAK?",
+  "answer": "Shade the ball handler to his weak hand and shrink the floor away from the ball",
+  "wrong": [
+   "Force him to his strong hand",
+   "Double right away",
+   "Give him space"
+  ],
+  "explain": "Weak."
+ },
+ {
+  "id": "c-092",
+  "tags": [
+   "defence",
+   "iso"
+  ],
+  "q": "ISO D: what is SHIFT?",
+  "answer": "LOW and RIM load to the ball early and pre-rotate",
+  "wrong": [
+   "The ball defender switches",
+   "Everyone moves one spot over",
+   "We go zone"
+  ],
+  "explain": "Shift."
+ },
+ {
+  "id": "c-093",
+  "tags": [
+   "defence",
+   "iso",
+   "special situations"
+  ],
+  "q": "We want the ball out of a dangerous player's hands right now. The call?",
+  "answer": "SMACK/SLAP: an immediate double team from the loaded side",
+  "wrong": [
+   "PEEL",
+   "SCRAM",
+   "STAY"
+  ],
+  "explain": "Smack/Slap (Double Team)."
+ },
+ {
+  "id": "c-094",
+  "tags": [
+   "defence",
+   "post"
+  ],
+  "q": "Our base post coverage is WHITE. What is it?",
+  "answer": "3/4 top denial, slide behind on the pass, wall up and show hands",
+  "wrong": [
+   "Full front",
+   "Play behind",
+   "Double on the catch"
+  ],
+  "explain": "White (Base Post)."
+ },
+ {
+  "id": "c-095",
+  "tags": [
+   "defence",
+   "post"
+  ],
+  "q": "What is BLACK in post D?",
+  "answer": "We front the post (box out from the front) to discourage the pass or force a lob over the top",
+  "wrong": [
+   "3/4 top denial",
+   "Play behind",
+   "Double from the baseline"
+  ],
+  "explain": "Black."
+ },
+ {
+  "id": "c-096",
+  "tags": [
+   "defence",
+   "post"
+  ],
+  "q": "Post catch, call is KICK. Who doubles, and from where?",
+  "answer": "LOW doubles from the baseline side",
+  "wrong": [
+   "Strong side defender from the top side",
+   "The guard from the slot",
+   "Nobody"
+  ],
+  "explain": "Kick."
+ },
+ {
+  "id": "c-097",
+  "tags": [
+   "defence",
+   "post"
+  ],
+  "q": "Post catch, call is BOMB. Who doubles, and from where?",
+  "answer": "The strong side defender doubles from the top side",
+  "wrong": [
+   "LOW from the baseline side",
+   "Nail from the elbow",
+   "The 5 from the other block"
+  ],
+  "explain": "Bomb."
+ },
+ {
+  "id": "c-098",
+  "tags": [
+   "defence",
+   "post"
+  ],
+  "q": "We're in BLACK. What does the fronting defender yell?",
+  "answer": "\"BLACK-BLACK-BLACK\" to alert the help side",
+  "wrong": [
+   "\"SCRAM\"",
+   "\"BALL\"",
+   "\"WHITE\""
+  ],
+  "explain": "Black - Kick."
+ },
+ {
+  "id": "c-099",
+  "tags": [
+   "defence",
+   "post"
+  ],
+  "q": "Black - Scram: LOW yells \"SCRAM\" on the post catch. What does the fronting guard do?",
+  "answer": "Releases to the weak-side corner (LOW switches onto the post)",
+  "wrong": [
+   "Doubles from the top",
+   "Stays and fights",
+   "Runs back on defence"
+  ],
+  "explain": "Black - Scram."
+ },
+ {
+  "id": "c-100",
+  "tags": [
+   "defence",
+   "post"
+  ],
+  "q": "Post puts it on the floor. Hit ⇒ Dig to Smack means…",
+  "answer": "Gap, dig, then double on the second post dribble with the nearest defender",
+  "wrong": [
+   "Double on the catch",
+   "Front the post",
+   "Leave him alone"
+  ],
+  "explain": "Hit ⇒ Dig to Smack."
+ },
+ {
+  "id": "c-101",
+  "tags": [
+   "defence",
+   "special situations"
+  ],
+  "q": "End of game, we're up 2. Screens?",
+  "answer": "\"Stay before, switch after\": no switches before the inbound, switch everything after",
+  "wrong": [
+   "Switch everything before and after",
+   "Fight over everything",
+   "Pork right away"
+  ],
+  "explain": "EOG Up 2."
+ },
+ {
+  "id": "c-102",
+  "tags": [
+   "defence",
+   "special situations"
+  ],
+  "q": "End of game, we're up 3. Screens?",
+  "answer": "Switch before and after, and Pork when we can to stop a 3",
+  "wrong": [
+   "Stay before, switch after",
+   "No switches at all",
+   "Play zone"
+  ],
+  "explain": "EOG Up 3."
+ },
+ {
+  "id": "c-103",
+  "tags": [
+   "defence",
+   "special situations"
+  ],
+  "q": "When do we PORK (intentional foul)?",
+  "answer": "Up 3 late, or at the end of a quarter when we have a foul to give",
+  "wrong": [
+   "Down 3 late",
+   "Any time they are in the bonus",
+   "When their best shooter has the ball"
+  ],
+  "explain": "Pork (Intentional Foul)."
+ },
+ {
+  "id": "c-104",
+  "tags": [
+   "defence",
+   "special situations"
+  ],
+  "q": "BLOB D (HAT): how do we guard screens?",
+  "answer": "Fight over every screen, no switches (inbound defender protects the basket)",
+  "wrong": [
+   "Switch everything",
+   "Go under every screen",
+   "Zone"
+  ],
+  "explain": "BLOB Defense."
+ },
+ {
+  "id": "c-105",
+  "tags": [
+   "defence",
+   "special situations"
+  ],
+  "q": "SMACK/TRAP at the end of a quarter means…",
+  "answer": "Double team their hot player",
+  "wrong": [
+   "Foul right away",
+   "Switch everything",
+   "Sag into the paint"
+  ],
+  "explain": "Smack/Trap (EOQ)."
+ }
 ]

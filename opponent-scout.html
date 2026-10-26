@@ -483,7 +483,7 @@
           <button id="btn-reset" class="btn btn-danger" style="display:none;">🔄 Reset to Default</button>
           
           <!-- Download Button -->
-          <button id="btn-download" class="btn btn-primary" style="display:none;">📥 Download File</button>
+          <button id="btn-download" class="btn btn-primary" style="display:none;">📥 Download PDF</button>
         </div>
       </div>
       
@@ -799,21 +799,18 @@
       }
     });
 
-    btnDownload.addEventListener('click', () => {
-      const fileName = fileType === 'profile' 
-        ? 'profile.md'
-        : '2025-26-scout.md';
-        
-      const blob = new Blob([rawContent], { type: 'text/markdown;charset=utf-8;' });
-      const link = document.createElement("a");
-      const url = URL.createObjectURL(blob);
-      link.setAttribute("href", url);
-      link.setAttribute("download", fileName);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      showToast('Downloading Markdown file...');
+    // Download the report as a PDF (what's on screen: saved edits merged, our section order).
+    // Synergy lines are left out: they're licensed numbers, and a PDF gets passed around.
+    btnDownload.addEventListener('click', async () => {
+      const label = (FILE_TYPES[fileType] || {}).label || 'Report';
+      showToast('Making the PDF…');
+      try {
+        await GriffinPDF.markdown(reorderScout(rawContent), {
+          title: `${teamNameFormatted}: ${label}`,
+          filename: GriffinPDF.fileName(`${teamSlug}-${label}`)
+        });
+        showToast('PDF downloaded');
+      } catch (e) { showToast(e.message || 'Could not make the PDF'); }
     });
 
     function showToast(msg) {
@@ -934,6 +931,7 @@
     if (teamSlug) loadContent();
   </script>
 <script src="/scout-report-merge.js"></script>
+<script src="/pdf-export.js"></script>
 <script src="/synergy-view.js"></script>
 </body>
 </html>

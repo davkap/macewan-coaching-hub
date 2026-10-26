@@ -816,9 +816,9 @@
     // Download HTML
     const btnDownload = document.createElement('button');
     btnDownload.className = 'editor-btn editor-btn-accent';
-    btnDownload.innerText = '📥 Download HTML';
+    btnDownload.innerText = '📥 Download PDF';
     btnDownload.id = 'btn-cards-download';
-    btnDownload.onclick = downloadHTML;
+    btnDownload.onclick = downloadPDF;
     actions.appendChild(btnDownload);
 
     bar.appendChild(actions);
@@ -1343,6 +1343,51 @@
       }
     };
     fileInput.click();
+  }
+
+  // Download the cards as a PDF (pdf-export.js, loaded on demand): one block per player
+  // with his tags, note and stats, in the same Starters / Bench order as the page.
+  // Synergy lines are left out (licensed numbers; a PDF gets passed around).
+  function loadPdfMaker() {
+    if (window.GriffinPDF) return Promise.resolve();
+    return new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = '/pdf-export.js';
+      s.onload = res; s.onerror = () => rej(new Error('Could not load the PDF maker.'));
+      document.head.appendChild(s);
+    });
+  }
+  async function downloadPDF() {
+    const wrapper = document.getElementById('scout-cards-wrapper') || document.getElementById('cards-wrapper') || document.body;
+    const title = (document.querySelector('header.title h1') || {}).textContent || `${teamSlug} scout cards`;
+    const T = el => (el ? el.innerText : '').replace(/[ \t]+/g, ' ').replace(/\n\s*\n+/g, '\n').trim();
+    const blocks = [];
+    wrapper.querySelectorAll('.section-banner, .card').forEach(el => {
+      if (el.classList.contains('section-banner')) { blocks.push({ type: 'h2', text: T(el) }); return; }
+      blocks.push({ type: 'keep', h: 170 });
+      blocks.push({ type: 'h3', text: '**' + T(el.querySelector('.player-header')).replace(/\*/g, '') + '**' });
+      const tags = el.querySelector('.tactical-tags');
+      if (tags) {
+        const html = tags.innerHTML.replace(/<strong>(.*?)<\/strong>/gi, '**$1**').replace(/<br\s*\/?>/gi, '  |  ').replace(/<[^>]+>/g, '');
+        const d = document.createElement('textarea'); d.innerHTML = html;
+        blocks.push({ type: 'p', text: d.value.replace(/\s+/g, ' ').trim(), size: 9.5 });
+      }
+      const note = T(el.querySelector('.scout-notes'));
+      if (note) blocks.push({ type: 'p', text: '*Note:* ' + note.replace(/\n/g, ' '), size: 9 });
+      const tbl = el.querySelector('.stats-table');
+      if (tbl) {
+        const head = Array.from(tbl.querySelectorAll('thead th')).map(T);
+        const rows = Array.from(tbl.querySelectorAll('tbody tr')).map(tr => Array.from(tr.children).map(T));
+        blocks.push({ type: 'table', head, rows, size: 8 });
+      }
+      blocks.push({ type: 'hr' });
+    });
+    showToast('Making the PDF…');
+    try {
+      await loadPdfMaker();
+      await GriffinPDF.blocks(blocks, { title: title.trim(), filename: `${teamSlug}-scout-cards` });
+      showToast('PDF downloaded');
+    } catch (e) { showToast(e.message || 'Could not make the PDF'); }
   }
 
   function downloadHTML() {

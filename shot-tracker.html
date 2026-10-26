@@ -693,6 +693,23 @@ function download(name, text, type) {
   document.body.appendChild(a); a.click();
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
 }
+// Chances list as a PDF table (pdf-export.js is loaded on demand).
+function downloadChancesPDF() {
+  const g = App.game;
+  const rows = shotRows();
+  const go = () => GriffinPDF.table({
+    title: "Shot Tracker: " + (App.S.teamName || "MacEwan") + " vs " + g.opp.name + " (" + g.date + ")",
+    subtitle: rows.length + " chances",
+    head: ["Period", "Clock", "Team", "Player", "Play type", "Kind", "Shot", "Zone", "3 type", "Contest", "Made", "FT", "PQ", "Tier", "Pts"],
+    rows: rows.map(r => [r.period, r.clock, r.team, r.player, r.play_type, r.kind, r.shot_class, r.zone, r.three_type, r.contest, r.made === "" ? "" : (r.made ? "Yes" : "No"), r.fta ? r.ftm + "/" + r.fta : "", r.pq, r.tier, r.points]),
+    filename: "chances-" + g.date
+  }).catch(e => alert(e.message || "Could not make the PDF"));
+  if (window.GriffinPDF) return go();
+  const sc = document.createElement("script");
+  sc.src = "/pdf-export.js"; sc.onload = go; sc.onerror = () => alert("Could not load the PDF maker. Use CSV instead.");
+  document.head.appendChild(sc);
+}
+
 function toCSV(rows) {
   if (!rows.length) return "";
   const cols = Object.keys(rows[0]);
@@ -2825,7 +2842,7 @@ function renderSetup() {
 
     '<div class="card"><h3>Export</h3>' +
     '<div class="btnrow"><button class="btn" data-act="csv">Copy CSV</button><button class="btn ghost" data-act="json">Copy game JSON</button></div>' +
-    (window.ARTIFACT_MODE ? "" : '<div class="btnrow" style="padding-top:8px"><button class="btn ghost" data-act="dlcsv">Download CSV</button></div>') +
+    (window.ARTIFACT_MODE ? "" : '<div class="btnrow" style="padding-top:8px"><button class="btn ghost" data-act="dlpdf">Download PDF</button> <button class="btn ghost" data-act="dlcsv" title="Spreadsheet file for Excel / Google Sheets">CSV (Excel)</button></div>') +
     '<div class="note">CSV columns match the laptop tracker\'s chance export, so both sit in one season sheet.' +
     (window.ARTIFACT_MODE ? " Copy is the only export inside a Claude artifact — the viewer blocks downloads and outside connections. The copy on your laptop and the Python build both download the file and can send to a server." : "") + "</div>" +
     (window.ARTIFACT_MODE ? "" :
@@ -3823,6 +3840,7 @@ function wire() {
     } else if (act === "csv") copyOut(toCSV(shotRows()), "CSV");
     else if (act === "json") copyOut(JSON.stringify(App.game, null, 2), "JSON");
     else if (act === "dlcsv") download("chances-" + App.game.date + ".csv", toCSV(shotRows()), "text/csv");
+    else if (act === "dlpdf") downloadChancesPDF();
     else if (act === "sync") sendToServer(b);
     else if (act === "sendall") sendAllGames();
     else if (act === "dbsync") bridgeToMacEwanDatabase(App.game, App.D, true);

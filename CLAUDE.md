@@ -235,6 +235,15 @@ returns (`sessionStorage.griffin_member_token`).
   report for every section that still has the mark; the editor drops the mark from any section
   the coach changes, so coach-written sections are kept.
 
+## Downloads (PDF)
+
+Downloads are PDFs (David, Oct 2026), made in the browser by `pdf-export.js` with pdf-lib
+(`vendor/pdf-lib.min.js`, MIT, kept on the site so it works offline): the scouting report and profile
+(`opponent-scout.html`), the scout cards (`scout-cards-editor.js`), the Database views
+(`lineup-tracker.html`) and the Shot Tracker chances list. The Database and Shot Tracker also keep a
+"CSV (Excel)" button; drill files stay JSON. Synergy lines are left out of PDFs (licensed numbers).
+The built-in PDF fonts only cover Western characters, so `GriffinPDF.clean` swaps arrows/emoji.
+
 ## Content saved from the site
 
 Scout notes and other edits made in the site's editors are saved to Netlify Blobs through

@@ -255,8 +255,7 @@ function usGameCard(g, secs) {
   const lead = secs ? usBoxView(g.id, secs, g).leaders : [];
   return { id: g.id, league: 'usports', start: g.date, state: 'post', detail: 'Final', completed: true, conf: g.conf,
     away: { name: g.winner, score: String(g.wScore), winner: true }, home: { name: g.loser, score: String(g.lScore) },
-    leaders: lead.filter(l => l.stat === 'points').sort((a, b) => b.value - a.value).slice(0, 1)
-      .concat(lead.filter(l => l.stat !== 'points').sort((a, b) => b.value - a.value).slice(0, 2)),
+    leaders: lead,
     venue: g.location, note: g.note, hasBox: g.hasBox,
     link: g.id ? `${US}/show-game-report.php?Gender=MBB&Season=${seasonOf(g.date)}&Gameid=${g.id}` : '' };
 }

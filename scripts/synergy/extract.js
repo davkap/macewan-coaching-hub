@@ -112,6 +112,27 @@
     return out;
   }
 
+  // Wait for the right main table before reading it. Synergy can still be showing the
+  // previous page's table (seen Oct 26 2026: situation rows read as Mount Royal's play
+  // types), so check its rows: overall = situations, playtypes = Spot Up etc. (and no
+  // "All Possessions" row), shottypes = shot types; and the defence read must differ
+  // from the offence one. Throws (team goes to __synErr) rather than saving wrong numbers.
+  const KIND = { overall: /^All Possessions$/i, playtypes: /^Spot Up$/i, shottypes: /^All Field Goal Attempts$/i };
+  async function readKind(kind, notSameAs) {
+    const t0 = Date.now();
+    while (Date.now() - t0 < 20000) {
+      const t = tables().find(tb => Array.from(tb.querySelectorAll('tbody tr')).some(tr => KIND[kind].test(txt(tr.querySelector('td, th')))));
+      if (t) {
+        const rows = readMain(t);
+        const right = rows.length && (kind !== 'playtypes' || !rows.some(x => /^All Possessions$/i.test(x.name)));
+        const same = notSameAs && JSON.stringify(rows) === JSON.stringify(notSameAs);
+        if (right && !same) return rows;
+      }
+      await sleep(400);
+    }
+    throw new Error(kind + ' table did not load in time');
+  }
+
   async function team(id) {
     const base = '/basketball/teams/' + id;
     const r = { synergyId: id, pulledAt: new Date().toISOString() };
@@ -121,17 +142,17 @@
     r.gp = head ? +head[1] : null;
     const gb = readBreakdown(breakdownTable());
     r.games = gb ? gb.cols : [];
-    r.situations = { off: readMain(tables()[0]) };
+    r.situations = { off: await readKind('overall') };
     await go(base + '/overall', { offense: 'false' });
-    r.situations.def = readMain(tables()[0]);
+    r.situations.def = await readKind('overall', r.situations.off);
     await go(base + '/playtypes', { offense: 'true' });
-    r.playTypes = { off: readMain(tables()[0]) };
+    r.playTypes = { off: await readKind('playtypes') };
     await go(base + '/playtypes', { offense: 'false' });
-    r.playTypes.def = readMain(tables()[0]);
+    r.playTypes.def = await readKind('playtypes', r.playTypes.off);
     await go(base + '/shottypes', { offense: 'true' });
-    r.shotTypes = { off: readMain(tables()[0]) };
+    r.shotTypes = { off: await readKind('shottypes') };
     await go(base + '/shottypes', { offense: 'false' });
-    r.shotTypes.def = readMain(tables()[0]);
+    r.shotTypes.def = await readKind('shottypes', r.shotTypes.off);
     r.players = {
       playTypes: await playersBy(base + '/playtypes', { offense: 'true' }, { code: 'Poss', key: 'poss' }, { code: 'Pts', key: 'pts' }),
       shotTypes: await playersBy(base + '/shottypes', { offense: 'true' }, { code: 'FGAtt', key: 'fga' }, { code: 'FGMade', key: 'fgm' })

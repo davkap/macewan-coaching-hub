@@ -235,6 +235,19 @@ returns (`sessionStorage.griffin_member_token`).
   report for every section that still has the mark; the editor drops the mark from any section
   the coach changes, so coach-written sections are kept.
 
+## Basketball Pulse (`pulse.html`, `netlify/functions/pulse.js`)
+
+Scores, top performers, starters, team stats, standings and injuries for U Sports, NCAA D1 men
+and the NBA (David, Oct 2026; EuroLeague to come: add an adapter in `pulse.js`).
+- NBA / NCAA: ESPN's public site API (`site.api.espn.com` scoreboard, summary, injuries,
+  rankings; `apis/v2/.../standings`). cdn.nba.com blocks outside requests, so it isn't used.
+- U Sports: usportshoops.ca season games list + box scores (`parseBoxScore` from
+  `scripts/lib/usports-scraper.js`). The U Sports table is built from every score (conference =
+  games marked *). U Sports has no injury reports.
+- Answers are cached (memory + Blobs store `pulse`): live scoreboards 45 s, box scores 60 s,
+  U Sports box scores a day; a stale copy is shown if a source is down. Canada West games are
+  highlighted and listed first. Synergy isn't used here yet (it needs David's login).
+
 ## Downloads (PDF)
 
 Downloads are PDFs (David, Oct 2026), made in the browser by `pdf-export.js` with pdf-lib

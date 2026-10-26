@@ -180,7 +180,7 @@ async function ncaaRankings() {
     return {
       league: 'ncaa', kind: 'rankings',
       groups: (j.rankings || []).slice(0, 2).map(r => ({
-        name: r.name + (r.headline ? ' · ' + r.headline.replace(r.name, '').trim() : ''),
+        name: r.name + (r.type || r.occurrence ? ` · ${((r.occurrence || {}).displayValue || '').trim()}`.replace(/ · $/, '') : ''),
         columns: ['#', 'Team', 'Record', 'Points', 'Prev'],
         rows: (r.ranks || []).map(k => [k.current, (k.team.location || '') + (k.team.name ? ' ' + k.team.name : ''), k.recordSummary || '',
           k.points != null ? k.points + (k.firstPlaceVotes ? ` (${k.firstPlaceVotes})` : '') : '', k.previous || '-'])

@@ -164,7 +164,9 @@
   function card(g) {
     const pre = g.state === 'pre';
     const when = pre ? new Date(g.start).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }) : g.detail;
-    const lead = (g.leaders || []).map(l => `<div><b>${statWord[l.stat] || l.stat}</b> ${esc(l.value)} · ${esc(l.player)}${l.team ? ` (${esc(l.team)})` : ''}</div>`).join('');
+    // One leader per stat for the whole game (best of the two teams).
+    const best = ['points', 'rebounds', 'assists'].map(k => (g.leaders || []).filter(l => l.stat === k).sort((x, y) => (parseFloat(y.value) || 0) - (parseFloat(x.value) || 0))[0]).filter(Boolean);
+    const lead = best.map(l => `<div><b>${statWord[l.stat] || l.stat}</b> ${esc(l.value)} · ${esc(l.player)}${l.team ? ` (${esc(l.team)})` : ''}</div>`).join('');
     return `<div class="game${isOurs(g) ? ' ours' : ''}${state.open === g.id ? ' open' : ''}" data-id="${esc(g.id)}">
       <div class="status"><span class="${g.state === 'in' ? 'live' : ''}">${g.state === 'in' ? '● LIVE · ' : ''}${esc(when)}</span><span>${esc(g.tv || (g.conf ? 'Conference' : ''))}</span></div>
       ${teamRow(g.away, g.home, pre)}${teamRow(g.home, g.away, pre)}

@@ -615,7 +615,7 @@
       }
 
       // Fetch live cloud version so all coaches & players see Admin's edits
-      fetch(`/.netlify/functions/get-content?key=${encodeURIComponent(storageKey)}`)
+      fetch(`/.netlify/functions/get-content?key=${encodeURIComponent(storageKey)}`, { cache: 'no-store' })
         .then(res => res.json())
         .then(data => {
           if (data && data.success && data.content) {

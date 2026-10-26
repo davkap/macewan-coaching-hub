@@ -46,7 +46,7 @@
 
   async function getContent(key) {
     try {
-      const r = await fetch('/.netlify/functions/get-content?key=' + encodeURIComponent(key));
+      const r = await fetch('/.netlify/functions/get-content?key=' + encodeURIComponent(key), { cache: 'no-store' });
       const d = await r.json();
       return d && d.success && d.content ? d.content : '';
     } catch (e) { return ''; }

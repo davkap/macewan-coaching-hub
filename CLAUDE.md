@@ -223,6 +223,17 @@ returns (`sessionStorage.griffin_member_token`).
   Personnel, Completed Games, Upcoming Schedule, Sources. `scripts/generate_season_reports.js` writes
   it; `reorderScout` in `opponent-scout.html` applies it to coach-saved versions too.
   `build_canadawest_hub.js` matches report sections to its tabs by title, not number.
+- Keys to victory, Offense, Defense, How we attack their D, How we defend their O, Special
+  situations and Practice points are written from this season's public stats on every build by
+  `scripts/lib/scout-writer.js` (rules only, in Griffin Concepts language: closeout tags from
+  `scripts/lib/closeouts.js`, the same rules as the scout cards; coverages; BEN; Hit-Find-Get…), as
+  bullet / numbered lists. Last season's "Carried over from 2025-26" notes were retired (Oct 2026).
+  Synergy reads are added under those sections in the browser only (`reportBullets` in
+  `synergy-view.js`), for logged-in users, never written into the report.
+- Every automatic section has a `<!-- auto -->` line. `scout-report-merge.js` (used by
+  `opponent-scout.html`, `quiz.html`, `game-week.html`) swaps the fresh version into a coach-saved
+  report for every section that still has the mark; the editor drops the mark from any section
+  the coach changes, so coach-written sections are kept.
 
 ## Content saved from the site
 

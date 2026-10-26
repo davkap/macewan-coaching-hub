@@ -57,7 +57,7 @@ function inline(s){
 // Convert a markdown sub-block (no level-2 headings) into HTML.
 function mdToHtml(md){
   if(!md) return '';
-  const lines = md.replace(/\r/g,'').split('\n');
+  const lines = md.replace(/\r/g,'').replace(/<!--[\s\S]*?-->[ \t]*\n?/g,'').split('\n');
   const out = [];
   let i = 0;
   function isTableSep(l){ return /^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)+\|?\s*$/.test(l); }

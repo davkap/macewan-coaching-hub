@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const { TEAMS_MAP } = require('./lib/usports-scraper');
+const { writeScoutSections } = require('./lib/scout-writer');
+const AUTO = '<!-- auto -->';
 
 const ROOT = path.join(__dirname, '..');
 const OPPONENTS_DIR = path.join(ROOT, 'opponents');
@@ -20,7 +22,7 @@ function generateIdentityParagraph(teamName, oppData) {
   }
 
   if (topScorers.length > 0) {
-    const leaderStrs = topScorers.map(s => `${s.name} (#${s.ppg} PPG, ${s.fg3Pct}% 3PT, ${s.rpg} RPG)`);
+    const leaderStrs = topScorers.map(s => `${s.name} (${s.ppg} PPG, ${s.fg3Pct}% 3PT, ${s.rpg} RPG)`);
     p += `Offensively, they are led by ${leaderStrs.join(', ')}. `;
   }
 
@@ -112,7 +114,7 @@ function updateOpponentProfile(slug, oppData) {
   fs.writeFileSync(profilePath, md, 'utf-8');
 }
 
-function updateOpponentScout(slug, oppData) {
+function updateOpponentScout(slug, oppData, allData) {
   const scoutsDir = path.join(OPPONENTS_DIR, slug, 'scouts');
   if (!fs.existsSync(scoutsDir)) {
     fs.mkdirSync(scoutsDir, { recursive: true });
@@ -172,38 +174,28 @@ function updateOpponentScout(slug, oppData) {
   // Order agreed with David (Oct 2026): Keys to victory first, then the film
   // sections, then Personnel / Completed Games / Upcoming Schedule at the end.
   // opponent-scout.html applies the same order to coach-saved versions.
+  // The sections are written from this season's stats (scripts/lib/scout-writer.js),
+  // as lists, and refresh on every build. "<!-- auto -->" marks a section as automatic:
+  // on a coach-saved report the site swaps in the fresh version of every section that
+  // still has the mark (the editor removes the mark from any section a coach changes).
+  const w = writeScoutSections(oppData, allData || {});
   const filmSections = [
-    "Keys to victory",
-    "Offense",
-    "Defense",
-    "How we attack their D",
-    "How we defend their O",
-    "Special situations",
-    "Practice points this week"
+    ['Keys to victory', w.keys],
+    ['Offense', w.offense],
+    ['Defense', w.defense],
+    ['How we attack their D', w.attack],
+    ['How we defend their O', w.defend],
+    ['Special situations', w.special],
+    ['Practice points this week', w.practice]
   ];
-
-  for (let i = 0; i < filmSections.length; i++) {
-    const secTitle = filmSections[i];
-    const secNum = i + 1; // 1. Keys to victory, 2. Offense, etc.
-    let secBody = `*(Carried over from 2025-26, verify on film)*\n- [FILL FROM FILM]`;
-
-    // Regex match from old scout report
-    const re = new RegExp(`##\\s*\\d*\\.?\\s*${secTitle.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&')}[\\s\\S]*?(?=\\n## |$)`, 'i');
-    const m = oldScoutMd.match(re);
-    if (m) {
-      secBody = m[0].replace(/^##[^\n]*\n/, '').trim();
-      if (!secBody.includes('Carried over')) {
-        secBody = `*(Carried over from 2025-26, verify on film)*\n${secBody}`;
-      }
-    }
-
-    md += `## ${secNum}. ${secTitle}\n${secBody}\n\n`;
-  }
+  filmSections.forEach(([title, lines], i) => {
+    md += `## ${i + 1}. ${title}\n${AUTO}\n${lines.join('\n')}\n\n`;
+  });
 
   const n = filmSections.length;
-  md += `## ${n + 1}. Personnel (USportsHoops 2026-27 Stats)\n${personnelTable}\n\n`;
-  md += `## ${n + 2}. Completed Games (2026-27)\n${completedGamesTable}\n\n`;
-  md += `## ${n + 3}. Upcoming Schedule (2026-27)\n${upcomingGamesTable}\n\n`;
+  md += `## ${n + 1}. Personnel (USportsHoops 2026-27 Stats)\n${AUTO}\n${personnelTable}\n\n`;
+  md += `## ${n + 2}. Completed Games (2026-27)\n${AUTO}\n${completedGamesTable}\n\n`;
+  md += `## ${n + 3}. Upcoming Schedule (2026-27)\n${AUTO}\n${upcomingGamesTable}\n\n`;
 
   md += `## Sources\n`;
   md += `- http://usportshoops.ca/history/teamseason.php?Gender=MBB&Season=2026-27&Team=${encodeURIComponent(oppData.usportsName)}\n`;
@@ -227,7 +219,7 @@ function runGeneration() {
     if (!oppData) continue;
 
     updateOpponentProfile(item.slug, oppData);
-    updateOpponentScout(item.slug, oppData);
+    updateOpponentScout(item.slug, oppData, results);
     console.log(`✅ Generated 2026-27 profile & scout for ${item.slug}`);
   }
 

@@ -127,13 +127,14 @@
   // Team scouting report: a coach's saved edit wins over the built file.
   function loadReport(slug, withEdits) {
     return once('report:' + slug + ':' + !!withEdits, async () => {
-      let md = withEdits ? await getContent('scout_scout_' + slug) : '';
-      if (!md) {
-        try {
-          const r = await fetch('/opponents/' + slug + '/scouts/2026-27-scout.md');
-          md = r.ok ? await r.text() : '';
-        } catch (e) { md = ''; }
-      }
+      const saved = withEdits ? await getContent('scout_scout_' + slug) : '';
+      let fresh = '';
+      try {
+        const r = await fetch('/opponents/' + slug + '/scouts/2026-27-scout.md');
+        fresh = r.ok ? await r.text() : '';
+      } catch (e) { fresh = ''; }
+      // A coach's saved sections win; automatic ones come from the fresh build (scout-report-merge.js).
+      const md = saved ? (window.GriffinScoutMerge ? GriffinScoutMerge.merge(saved, fresh) : saved) : fresh;
       return parseReport(md);
     });
   }
@@ -155,6 +156,8 @@
     return s;
   }
 
+  // Stat lines the report writer adds (scripts/lib/scout-writer.js): numbers, not plans, so no questions.
+  const STAT_LABEL = /^(sample|scoring|ball handlers|3-point shooting|gets to the line|offensive glass|ball movement|1-on-1 heavy|ball security|points allowed|pressure|rim protection|fouls|defensive glass|free throws)$/i;
   // { labels: { "Ball-screen coverage": { section, value } }, plan: [{short, full}], keys: [...], practice: [...] }
   function parseReport(md) {
     const out = { labels: {}, plan: [], keys: [], practice: [] };
@@ -165,8 +168,9 @@
       if (/^(Offense|Defense|How we defend their O|Special situations)/i.test(title)) {
         for (const line of lines) {
           const m = line.match(/^\s*-\s*\*\*([^*]+?):?\*\*:?\s*(.*)$/);
-          if (!m) continue;
-          const value = cleanValue(m[2]);
+          if (!m || STAT_LABEL.test(m[1].replace(/:$/, '').trim())) continue;
+          // Player lines: "**#4 Oliver Nadeau** (8.1 PPG, …): C/O Klay…" -> the plan after the stats.
+          const value = cleanValue(m[2].replace(/^\([^)]*\):\s*/, ''));
           if (value) out.labels[m[1].replace(/:$/, '').trim()] = { section: title, value };
         }
       } else if (/^(How we attack their D|Keys to victory|Practice points)/i.test(title)) {

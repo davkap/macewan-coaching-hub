@@ -441,6 +441,11 @@
       }
     }
     .doc-switch { margin: 8px 0 4px; font-size: 0.9em; line-height: 1.9; }
+    .md-quote { border-left: 4px solid #d1ad7d; background: rgba(209,173,125,0.12); padding: 10px 14px; border-radius: 6px; margin: 10px 0; }
+    .md-hr { border-top: 1px solid #e5e7eb; margin: 14px 0; }
+    .syn-report { margin-top: -4px; }
+    .syn-report li { color: #334155; }
+    .syn-tag { display: inline-block; font-size: 0.78em; font-weight: 700; color: #98002e; background: rgba(209,173,125,0.22); border-radius: 4px; padding: 0 6px; margin-right: 4px; }
     .doc-switch a { color: #98002e; font-weight: 600; }
   </style>
 </head>
@@ -500,7 +505,7 @@
           <button class="mobile-tab-btn" id="editor-tab-preview" onclick="switchEditorTab('preview')">👁️ Preview</button>
         </div>
         <div class="editor-textarea-wrap">
-          <div class="editor-textarea-header">EDIT RAW MARKDOWN CONTENT</div>
+          <div class="editor-textarea-header">EDIT RAW MARKDOWN CONTENT <span style="font-weight:400;text-transform:none;letter-spacing:0">· sections with &lt;!-- auto --&gt; update with the stats until you change them</span></div>
           <textarea id="markdown-textarea" class="editor-textarea" placeholder="Type markdown here..."></textarea>
         </div>
         <div class="editor-preview-wrap">
@@ -561,6 +566,11 @@
     
     let rawContent = '';
     let isEdited = false;
+    // The freshly built report (stats sections refresh on every build). A coach-saved
+    // version is merged with it (scout-report-merge.js) so automatic sections stay current.
+    let freshContent = '';
+    const fetchFresh = () => fetch(defaultFilePath, { cache: 'no-cache' }).then(r => r.ok ? r.text() : '').catch(() => '');
+    const withFresh = saved => (fileType === 'scout' && window.GriffinScoutMerge && freshContent) ? GriffinScoutMerge.merge(saved, freshContent) : saved;
 
     // Load original contents and check cloud + local storage
     async function loadContent() {
@@ -580,9 +590,10 @@
       switcher.insertAdjacentElement('afterend', cardsLink);
 
       const savedLocal = localStorage.getItem(storageKey);
-      
+      freshContent = await fetchFresh();
+
       if (savedLocal !== null) {
-        rawContent = savedLocal;
+        rawContent = withFresh(savedLocal);
         isEdited = true;
         storageStatus.style.display = 'block';
         btnReset.style.display = 'inline-flex';
@@ -608,7 +619,7 @@
         .then(res => res.json())
         .then(data => {
           if (data && data.success && data.content) {
-            rawContent = data.content;
+            rawContent = withFresh(data.content);
             localStorage.setItem(storageKey, data.content);
             isEdited = true;
             storageStatus.style.display = 'block';
@@ -672,6 +683,27 @@
       renderedContent.innerHTML = parseMarkdown(rawContent);
       const firstH2 = renderedContent.querySelector('h2');
       if (firstH2 && synPanel.hasAttribute('data-synergy-team')) firstH2.parentNode.insertBefore(synPanel, firstH2);
+      addSynergyBullets();
+    }
+
+    // Synergy reads under Offense / Defense / How we attack / How we defend / Special
+    // situations: browser only, logged-in users only, never saved into the report.
+    async function addSynergyBullets() {
+      if (fileType !== 'scout' || !window.GriffinSynergyView) return;
+      const d = await GriffinSynergyView.load(teamSlug);
+      const b = GriffinSynergyView.reportBullets(d);
+      const where = { offense: /^\d*\.?\s*offen[cs]e/i, defense: /^\d*\.?\s*defen[cs]e/i, attack: /how we attack/i, defend: /how we defend/i, special: /special situations/i };
+      renderedContent.querySelectorAll('.syn-report').forEach(e => e.remove());
+      renderedContent.querySelectorAll('h2').forEach(h => {
+        const key = Object.keys(where).find(k => where[k].test(h.textContent.trim()));
+        if (!key || !b[key].length) return;
+        const ul = document.createElement('ul');
+        ul.className = 'syn-report';
+        ul.innerHTML = b[key].map(x => '<li>' + x + '</li>').join('');
+        let next = h.nextElementSibling;
+        while (next && /^(UL|OL)$/.test(next.tagName) && next.nextElementSibling && !/^H2$/.test(next.nextElementSibling.tagName) && /^(UL|OL)$/.test(next.nextElementSibling.tagName)) next = next.nextElementSibling;
+        (next && /^(UL|OL)$/.test(next.tagName) ? next : h).insertAdjacentElement('afterend', ul);
+      });
     }
 
     // Switch between write and preview modes on mobile editor
@@ -731,6 +763,8 @@
 
     btnSave.addEventListener('click', () => {
       rawContent = markdownTextarea.value;
+      // A section the coach changed loses its "auto" mark, so stats refreshes never overwrite it.
+      if (fileType === 'scout' && window.GriffinScoutMerge && freshContent) rawContent = GriffinScoutMerge.markEdits(rawContent, freshContent);
       localStorage.setItem(storageKey, rawContent);
       isEdited = true;
       syncReportToCloud(storageKey, rawContent);
@@ -795,10 +829,14 @@
     function parseMarkdown(md) {
       if (!md) return '';
       let html = md
+        .replace(/<!--[\s\S]*?-->[ \t]*\n?/g, '')   // build marks such as <!-- auto -->
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
 
+      // Quote blocks ("> Overview…") and dividers ("---")
+      html = html.replace(/^&gt;\s?(.*)$/gm, '<div class="md-quote">$1</div>');
+      html = html.replace(/^-{3,}\s*$/gm, '<div class="md-hr"></div>');
       // Headings
       html = html.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
       html = html.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
@@ -809,6 +847,9 @@
       html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
       html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
 
+      // Numbered lists
+      html = html.replace(/^\s*\d+\.\s+(.*?)$/gm, '<li class="ol-item">$1</li>');
+      html = html.replace(/(<li class="ol-item">.*?<\/li>\s*)+/gs, m => '<ol>' + m + '</ol>');
       // Unordered lists
       html = html.replace(/^\s*-\s+(.*?)$/gm, '<li>$1</li>');
       // Wrap sequential <li> blocks in <ul>
@@ -856,7 +897,7 @@
       html = blocks.map(block => {
         block = block.trim();
         if (!block) return '';
-        if (block.startsWith('<h') || block.startsWith('<ul') || block.startsWith('<table') || block.startsWith('<div')) {
+        if (block.startsWith('<h') || block.startsWith('<ul') || block.startsWith('<ol') || block.startsWith('<table') || block.startsWith('<div')) {
           return block;
         }
         return '<p>' + block.replace(/\n/g, '<br>') + '</p>';
@@ -892,6 +933,7 @@
     // Trigger initial load
     if (teamSlug) loadContent();
   </script>
+<script src="/scout-report-merge.js"></script>
 <script src="/synergy-view.js"></script>
 </body>
 </html>

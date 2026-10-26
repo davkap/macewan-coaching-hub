@@ -234,7 +234,42 @@
     });
   }
 
-  window.GriffinSynergyView = { load, teamPanel, message, byPlayer, playerSummary, css, short, R };
+  // Short Synergy reads for the scouting report sections (shown only in the browser,
+  // for logged-in users; never saved into the report). Returns { offense, defense,
+  // attack, defend, special }: arrays of HTML list items.
+  function reportBullets(d) {
+    const out = { offense: [], defense: [], attack: [], defend: [], special: [] };
+    if (!d || d.error || !d.pt) return out;
+    const games = d.games ? d.games.length : 0;
+    const tag = `<span class="syn-tag">📊 Synergy${games ? ` (${games} game${games === 1 ? '' : 's'})` : ''}</span>`;
+    const real = rows => (rows || []).filter(r => r[R.name] !== 'Miscellaneous Plays' && r[R.pct] >= 5);
+    const rated = rows => real(rows).filter(r => r[R.rating]);
+    const pp = r => `${short(r[R.name])} ${f(r[R.pct])}% (${f(r[R.ppp], 2)} PPP${r[R.rating] ? ', ' + r[R.rating] : ''})`;
+    const off = real(d.pt.off).sort((a, b) => b[R.pct] - a[R.pct]);
+    const defRows = real(d.pt.def);
+    if (off.length) out.offense.push(`${tag} Most used: ${off.slice(0, 3).map(pp).join(' · ')}.`);
+    const bestO = rated(d.pt.off).sort((a, b) => b[R.ppp] - a[R.ppp])[0];
+    const worstO = rated(d.pt.off).sort((a, b) => a[R.ppp] - b[R.ppp])[0];
+    if (bestO) out.defend.push(`${tag} Take away their best: ${pp(bestO)}.`);
+    if (worstO && worstO !== bestO) out.defend.push(`${tag} Force them into their worst: ${pp(worstO)}.`);
+    const allowWorst = rated(d.pt.def).sort((a, b) => b[R.ppp] - a[R.ppp])[0];
+    const allowBest = rated(d.pt.def).sort((a, b) => a[R.ppp] - b[R.ppp])[0];
+    if (defRows.length) out.defense.push(`${tag} What they face most: ${defRows.sort((a, b) => b[R.pct] - a[R.pct]).slice(0, 3).map(pp).join(' · ')}.`);
+    if (allowWorst) out.attack.push(`${tag} Attack them with ${short(allowWorst[R.name])}: they give up ${f(allowWorst[R.ppp], 2)} PPP (${allowWorst[R.rating]}).`);
+    if (allowBest && allowBest !== allowWorst) out.attack.push(`${tag} Their best-defended: ${short(allowBest[R.name])} (${f(allowBest[R.ppp], 2)} PPP, ${allowBest[R.rating]}). Don't settle for it.`);
+    const sit = (side, name) => ((d.sit && d.sit[side]) || []).find(r => r[R.name] === name);
+    const tr = sit('off', 'Transition');
+    if (tr && tr[R.pct] >= 20) out.defend.push(`${tag} They run: ${f(tr[R.pct])}% of their possessions are transition (${f(tr[R.ppp], 2)} PPP). Win D-Trans.`);
+    [['After Time Outs', 'After time outs'], ['Out of Bounds (End)', 'BLOB'], ['Out of Bounds (Side)', 'SLOB'], ['Last 4 Sec. of Shot Clock', 'Late shot clock'], ['Against Zone', 'Vs zone'], ['Press', 'Vs press']].forEach(([n, label]) => {
+      const r = sit('off', n);
+      if (r && r[R.poss] >= 8) out.special.push(`${tag} ${label}: ${f(r[R.ppp], 2)} PPP on ${r[R.poss]} possessions${r[R.rating] ? ` (${r[R.rating]})` : ''}.`);
+    });
+    const pressD = sit('def', 'Press');
+    if (pressD && pressD[R.pct] >= 15) out.special.push(`${tag} They press on ${f(pressD[R.pct])}% of possessions. Be ready: Head Man, Deep Outlet, C Cut.`);
+    return out;
+  }
+
+  window.GriffinSynergyView = { load, teamPanel, message, byPlayer, playerSummary, reportBullets, css, short, R };
   const start = () => { mountPanels(); mountCards(); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();

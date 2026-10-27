@@ -13,7 +13,10 @@
 // sources aren't hit on every page view. Add a league = add an adapter below
 // (EuroLeague later).
 const { getStore, connectLambda } = require('@netlify/blobs');
-const { parseBoxScore } = require('../../scripts/lib/usports-scraper');
+const { parseBoxScore, TEAMS_MAP } = require('../../scripts/lib/usports-scraper');
+// Canada West schedules from the last stats build (for "next games" when U Sports has none today).
+let CW_DATA = {};
+try { CW_DATA = require('../../data/usports-rosters-stats.json'); } catch (e) {}
 
 const HEADERS = { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=30' };
 const reply = (statusCode, body) => ({ statusCode, headers: HEADERS, body: JSON.stringify(body) });
@@ -94,7 +97,7 @@ async function espnScores(lg, date) {
   const ttl = d === todayLocal() ? 45 : d < todayLocal() ? 3600 : 900;
   return cached(`${lg}_scores_${d}`, ttl, async () => {
     const j = await getJSON(site(lg, 'scoreboard') + `?dates=${d}` + (lg === 'ncaa' ? '&groups=50&limit=400' : '&limit=100'));
-    return { league: lg, date: d, games: (j.events || []).map(e => espnGame(lg, e)) };
+    return { league: lg, date: d, fetchedAt: new Date().toISOString(), games: (j.events || []).map(e => espnGame(lg, e)) };
   });
 }
 
@@ -213,7 +216,7 @@ async function usGames(season) {
         winner: strip(cells[3]), wScore: +strip(cells[4]) || 0, loser: strip(cells[5]), lScore: +strip(cells[6]) || 0,
         note: comment.trim(), hasBox: !!id });
     });
-    return { season, games };
+    return { season, games, fetchedAt: new Date().toISOString() };
   });
 }
 
@@ -261,15 +264,34 @@ function usGameCard(g, secs) {
 }
 async function usScores(date) {
   const season = seasonOf(date || todayLocal());
-  const { games } = await usGames(season);
+  const { games, fetchedAt } = await usGames(season);
   const dates = Array.from(new Set(games.map(g => g.date))).sort().reverse();
   // No games that day: show the most recent day with games on or before it.
   const want = date || todayLocal();
   const day = dates.indexOf(want) >= 0 ? want : (dates.find(d => d <= want) || dates[dates.length - 1] || want);
   const list = games.filter(g => g.date === day);
   const boxes = await Promise.all(list.map(g => g.hasBox ? usBox(g.id, season).catch(() => null) : null));
-  return { league: 'usports', date: day, asked: want, dates: dates.slice(0, 60), games: list.map((g, i) => usGameCard(g, boxes[i])) };
+  return { league: 'usports', date: day, asked: want, dates: dates.slice(0, 60), fetchedAt, next: day < want ? nextCanadaWest(want) : null,
+    games: list.map((g, i) => usGameCard(g, boxes[i])) };
 }
+// Next Canada West game day on or after `from` (YYYYMMDD), from the teams' schedules.
+function nextCanadaWest(from) {
+  const name = slug => { const n = ((TEAMS_MAP.find(t => t.slug === slug || (t.isMyTeam && slug === 'macewan')) || {}).usportsName) || slug; return n === 'UBCOKN' ? 'UBCO' : n; };
+  const list = [];
+  Object.keys(CW_DATA).forEach(slug => (CW_DATA[slug].upcomingGames || []).forEach(g => {
+    const m = String(g.date || '').match(/([A-Z][a-z]{2}) (\d{1,2}), (\d{4})/);
+    if (!m) return;
+    const d = `${m[3]}${String(MONTHS[m[1]]).padStart(2, '0')}${String(m[2]).padStart(2, '0')}`;
+    if (d >= from) list.push({ date: d, teams: [name(slug), g.opponent].sort(), location: g.location });
+  }));
+  if (!list.length) return null;
+  const day = list.map(x => x.date).sort()[0];
+  const seen = new Set();
+  const games = list.filter(x => x.date === day).filter(x => { const k = x.teams.join('|'); if (seen.has(k)) return false; seen.add(k); return true; })
+    .map(x => `${x.teams[0]} vs ${x.teams[1]}`);
+  return { date: day, games };
+}
+
 async function usTable(season) {
   const { games } = await usGames(season);
   // U Sports teams = teams that have played a conference (*) game; others are exhibition opponents.

@@ -70,6 +70,7 @@
     .pill.out { background:#fde2e2; color:#a40000; } .pill.dtd { background:#fff2d6; color:#8a5a00; } .pill.other { background:#e9ecef; color:#333; }
     .box { background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:12px; }
     .empty { color:var(--mute); padding:20px 0; }
+    .sec { font-family:Montserrat,sans-serif; font-size:15px; color:var(--maroon); margin:16px 0 8px; }
     .spin { color:var(--mute); padding:20px 0; }
   </style>
 </head>
@@ -92,7 +93,7 @@
     { key: 'nba', name: '🏀 NBA', table: 'Standings', injuries: true }
   ];
   // Canada West teams (usportshoops names) to highlight on the U Sports tab.
-  const CW = ['MacEwan', 'Alberta', 'Brandon', 'Calgary', 'UFV', 'Lethbridge', 'Manitoba', 'Mount Royal', 'Regina', 'Saskatchewan', 'Thompson Rivers', 'Trinity Western', 'UBC', 'UBC Okanagan', 'UBCOKN', 'UNBC', 'Victoria', 'Winnipeg'];
+  const CW = ['MacEwan', 'Alberta', 'Brandon', 'Calgary', 'UFV', 'Lethbridge', 'Manitoba', 'Mount Royal', 'Regina', 'Saskatchewan', 'Thompson Rivers', 'Trinity Western', 'UBC', 'UBC Okanagan', 'UBCOKN', 'UBCO', 'UNBC', 'Victoria', 'Winnipeg'];
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const ls = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } };
   const params = new URLSearchParams(location.search);
@@ -135,7 +136,16 @@
   function loadScores() {
     const p = { league: state.league, view: 'scores' };
     if (state.date) p.date = state.date;
-    return api(p).then(d => { state.data = d; drawScores(); }).catch(err);
+    state.prev = null;
+    return api(p).then(async d => {
+      state.data = d;
+      // NBA / NCAA on "today" before tip-off: show last night's results above tonight's schedule.
+      if (!state.date && state.league !== 'usports' && (d.games || []).every(g => g.state === 'pre')) {
+        const y = fromYmd(d.date); y.setDate(y.getDate() - 1);
+        try { const pd = await api({ league: state.league, view: 'scores', date: ymd(y) }); if ((pd.games || []).length) state.prev = pd; } catch (e) {}
+      }
+      drawScores();
+    }).catch(err);
   }
   function shiftDay(n) {
     const d = state.data;
@@ -185,7 +195,16 @@
     const order = { in: 0, pre: 1, post: 2 };
     games.sort((a, b) => (isOurs(b) - isOurs(a)) || (order[a.state] - order[b.state]) || String(a.start).localeCompare(String(b.start)));
     const live = games.some(g => g.state === 'in');
-    const asked = d.asked && d.asked !== d.date ? `<div class="meta">No U Sports games on ${esc(nice(d.asked))}: showing the most recent day with games.</div>` : '';
+    const asked = d.asked && d.asked !== d.date
+      ? `<div class="box" style="background:#fbf3f5;border-color:#ecc9d3">No U Sports games have been played since <b>${esc(nice(d.date))}</b>, so those are the latest scores below (usportshoops.ca adds a game once it's played, usually the same night or the next morning).${d.next ? `<br>Next Canada West games: <b>${esc(nice(d.next.date))}</b>: ${esc(d.next.games.join(' · '))}.` : ''}</div>` : '';
+    const updated = d.fetchedAt ? ` · updated ${esc(new Date(d.fetchedAt).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }))}` : '';
+    const filt = list => {
+      let gs = (list || []).slice();
+      if (q) gs = gs.filter(g => [g.home.name, g.away.name, g.home.full, g.away.full, g.home.abbr, g.away.abbr].join(' ').toLowerCase().indexOf(q) >= 0);
+      if (state.ranked) gs = gs.filter(g => g.home.rank || g.away.rank);
+      return gs.sort((a, b) => (isOurs(b) - isOurs(a)) || (order[a.state] - order[b.state]) || String(a.start).localeCompare(String(b.start)));
+    };
+    const prevGames = state.prev ? filt(state.prev.games) : [];
     document.getElementById('main').innerHTML = `
       <div class="bar">
         <button class="btn" id="prev">‹</button><span class="day">${esc(nice(d.date))}</span><button class="btn" id="next">›</button>
@@ -194,7 +213,8 @@
         ${lg === 'ncaa' ? `<label class="chk"><input type="checkbox" id="rk"${state.ranked ? ' checked' : ''}> Top 25 only</label>` : ''}
       </div>
       ${asked}
-      <div class="meta">${games.length} game${games.length === 1 ? '' : 's'}${live ? ' · updates every minute while games are live' : ''}${d.stale ? ' · source is slow, showing the last saved scores' : ''}${lg === 'usports' ? ' · Canada West games first' : ''}. Tap a game for starters, top performers, team stats${lg === 'usports' ? '' : ' and injuries'}.</div>
+      <div class="meta">${games.length} game${games.length === 1 ? '' : 's'}${updated}${live ? ' · updates every minute while games are live' : ''}${d.stale ? ' · source is slow, showing the last saved scores' : ''}${lg === 'usports' ? ' · Canada West games first' : ''}. Tap a game for starters, top performers, team stats${lg === 'usports' ? '' : ' and injuries'}.</div>
+      ${prevGames.length ? `<h3 class="sec">Last night's results · ${esc(nice(state.prev.date))}</h3><div class="grid">${prevGames.map(card).join('')}</div><h3 class="sec">Today's games · ${esc(nice(d.date))}</h3>` : ''}
       ${games.length ? `<div class="grid">${games.map(card).join('')}</div>` : '<div class="empty">No games this day.</div>'}`;
     document.getElementById('prev').onclick = () => shiftDay(-1);
     document.getElementById('next').onclick = () => shiftDay(1);

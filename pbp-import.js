@@ -210,6 +210,7 @@
     const usRoster = JSON.parse(JSON.stringify(opts.usRoster || []));
     const oppRoster = JSON.parse(JSON.stringify(opts.oppRoster || []));
     const ids = { us: new Map(), them: new Map() };   // box/pbp name → tracker id
+    const boxNames = { us: [], them: [] };            // [box score name, tracker id]
 
     function attach(list, team, boxTeam) {
       (boxTeam ? boxTeam.players : []).forEach(bp => {
@@ -228,6 +229,7 @@
         if (!p.num && bp.num) p.num = bp.num;
         bp.id = p.id;
         ids[team].set(norm(bp.name), p.id);
+        boxNames[team].push([bp.name, p.id]);
       });
     }
     attach(usRoster, "us", box[usSide]);
@@ -237,6 +239,10 @@
       if (!by) return null;
       const k = norm(by);
       if (ids[team].has(k)) return ids[team].get(k);
+      /* the box score writes the same names ("Alba Gabaldon, Jose Miguel"),
+         so it settles two-word surnames that a first-last roster can't */
+      const hit = boxNames[team].find(b => sameName(b[0], by)) || boxNames[team].find(b => closeName(b[0], by));
+      if (hit) { ids[team].set(k, hit[1]); return hit[1]; }
       const list = team === "us" ? usRoster : oppRoster;
       let p = list.find(x => sameName(lastFirst(x.name), by)) || list.find(x => closeName(lastFirst(x.name), by));
       if (!p) {
@@ -322,7 +328,7 @@
           }
           if (s.kind === "shot" || s.kind === "to") break;
         }
-        if (a.andOf) continue;
+        if (a.andOf) { delete a.trip; continue; }      // written with the basket, not as its own trip
       }
       if (foul) { foul.used = true; a.fouler = foul.pl; a.foulCount = foul.teamFoulsBefore; }
       a.noFoul = !foul;
@@ -385,7 +391,9 @@
           /* every sub at this moment goes in as one swap */
           const ins = [], outs = [];
           let j = k;
-          for (; j < pa.length && pa[j].c === a.c && (pa[j].kind === "in" || pa[j].kind === "out" || pa[j].team !== "us"); j++) {
+          /* only other subs are skipped over here: anything else at this
+             moment (their free throws, a foul) is still to be written */
+          for (; j < pa.length && pa[j].c === a.c && (pa[j].kind === "in" || pa[j].kind === "out"); j++) {
             const b = pa[j];
             if (b.team !== "us" || !b.pl) continue;
             if (b.kind === "in" && ins.indexOf(b.pl) < 0 && floor.indexOf(b.pl) < 0) ins.push(b.pl);

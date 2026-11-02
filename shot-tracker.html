@@ -1762,7 +1762,17 @@ function tally(list) {
   t.toRate = t.n ? t.to / t.n : null;
   return t;
 }
-const score = g => { const A = attempts(g); return { us: tally(A.filter(a => a.team === "us")).pts, them: tally(A.filter(a => a.team === "them")).pts }; };
+/* Every point, including free throws that weren't a shot chance (bonus or
+   technical FTs, e.g. from an imported play-by-play), the same way derive()
+   keeps the score. */
+const score = g => {
+  const s = { us: 0, them: 0 };
+  (g.events || []).forEach(e => {
+    if (e.type === "shot") { if (e.made) s[e.team] += e.cls === "three" ? 3 : 2; if (e.and1 && e.ftMade) s[e.team]++; }
+    else if (e.type === "ft") s[e.team] += (String(e.seq || "").match(/M/g) || []).length;
+  });
+  return s;
+};
 const myChances = () => chances(App.game).filter(c => c.team === App.team);
 const roster = (g, t) => (t === "us" ? g.us.roster : g.opp.roster) || [];
 const pnameOf = (g, id) => { const p = roster(g, "us").concat(roster(g, "them")).find(x => x.id === id); return p ? ("#" + p.num + " " + (p.name || "")).trim() : "—"; };
@@ -2649,7 +2659,7 @@ function renderCourt() {
   const placed = mine.filter(a => !(a.ev.pbp && a.ev.pbp.todo));
   const cur = rvCurrent();
   host.innerHTML = courtSVG(markers(placed) +
-    (cur && cur.x != null ? '<circle class="mk-focus" cx="' + cur.x + '" cy="' + cur.y + '" r="15"/>' : ""), "tapcourt");
+    (cur && cur.type === "shot" && cur.cls === "rim" ? '<circle class="mk-focus" cx="' + cur.x + '" cy="' + cur.y + '" r="15"/>' : ""), "tapcourt");
   const t = tally(mine);
   $("#courtHint").innerHTML = mine.length
     ? "Tap the spot it happened · <b>" + t.n + "</b> chances · <b>" +

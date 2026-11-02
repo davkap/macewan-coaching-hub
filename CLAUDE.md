@@ -126,6 +126,29 @@ into the Database's event format (the format the old loggers used) so every view
 
 If you change either side, keep these names in sync or the Database will count plays wrong.
 
+### Play-by-play import and film review (Nov 2026)
+
+Setup → "Import play-by-play" builds a whole game from a school's Sidearm box score page
+(macewangriffins.ca, mrucougars.com, … the page with the Play-By-Play tab): from a link through
+`netlify/functions/pbp-fetch.js` (only addresses containing "boxscore"; some school sites block
+servers), or from the page saved with Ctrl+S and uploaded. `pbp-import.js` (`GriffinPBP`) reads it:
+- the team for each play comes from its column (left = visitors, right = home), players are
+  matched to rosters through the box score (numbers, two-word surnames, scorer typos), Q1
+  starters from the box score's GS `*`, later quarters from who plays before being subbed in.
+- every shot, FT trip (shooting foul vs bonus), and-1, turnover (steal = live ball, own foul =
+  offensive foul), rebound, foul, sub (one swap per moment) and timeout becomes a normal event.
+  Fast-break plays get trigger TRANS, tip-ins/putbacks ORB.
+- checked on both MRU games (Oct 30-31 2026): final score, every player's points and every
+  player's minutes match the box score. `build()` warns when points don't add up.
+
+What only film shows is marked `pbp.todo` on the event. The Track tab then shows a "Film
+review" banner for the end picked by Our/Their offence: tap the spot (or "At the rim", "No
+spot" for turnovers, "Not a shot" for bonus FTs) and the usual sheet asks only the missing
+questions (C&S/OTD, contest, who was guarding, trigger). "Who was guarding?" lists the five on
+the floor at that play (`onFloor` uses `D.meta[id].lineup` during review). Unplaced imported
+plays aren't drawn on the Track court. Until a play is reviewed its contest is blank, which the
+Database bridge counts as contested.
+
 ## Pages, navigation and phones
 
 - Every page loads `/site-responsive.css` (shared phone/tablet fixes: no sideways scrolling

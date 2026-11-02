@@ -294,6 +294,20 @@ label.fld textarea{resize:vertical;font-size:13px;line-height:1.5}
 .demo b{font-weight:600;color:var(--ink)}
 .demo button{flex:none;font-family:var(--disp);font-size:12.5px;font-weight:600;letter-spacing:.05em;
   text-transform:uppercase;color:var(--brand);text-decoration:underline}
+/* ---------- film review (plays imported from the play-by-play) ---------- */
+.rv{background:var(--panel);border:2px solid var(--brand);border-radius:12px;padding:11px 12px;margin-bottom:12px;box-shadow:var(--shadow)}
+.rv-top{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:600}
+.rv-what{font-size:16px;font-weight:600;color:var(--ink);padding:5px 0 2px;line-height:1.35}
+.rv-ask{font-size:13px;color:var(--ink-2)}
+.rv-btns{display:flex;flex-wrap:wrap;gap:7px;padding-top:9px}
+.rv-btns button{flex:1;min-width:96px;min-height:42px;border:1px solid var(--rule-strong);border-radius:9px;
+  background:var(--panel-3);font-size:13px;font-weight:600;color:var(--ink)}
+.rv-btns button.pri{background:var(--brand);color:var(--on-brand);border-color:var(--brand)}
+.mk-focus{fill:none;stroke:var(--brand);stroke-width:3;stroke-dasharray:5 4}
+.pbpprev{background:var(--panel-3);border-radius:9px;padding:10px 11px;margin-top:10px;font-size:13px;line-height:1.5;color:var(--ink-2)}
+.pbpprev b{color:var(--ink)}
+.pbpprev ul{margin:6px 0 0 18px;padding:0;color:#b26a00}
 /* ---------- analysis ---------- */
 .read{display:flex;gap:9px;padding:11px 0;border-bottom:1px solid var(--rule)}
 .read:last-child{border-bottom:0}
@@ -414,6 +428,7 @@ img{max-width:100%}
   </main>
 </div>
 
+<script src="/pbp-import.js"></script>
 <script>
 /* ---- inlined from js/core.js ---- */
 /* ============================================================
@@ -1829,7 +1844,13 @@ function recompute() {
   try { App.D = derive(App.game, App.S, nowGs()); }
   catch (e) { App.D = { lineup: [], box: {}, meta: {}, stints: [] }; }
 }
-const onFloor = () => (App.D && App.D.lineup) || [];
+/* In film review the question is about a play from earlier in the game, so
+   "on the floor" means the five at that moment, not at the end. */
+const onFloor = () => {
+  const w = App.wiz, m = w && w.review && App.D && App.D.meta[w.review];
+  if (m && m.lineup && m.lineup.length) return m.lineup;
+  return (App.D && App.D.lineup) || [];
+};
 const playerById = id => roster(App.game, "us").concat(roster(App.game, "them")).find(p => p.id === id) || null;
 const minutesOf = id => (App.D && App.D.box && App.D.box[id] ? App.D.box[id].min : 0);
 
@@ -2125,6 +2146,7 @@ function dFromEvent(ev) {
 }
 
 function finish() {
+  if (App.wiz && App.wiz.review) { rvFinish(); return; }
   const d = App.wiz.d;
   const at = d.cAt != null ? d.cAt : tapClock();
   const alreadyStopped = !!App.wiz.stopped;   // the whistle stopped it earlier
@@ -2388,6 +2410,221 @@ function renderSheet() {
   document.body.appendChild(scrim); document.body.appendChild(sheet);
 }
 
+/* ---------- play-by-play import + film review ----------
+   pbp-import.js turns a school's box score page into this game's events:
+   every shot, FT trip, turnover, rebound, foul, sub and timeout, with the
+   right player, clock and five on the floor. What only film can tell (the
+   spot, trigger, contest, C&S/OTD, who was guarding) is marked pbp.todo, and
+   the Track tab walks the coach through those plays one at a time, on
+   whichever end the Our/Their offence switch shows. */
+function rvQueue() {
+  const skip = (App.rv && App.rv.skip) || [];
+  const q = (App.game.events || []).filter(e => e.pbp && e.pbp.todo && e.team === App.team);
+  return q.filter(e => skip.indexOf(e.id) < 0).concat(q.filter(e => skip.indexOf(e.id) > -1));
+}
+const rvCurrent = () => (App.rvOff ? null : rvQueue()[0] || null);
+
+function rvDescribe(ev) {
+  const g = App.game;
+  const who = ev.pl ? pnameOf(g, ev.pl) : teamLbl(ev.team);
+  const when = periodName(ev.p) + " " + fmtClock(ev.c).replace(/\.\d$/, "");
+  let what;
+  if (ev.type === "to") {
+    what = who + " · turnover" + (ev.kind === "Offensive foul" ? " (offensive foul)"
+      : ev.live ? " (stolen" + (ev.stl ? " by " + pnameOf(g, ev.stl) : "") + ")" : "");
+  } else if (ev.type === "ft") {
+    const m = (String(ev.seq || "").match(/M/g) || []).length;
+    what = who + " · fouled, " + m + " of " + String(ev.seq || "").length + " free throws";
+  } else {
+    const kind = { "3PTR": "3", JUMPER: "jumper", LAYUP: "layup", DUNK: "dunk", TIPIN: "tip-in" }[ev.pbp && ev.pbp.shot] || SHOT_CLASS[ev.cls];
+    what = who + " · " + (ev.made ? "made " : "missed ") + kind + (ev.and1 ? " + and-1" : "") +
+      (ev.ast ? " · assist " + pnameOf(g, ev.ast) : "") + (ev.blk ? " · blocked by " + pnameOf(g, ev.blk) : "");
+  }
+  return { when, what };
+}
+
+function rvBanner() {
+  const evs = App.game.events || [];
+  if (!evs.some(e => e.pbp)) return "";
+  const q = rvQueue();
+  const elsewhere = evs.filter(e => e.pbp && e.pbp.todo && e.team !== App.team).length;
+  if (!q.length) {
+    return elsewhere
+      ? '<div class="demo"><span><b>Film review:</b> this end is done. ' + elsewhere + " left on " +
+        (App.team === "us" ? "their" : "our") + ' offence.</span><button data-rv="flip">Switch</button></div>'
+      : "";
+  }
+  if (App.rvOff) return '<div class="demo"><span><b>Film review paused.</b> ' + q.length +
+    " plays on this end still need a spot.</span><button data-rv=\"resume\">Resume</button></div>";
+  const ev = q[0], D = rvDescribe(ev);
+  const skipped = ((App.rv && App.rv.skip) || []).indexOf(ev.id) > -1;
+  let ask, btns = "";
+  if (ev.type === "to") { ask = "Tap where the ball was lost."; btns += '<button data-rv="nospot">No spot</button>'; }
+  else if (ev.type === "ft" && !ev.cls) { ask = "They were in the bonus. If he was fouled shooting, tap where; if not:"; btns += '<button data-rv="bonus" class="pri">Not a shot</button>'; }
+  else if (ev.type === "ft") { ask = "Tap where he was fouled shooting."; btns += '<button data-rv="bonus">Not a shot</button>'; }
+  else {
+    ask = "Tap where the shot went up.";
+    if (ev.cls === "rim") btns += '<button data-rv="keep" class="pri">At the rim</button>';
+  }
+  btns += '<button data-rv="skip">Skip for now</button><button data-rv="stop">Pause</button>';
+  return '<div class="rv" role="status"><div class="rv-top"><span>Film review · ' +
+    (App.team === "us" ? "our" : "their") + " offence</span><span>" + q.length + " left</span></div>" +
+    '<div class="rv-what"><span class="tnum">' + esc(D.when) + "</span> · " + esc(D.what) + "</div>" +
+    '<div class="rv-ask">' + esc(ask) + (skipped ? " (skipped earlier)" : "") + "</div>" +
+    '<div class="rv-btns">' + btns + "</div></div>";
+}
+
+/* Open the usual question sheet for an imported play, with everything the
+   play-by-play already knows filled in, so only the film questions are asked.
+   `how`: a tap (x, y), "keep" (the marked spot) or "nospot". */
+function rvStart(ev, x, y, how) {
+  const d = dFromEvent(ev);
+  if (how === "nospot") {
+    Object.assign(d, { x: null, y: null, cls: null, zone: null });
+  } else if (how !== "keep") {
+    const c = classifyPoint(x, y, App.S.rimRadiusM);
+    let cls = c.cls, zone = c.zone;
+    if (ev.type !== "to") {
+      /* a 2 is a 2: a tap just past the arc on a scored two keeps it a two */
+      const three = ev.type === "ft" ? !!(ev.pbp && ev.pbp.ftTrip === 3) : ev.cls === "three";
+      if ((cls === "three") !== three) {
+        cls = three ? "three" : (ev.cls && ev.cls !== "three" ? ev.cls : "mid");
+        zone = nearestZone(cls, x, y);
+      }
+    }
+    Object.assign(d, { x: Math.round(x), y: Math.round(y), cls, zone });
+  }
+  if (d.cls === "three") { if (!ev.st) delete d.st; } else d.st = null;
+  if (d.res !== "to" && !ev.ct) delete d.ct;
+  if (!ev.pt || ev.pt === "Unknown") delete d.pt;
+  d.cAt = ev.c;
+  App._allPlayers = false;
+  App.wiz = { d, review: ev.id };
+  nextStep();
+}
+
+function rvFinish() {
+  const w = App.wiz, d = w.d;
+  App.wiz = null;
+  const i = App.game.events.findIndex(e => e.id === w.review);
+  if (i < 0) { renderAll(); return; }
+  const ev = App.game.events[i];
+  const next = chanceEventFrom(d);
+  next.id = ev.id; next.p = ev.p; next.c = ev.c;
+  /* what the scorer recorded stays exactly as recorded */
+  ["ast", "blk", "blocked", "fouler", "stl", "noFoul", "pqOverride"].forEach(k => { if (ev[k] != null) next[k] = ev[k]; });
+  if (ev.type === "ft") { next.seq = ev.seq; delete next.ftUnknown; }
+  if (ev.type === "shot" && ev.and1) { next.ftMade = !!ev.ftMade; delete next.ftUnknown; }
+  next.pbp = Object.assign({}, ev.pbp, { todo: false });
+  App.game.events[i] = next;
+  if (App.rv) App.rv.skip = App.rv.skip.filter(id => id !== ev.id);
+  save(); renderAll();
+  const c = chances(App.game).find(a => a.id === next.id);
+  toast(describeEvent(next) + (c ? "  ·  " + tierOf(c.grade).name + " " + c.grade : ""));
+}
+
+/* Bonus free throws: points, but not a shot chance. */
+function rvNotAShot(ev) {
+  const i = App.game.events.findIndex(e => e.id === ev.id);
+  if (i < 0) return;
+  const n = Object.assign({}, ev);
+  ["cls", "zone", "x", "y", "preset", "st", "ct", "dfn"].forEach(k => delete n[k]);
+  n.pbp = Object.assign({}, ev.pbp, { todo: false, shooting: false });
+  App.game.events[i] = n;
+  save(); renderAll();
+  toast("Bonus free throws: points kept, not counted as a shot");
+}
+
+function rvAction(act) {
+  const ev = rvCurrent();
+  if (act === "resume") App.rvOff = false;
+  else if (act === "stop") App.rvOff = true;
+  else if (act === "flip") { App.team = App.team === "us" ? "them" : "us"; App.F.pl = ""; }
+  else if (!ev) return;
+  else if (act === "skip") { App.rv = App.rv || { skip: [] }; if (App.rv.skip.indexOf(ev.id) < 0) App.rv.skip.push(ev.id); }
+  else if (act === "keep") { rvStart(ev, null, null, "keep"); return; }
+  else if (act === "nospot") { rvStart(ev, null, null, "nospot"); return; }
+  else if (act === "bonus") { rvNotAShot(ev); return; }
+  renderAll();
+}
+
+/* Conference team for a box score name: "Mount Royal University" → Mount Royal Cougars. */
+function cwFind(name, abbr) {
+  const n = String(name || "").toLowerCase();
+  const list = cwOpponents(App.S.teamShort);
+  const byName = list.slice().sort((a, b) => b.name.length - a.name.length).find(t => {
+    const school = t.name.toLowerCase().split(" ").slice(0, -1).join(" ");
+    return school && n.indexOf(school) > -1;
+  });
+  return byName || list.find(t => t.short.toUpperCase() === String(abbr || "").toUpperCase()) || null;
+}
+
+async function pbpLoad(kind, arg) {
+  App._pbp = null; App._pbpMsg = "Reading the play-by-play…"; App._pbpBusy = true;
+  renderSetup();
+  try {
+    let html;
+    if (kind === "url") {
+      const r = await fetch("/.netlify/functions/pbp-fetch?url=" + encodeURIComponent(arg));
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.html) throw new Error(j.error || "Couldn't load that link. Save the page and upload it instead.");
+      html = j.html;
+    } else html = await arg.text();
+    pbpPrepare(html);
+  } catch (e) { App._pbp = null; App._pbpMsg = String((e && e.message) || e); }
+  App._pbpBusy = false;
+  renderSetup();
+}
+
+function pbpPrepare(html) {
+  if (!window.GriffinPBP) throw new Error("The importer didn't load. Reload the page and try again.");
+  const parsed = GriffinPBP.parseHTML(html);
+  if (!parsed.periods.some(p => p.rows.length))
+    throw new Error("No play-by-play found. Use the game's box score page, the one with the Play-By-Play tab.");
+  const usRoster = Store.roster().length ? Store.roster() : griffinsRoster();
+  const opts = { usRoster, playTypes: App.S.playTypes, uid };
+  let B = GriffinPBP.build(parsed, opts);
+  const team = cwFind(B.summary.them.name, B.summary.them.abbr);
+  if (team) B = GriffinPBP.build(parsed, Object.assign({}, opts, { oppRoster: cwRoster(team) }));
+  App._pbp = { B, team, home: B.usSide === "R" };   // Sidearm lists the visitors on the left
+  App._pbpMsg = "";
+}
+
+function pbpPreview() {
+  const P = App._pbp;
+  if (!P) return App._pbpMsg ? '<div class="note" style="color:' + (App._pbpBusy ? "var(--ink-3)" : "#b26a00") +
+    ';font-weight:600">' + esc(App._pbpMsg) + "</div>" : "";
+  const s = P.B.summary, opp = P.team ? P.team.name : s.them.name;
+  const short = P.team ? P.team.short : s.them.abbr;
+  const dupe = Store.index().some(x => x.date === s.date && (x.opp === opp || x.opp === s.them.name));
+  let h = '<div class="pbpprev"><b>' + esc(App.S.teamName) + " " + s.us.pts + " – " + s.them.pts + " " + esc(opp) +
+    "</b> (" + (P.home ? "home" : "away") + ")<br>" + esc(s.date || "Date not found: set it in This game") + " · " +
+    s.periods + " periods · " + s.shots + " shots, " + s.trips + " free-throw trips, " + s.tos + " turnovers<br>" +
+    "<b>" + s.todo + "</b> plays to place in film review (both ends). Everything else is already filled in.";
+  if (P.B.warnings.length) h += "<ul>" + P.B.warnings.map(w => "<li>" + esc(w) + "</li>").join("") + "</ul>";
+  if (dupe) h += '<div style="padding-top:6px">You already have a game vs ' + esc(short) + " on this date on this device. " +
+    "This builds a separate game; don't track the same game both ways or the Database will count it twice.</div>";
+  return h + '<div class="btnrow" style="padding-top:9px"><button class="btn" data-act="pbpcreate">Build this game</button>' +
+    '<button class="btn ghost" data-act="pbpcancel">Cancel</button></div></div>';
+}
+
+function pbpCreate() {
+  const P = App._pbp; if (!P) return;
+  const B = P.B, s = B.summary;
+  const opp = P.team || { name: s.them.name, short: s.them.abbr || "OPP" };
+  const g = newGame(B.usRoster, { oppName: opp.name, oppShort: opp.short, date: s.date || localDate(),
+    venue: P.home ? "Home" : "Away", oppRoster: B.oppRoster });
+  g.events = B.events;
+  const last = B.events[B.events.length - 1];
+  g.clock = { period: last ? last.p : 4, remaining: 0, running: false, startedAt: 0, startRemaining: 0 };
+  g.imported = { at: Date.now(), from: "play-by-play" };
+  App.game = g;
+  App._pbp = null; App._pbpMsg = ""; App._pbpUrl = ""; App._oppOther = false;
+  App.rv = { skip: [] }; App.rvOff = false; App.team = "us";
+  save(); App.tab = "track"; renderAll();
+  toast("Game built from the play-by-play · " + s.us.pts + "–" + s.them.pts);
+}
+
 /* ---------- court ---------- */
 function markers(list) {
   let s = "";
@@ -2409,17 +2646,20 @@ function markers(list) {
 function renderCourt() {
   const host = $("#courtHost"); if (!host) return;
   const mine = myChances();
-  host.innerHTML = courtSVG(markers(mine), "tapcourt");
+  const placed = mine.filter(a => !(a.ev.pbp && a.ev.pbp.todo));
+  const cur = rvCurrent();
+  host.innerHTML = courtSVG(markers(placed) +
+    (cur && cur.x != null ? '<circle class="mk-focus" cx="' + cur.x + '" cy="' + cur.y + '" r="15"/>' : ""), "tapcourt");
   const t = tally(mine);
   $("#courtHint").innerHTML = mine.length
     ? "Tap the spot it happened · <b>" + t.n + "</b> chances · <b>" +
       pct(t.fgm, t.fga) + "</b> FG · " + t.to + " TO · PQ <b>" + fmt2(t.pqAvg) + "</b>"
     : "Tap where the shot went up, or where the ball was lost";
   const banner = $("#demoBanner");
-  if (banner) banner.innerHTML = App.game.demo
+  if (banner) banner.innerHTML = rvBanner() + (App.game.demo
     ? '<div class="demo"><span><b>Sample game.</b> Your real roster, invented shots, so the ' +
       'chart and report are not empty.</span><button data-act="wipe">Clear it</button></div>'
-    : "";
+    : "");
   const evs = App.game.events, ev = evs[evs.length - 1];
   let line = "Nothing logged yet.";
   if (ev) {
@@ -2438,6 +2678,8 @@ function courtTap(e) {
   const r = svg.getBoundingClientRect();
   const x = clamp((e.clientX - r.left) / r.width * COURT.w, 0, COURT.w);
   const y = clamp((e.clientY - r.top) / r.height * COURT.h, 0, COURT.h);
+  const cur = rvCurrent();
+  if (cur) { rvStart(cur, x, y); return; }
   const c = classifyPoint(x, y, App.S.rimRadiusM);
   startShot({ x: Math.round(x), y: Math.round(y), cls: c.cls, zone: c.zone });
 }
@@ -2783,6 +3025,18 @@ function renderSetup() {
   const tog = (k, title, sub) => '<div class="sw"><div class="sw-t">' + esc(title) + "<i>" + esc(sub) + '</i></div>' +
     '<button class="tog" role="switch" data-tog="' + k + '" aria-checked="' + (S[k] ? "true" : "false") + '" aria-label="' + esc(title) + '"></button></div>';
   el.innerHTML =
+    '<div class="card" style="border-top:4px solid var(--brand)"><h3>Import play-by-play</h3>' +
+    '<label class="fld"><span>Box score link</span><input id="pbpUrl" inputmode="url" ' +
+    'placeholder="https://…/boxscore/…" value="' + esc(App._pbpUrl || "") + '"></label>' +
+    '<div class="btnrow"><button class="btn" data-act="pbpfetch"' + (App._pbpBusy ? " disabled" : "") + '>Load from link</button>' +
+    '<label class="btn ghost" style="cursor:pointer">Upload saved page<input id="pbpFile" type="file" ' +
+    'accept=".html,.htm,text/html" hidden></label></div>' +
+    pbpPreview() +
+    '<div class="note">Builds the whole game from the official play-by-play: every shot, free throw, rebound, ' +
+    'turnover, foul and sub, with the five on the floor. Then the Track tab walks you through each shot to tap ' +
+    'the spot, trigger and contest while you watch film. If the link won\'t load, open the box score in your ' +
+    'browser, save the page (Ctrl+S or Cmd+S) and upload the file.</div></div>' +
+
     '<div class="card"><h3>This game</h3>' +
     opponentPicker(g, S) +
     '<label class="fld"><span>Date</span><input id="sDate" type="date" value="' + esc(g.date) + '"></label>' +
@@ -3764,6 +4018,8 @@ function wire() {
   });
   $("#pane-track").addEventListener("click", e => {
     if (e.target.closest('[data-act="wipe"]')) clearDemo();
+    const rv = e.target.closest("[data-rv]");
+    if (rv) rvAction(rv.dataset.rv);
   });
   $("#undoBtn").addEventListener("click", undoLast);
   $("#quickActs").addEventListener("click", e => {
@@ -3844,6 +4100,13 @@ function wire() {
     else if (act === "sync") sendToServer(b);
     else if (act === "sendall") sendAllGames();
     else if (act === "dbsync") bridgeToMacEwanDatabase(App.game, App.D, true);
+    else if (act === "pbpfetch") {
+      const url = (($("#pbpUrl") || {}).value || "").trim();
+      if (!url) { toast("Paste the box score link first"); return; }
+      App._pbpUrl = url; pbpLoad("url", url);
+    }
+    else if (act === "pbpcreate") pbpCreate();
+    else if (act === "pbpcancel") { App._pbp = null; App._pbpMsg = ""; renderSetup(); }
     else if (act === "newgame") {
       const r = Store.roster().length ? Store.roster() : roster(App.game, "us");
       App.game = newGame(r, { oppName: "Opponent", oppShort: "OPP" });
@@ -3851,6 +4114,7 @@ function wire() {
     } else if (act === "wipe") clearDemo();
   });
   $("#pane-setup").addEventListener("change", e => {
+    if (e.target.id === "pbpFile") { const f = e.target.files && e.target.files[0]; if (f) pbpLoad("file", f); return; }
     if (e.target.id === "sTrkName") { localStorage.setItem('pqt.trackerName', e.target.value.trim()); bridgeToMacEwanDatabase(App.game, App.D, false); renderSetup(); }
     else if (e.target.id === "sTrkRole") { localStorage.setItem('pqt.trackerRole', e.target.value); bridgeToMacEwanDatabase(App.game, App.D, true); }
   });
@@ -3860,6 +4124,7 @@ function wire() {
     else if (id === "sOppS") g.opp.short = e.target.value.toUpperCase();
     else if (id === "sDate") g.date = e.target.value;
     else if (id === "sRim") { const v = parseFloat(e.target.value); if (v > 0) { App.S.rimRadiusM = v; Store.saveSettings(App.S); } }
+    else if (id === "pbpUrl") { App._pbpUrl = e.target.value; return; }
     else if (id === "sApi") { App.S.apiBase = e.target.value.trim(); Store.saveSettings(App.S); return; }
     else if (id === "sKey") { App.S.ai.apiKey = e.target.value.trim(); Store.saveSettings(App.S); return; }
     else if (id === "sTok") { App.S.apiToken = e.target.value.trim(); Store.saveSettings(App.S); return; }

@@ -401,9 +401,11 @@
           }
           k = j - 1;
           if (!ins.length && !outs.length) continue;
-          push({ type: "sub", team: "us", in: ins, out: outs }, a);
-          const nf = floor.map(id => (outs.indexOf(id) > -1 && ins.length ? ins.shift() : id)).filter(id => outs.indexOf(id) < 0);
-          floor = nf.concat(ins.filter(id => nf.indexOf(id) < 0));
+          push({ type: "sub", team: "us", in: ins.slice(), out: outs.slice() }, a);
+          /* same slot rule as the tracker: the incoming player takes the outgoing one's place */
+          const q = ins.slice();
+          const nf = floor.map(id => (outs.indexOf(id) > -1 && q.length ? q.shift() : id)).filter(id => outs.indexOf(id) < 0);
+          floor = nf.concat(q.filter(id => nf.indexOf(id) < 0));
           continue;
         }
 

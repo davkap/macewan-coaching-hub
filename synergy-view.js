@@ -269,7 +269,52 @@
     return out;
   }
 
-  window.GriffinSynergyView = { load, teamPanel, message, byPlayer, playerSummary, reportBullets, css, short, R };
+  // ---- PDF (pdf-export.js blocks) ----------------------------------------
+  // The team panel as PDF blocks, for the scouting report download (David, Nov 2026:
+  // the downloaded report should carry the Synergy play types too).
+  function pdfBlocks(d) {
+    if (!d || d.error || !d.pt) return [];
+    const games = (d.games || []).length;
+    const ptRows = rows => (rows || []).filter(r => r[R.poss] > 0).sort((a, b) => b[R.poss] - a[R.poss])
+      .map(r => [short(r[R.name]), f(r[R.pct], 1) + '%', f(r[R.ppp], 2), r[R.rating] || 'small sample']);
+    const get = (rows, n) => (rows || []).find(r => r[R.name] === n);
+    const sit = SIT.map(n => [n, get(d.sit && d.sit.off, n), get(d.sit && d.sit.def, n)])
+      .filter(x => (x[1] && x[1][R.poss]) || (x[2] && x[2][R.poss]))
+      .map(([n, o, df]) => [SIT_LABEL[n] || n, o && o[R.poss] ? `${f(o[R.ppp], 2)} (${o[R.poss]})` : '-', df && df[R.poss] ? `${f(df[R.ppp], 2)} (${df[R.poss]})` : '-']);
+    const allO = get(d.st && d.st.off, 'All Field Goal Attempts');
+    const shots = SHOTS.map(([n, l]) => [l, get(d.st && d.st.off, n), get(d.st && d.st.def, n)])
+      .filter(x => (x[1] && x[1][R.fga]) || (x[2] && x[2][R.fga]))
+      .map(([l, o, df]) => [l, o && allO && allO[R.fga] ? Math.round(100 * o[R.fga] / allO[R.fga]) + '%' : '-', o && o[R.fga] ? f(o[R.fg], 1) + '%' : '-', df && df[R.fga] ? f(df[R.fg], 1) + '%' : '-']);
+    const out = [
+      { type: 'h2', text: 'Synergy play types' },
+      { type: 'p', size: 8.5, text: `*${games} game${games === 1 ? '' : 's'} logged${games ? ' (' + d.games.join(', ') + ')' : ''} - updated ${date(d.pulledAt)}${games < 4 ? '. Small sample: treat ratings as early reads.' : ''}*` }
+    ];
+    const off = ptRows(d.pt.off), def = ptRows(d.pt.def);
+    if (off.length) out.push({ type: 'h3', text: 'How they score (offence)' }, { type: 'table', head: ['Play type', '% of poss', 'PPP', 'Rating'], rows: off });
+    if (def.length) out.push({ type: 'h3', text: 'What they give up (defence)' }, { type: 'table', head: ['Play type', '% of poss', 'PPP allowed', 'Rating'], rows: def });
+    if (sit.length) out.push({ type: 'h3', text: 'Situations' }, { type: 'table', head: ['Situation', 'Their O PPP (poss)', 'Their D PPP allowed (poss)'], rows: sit });
+    if (shots.length) out.push({ type: 'h3', text: 'Shot profile' }, { type: 'table', head: ['Shot type', 'Their share', 'Their FG%', 'Allowed FG%'], rows: shots });
+    out.push({ type: 'p', size: 8, text: '*Rating compares their points per possession with every Synergy college team (Excellent to Poor). Source: Synergy Sports, MacEwan\'s subscription. Don\'t share outside the team.*' });
+    return out;
+  }
+  // reportBullets() HTML -> plain text for a PDF list item.
+  function bulletText(html) {
+    const t = String(html || '').replace(/<span class="syn-tag">[^<]*?Synergy([^<]*)<\/span>\s*/, (m, g) => `**Synergy${g.trim() ? ' ' + g.trim() : ''}:** `).replace(/<[^>]+>/g, '');
+    const el = document.createElement('textarea'); el.innerHTML = t;
+    return el.value.replace(/\s+/g, ' ').trim();
+  }
+  // A scout card's Synergy line (.synergy-box) as text.
+  function cardLineText(box) {
+    if (!box) return '';
+    return Array.from(box.children).map(div => {
+      const lbl = div.querySelector('.lbl');
+      const head = lbl ? lbl.textContent.trim() : '';
+      const rest = div.textContent.replace(head, '').replace(/\s+/g, ' ').trim();
+      return (head ? `**${head}:** ` : '') + rest;
+    }).filter(Boolean).join('  |  ');
+  }
+
+  window.GriffinSynergyView = { load, teamPanel, message, byPlayer, playerSummary, reportBullets, pdfBlocks, bulletText, cardLineText, css, short, R };
   const start = () => { mountPanels(); mountCards(); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();

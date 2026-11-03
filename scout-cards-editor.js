@@ -1346,8 +1346,10 @@
   }
 
   // Download the cards as a PDF (pdf-export.js, loaded on demand): one block per player
-  // with his tags, note and stats, in the same Starters / Bench order as the page.
-  // Synergy lines are left out (licensed numbers; a PDF gets passed around).
+  // with his tags, note, stats and Synergy line, in the same Starters / Bench order as
+  // the page. cardBlocks() is also used by the scouting report's Download PDF
+  // (opponent-scout.html loads this page in a hidden frame and calls
+  // window.GriffinScoutCardsPDF.blocks()), so report + cards come out as one PDF.
   function loadPdfMaker() {
     if (window.GriffinPDF) return Promise.resolve();
     return new Promise((res, rej) => {
@@ -1357,14 +1359,16 @@
       document.head.appendChild(s);
     });
   }
-  async function downloadPDF() {
+  function cardsTitle() {
+    return ((document.querySelector('header.title h1') || {}).textContent || `${teamSlug} scout cards`).trim();
+  }
+  function cardBlocks() {
     const wrapper = document.getElementById('scout-cards-wrapper') || document.getElementById('cards-wrapper') || document.body;
-    const title = (document.querySelector('header.title h1') || {}).textContent || `${teamSlug} scout cards`;
     const T = el => (el ? el.innerText : '').replace(/[ \t]+/g, ' ').replace(/\n\s*\n+/g, '\n').trim();
     const blocks = [];
     wrapper.querySelectorAll('.section-banner, .card').forEach(el => {
       if (el.classList.contains('section-banner')) { blocks.push({ type: 'h2', text: T(el) }); return; }
-      blocks.push({ type: 'keep', h: 170 });
+      blocks.push({ type: 'keep', h: 190 });
       blocks.push({ type: 'h3', text: '**' + T(el.querySelector('.player-header')).replace(/\*/g, '') + '**' });
       const tags = el.querySelector('.tactical-tags');
       if (tags) {
@@ -1380,12 +1384,25 @@
         const rows = Array.from(tbl.querySelectorAll('tbody tr')).map(tr => Array.from(tr.children).map(T));
         blocks.push({ type: 'table', head, rows, size: 8 });
       }
+      const syn = window.GriffinSynergyView && GriffinSynergyView.cardLineText(el.querySelector('.synergy-box'));
+      if (syn) blocks.push({ type: 'p', text: syn, size: 8.5 });
       blocks.push({ type: 'hr' });
     });
+    return blocks;
+  }
+  // The Synergy lines are drawn a moment after the cards: give them a few seconds.
+  async function synergyDrawn() {
+    if (!window.GriffinSynergyView) return;
+    const t0 = Date.now();
+    while (!document.querySelector('.synergy-box') && Date.now() - t0 < 4000) await new Promise(r => setTimeout(r, 200));
+  }
+  window.GriffinScoutCardsPDF = { blocks: async () => { await synergyDrawn(); return cardBlocks(); }, title: cardsTitle };
+
+  async function downloadPDF() {
     showToast('Making the PDF…');
     try {
       await loadPdfMaker();
-      await GriffinPDF.blocks(blocks, { title: title.trim(), filename: `${teamSlug}-scout-cards` });
+      await GriffinPDF.blocks(cardBlocks(), { title: cardsTitle(), filename: `${teamSlug}-scout-cards` });
       showToast('PDF downloaded');
     } catch (e) { showToast(e.message || 'Could not make the PDF'); }
   }

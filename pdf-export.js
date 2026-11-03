@@ -5,7 +5,8 @@
  *   GriffinPDF.markdown(md, { title, subtitle, filename })          report-style document
  *   GriffinPDF.table({ title, subtitle, head, rows, filename })     data table (landscape)
  *   GriffinPDF.blocks(blocks, { title, subtitle, filename, landscape })
- *     blocks: { type: 'h1'|'h2'|'h3'|'p'|'li'|'oli'|'quote'|'hr'|'table'|'space'|'keep', … }
+ *     blocks: { type: 'h1'|'h2'|'h3'|'p'|'li'|'oli'|'quote'|'hr'|'table'|'space'|'keep'|'page', … }
+ *     ('page' starts a new page; 'keep' starts one if less than h points are left)
  *     text uses **bold** and *italic*.
  */
 (function () {
@@ -186,6 +187,7 @@
         case 'table': table(bl.head || [], bl.rows || [], bl); break;
         case 'space': y -= bl.h || 8; break;
         case 'keep': need(bl.h || 100); break;
+        case 'page': if (y < H - TOP - 1) newPage(); break;
       }
     }
 

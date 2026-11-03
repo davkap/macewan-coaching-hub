@@ -563,6 +563,7 @@
     const btnCancel = document.getElementById('btn-cancel');
     const btnReset = document.getElementById('btn-reset');
     const btnDownload = document.getElementById('btn-download');
+    if (fileType === 'scout') { btnDownload.textContent = '📥 Download PDF (report + scout cards)'; btnDownload.title = 'One PDF: the scouting report with Synergy play types, then the player scout cards'; }
     
     let rawContent = '';
     let isEdited = false;
@@ -800,17 +801,76 @@
     });
 
     // Download the report as a PDF (what's on screen: saved edits merged, our section order).
-    // Synergy lines are left out: they're licensed numbers, and a PDF gets passed around.
+    // Logged-in users also get the Synergy play types (after the overview) and the Synergy
+    // reads under their sections, like the page. The scouting report PDF ends with the
+    // team's player scout cards (David, Nov 2026: one download for both).
+    function synergyIntoBlocks(blocks, d) {
+      if (!window.GriffinSynergyView || !d || d.error) return blocks;
+      const panel = GriffinSynergyView.pdfBlocks(d);
+      const firstH2 = blocks.findIndex(x => x.type === 'h2');
+      if (panel.length) blocks.splice(firstH2 < 0 ? blocks.length : firstH2, 0, ...panel);
+      if (fileType !== 'scout') return blocks;
+      const b = GriffinSynergyView.reportBullets(d);
+      const where = { offense: /^\d*\.?\s*offen[cs]e/i, defense: /^\d*\.?\s*defen[cs]e/i, attack: /how we attack/i, defend: /how we defend/i, special: /special situations/i };
+      for (let i = 0; i < blocks.length; i++) {
+        if (blocks[i].type !== 'h2') continue;
+        const key = Object.keys(where).find(k => where[k].test(String(blocks[i].text).trim()));
+        if (!key || !b[key].length) continue;
+        let end = i + 1;
+        while (end < blocks.length && blocks[end].type !== 'h2') end++;
+        blocks.splice(end, 0, ...b[key].map(h => ({ type: 'li', text: GriffinSynergyView.bulletText(h) })));
+      }
+      return blocks;
+    }
+    // The scout cards as they are on their page (coaches' saved edits, Synergy lines),
+    // read from that page in a hidden frame.
+    function scoutCardBlocks() {
+      return new Promise(resolve => {
+        const f = document.createElement('iframe');
+        f.setAttribute('aria-hidden', 'true');
+        f.tabIndex = -1;
+        f.style.cssText = 'position:absolute;left:-5000px;top:0;width:1200px;height:900px;visibility:hidden;border:0';
+        const t0 = Date.now();
+        let finished = false;
+        const done = v => { if (finished) return; finished = true; f.remove(); resolve(v); };
+        f.onload = () => {
+          const poll = async () => {
+            let w = null;
+            try { w = f.contentWindow; } catch (e) {}
+            if (!w) return done(null);
+            if ((w.__scoutCardsReady && w.GriffinScoutCardsPDF) || Date.now() - t0 > 12000) {
+              try { done(w.GriffinScoutCardsPDF ? { title: w.GriffinScoutCardsPDF.title(), blocks: await w.GriffinScoutCardsPDF.blocks() } : null); }
+              catch (e) { done(null); }
+            } else setTimeout(poll, 150);
+          };
+          poll();
+        };
+        setTimeout(() => done(null), 25000);
+        f.src = `/opponents/${teamSlug}/scout-cards.html`;
+        document.body.appendChild(f);
+      });
+    }
     btnDownload.addEventListener('click', async () => {
       const label = (FILE_TYPES[fileType] || {}).label || 'Report';
-      showToast('Making the PDF…');
+      const withCards = fileType === 'scout' && !!teamSlug;
+      showToast(withCards ? 'Making the PDF (report + scout cards)…' : 'Making the PDF…');
+      btnDownload.disabled = true;
       try {
-        await GriffinPDF.markdown(reorderScout(rawContent), {
+        const syn = window.GriffinSynergyView ? await GriffinSynergyView.load(teamSlug) : null;
+        let blocks = synergyIntoBlocks(GriffinPDF.mdBlocks(reorderScout(rawContent)), syn);
+        let missingCards = false;
+        if (withCards) {
+          const cards = await scoutCardBlocks();
+          if (cards && cards.blocks.length) blocks = blocks.concat([{ type: 'page' }, { type: 'h1', text: cards.title || 'Player scout cards' }], cards.blocks);
+          else missingCards = true;
+        }
+        await GriffinPDF.blocks(blocks, {
           title: `${teamNameFormatted}: ${label}`,
-          filename: GriffinPDF.fileName(`${teamSlug}-${label}`)
+          filename: GriffinPDF.fileName(`${teamSlug}-${label}${withCards && !missingCards ? '-and-scout-cards' : ''}`)
         });
-        showToast('PDF downloaded');
+        showToast(missingCards ? 'PDF downloaded (the scout cards could not be added this time)' : 'PDF downloaded');
       } catch (e) { showToast(e.message || 'Could not make the PDF'); }
+      btnDownload.disabled = false;
     });
 
     function showToast(msg) {

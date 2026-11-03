@@ -277,7 +277,15 @@ Downloads are PDFs (David, Oct 2026), made in the browser by `pdf-export.js` wit
 (`vendor/pdf-lib.min.js`, MIT, kept on the site so it works offline): the scouting report and profile
 (`opponent-scout.html`), the scout cards (`scout-cards-editor.js`), the Database views
 (`lineup-tracker.html`) and the Shot Tracker chances list. The Database and Shot Tracker also keep a
-"CSV (Excel)" button; drill files stay JSON. Synergy lines are left out of PDFs (licensed numbers).
+"CSV (Excel)" button; drill files stay JSON.
+- The scouting report's "Download PDF (report + scout cards)" makes ONE PDF: the report, then the
+  team's player scout cards on new pages (read from `opponents/<slug>/scout-cards.html` in a hidden
+  frame through `window.GriffinScoutCardsPDF.blocks()` in `scout-cards-editor.js`, so coaches' saved
+  card edits count). The profile download is the profile only.
+- Synergy in PDFs (David, Nov 2026, reversing the Oct rule): for a logged-in user the report PDF has
+  the Synergy play-type / situation / shot tables after the overview (`GriffinSynergyView.pdfBlocks`)
+  and the Synergy reads under their sections; scout card PDFs have each player's Synergy line. The
+  Synergy part carries a "don't share outside the team" line. Logged out, PDFs simply have no Synergy.
 The built-in PDF fonts only cover Western characters, so `GriffinPDF.clean` swaps arrows/emoji.
 
 ## Content saved from the site

@@ -142,6 +142,8 @@ servers), or from the page saved with Ctrl+S and uploaded. `pbp-import.js` (`Gri
   Fast-break plays get trigger TRANS, tip-ins/putbacks ORB.
 - checked on both MRU games (Oct 30-31 2026): final score, every player's points and every
   player's minutes match the box score. `build()` warns when points don't add up.
+- a shot written without a type ("GOOD by WILMES,DAVID", Winnipeg's scorer, Nov 2026) counts as a
+  two-point field goal of unknown type (`pbp.shot` "FG", placed at mid-range until film review).
 
 What only film shows is marked `pbp.todo` on the event. The Track tab then shows a "Film
 review" banner for the end picked by Our/Their offence: tap the spot (or "At the rim", "No

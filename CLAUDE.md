@@ -80,7 +80,9 @@ refuses to run without `--force`. Never regenerate the Database from it.
 
 When a coach edits a team's scout cards, `scout-cards-editor.js` saves a snapshot of the cards
 to Netlify Blobs and shows it to everyone. On load it puts the freshly built "U Sports" stats
-row back into the snapshot (and the "Last 5 Games" row, unless a coach typed it by hand).
+row back into the snapshot (and the "Last 5 Games" row, unless a coach typed it by hand: the
+built Last 5 numbers are remembered on the row as `data-auto-last5`; a row that still matches them,
+or a snapshot saved before Nov 2026 without the marker, is refreshed).
 Don't bump `data-template-version` in `build_scout_cards.js`: that discards every saved edit.
 
 The build fills every card from stats using the staff's rules (`closeoutFor` / `renderCard`

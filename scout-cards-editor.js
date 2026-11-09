@@ -42,8 +42,12 @@
   // version we read the fresh stats this page was built with, and put them
   // back into the restored cards:
   //  - the "U Sports" (season) row is always refreshed when fresh numbers exist;
-  //  - the "Last 5 Games" row is refreshed only if it was the automatic copy
-  //    of the season row (numbers a coach typed in by hand are kept).
+  //  - the "Last 5 Games" row is refreshed unless a coach typed it by hand. The
+  //    built numbers are remembered on the row (data-auto-last5), so a saved row
+  //    that still matches them is automatic. Snapshots saved before that marker
+  //    existed (Nov 2026) are treated as automatic: until then the check only
+  //    knew the old "copy of the season row" rule, so real Last 5 numbers from
+  //    box scores looked hand-typed and froze on the day of the edit.
   // Notes, tags, photos and card order from the saved version are untouched.
   let freshStats = null;
 
@@ -177,6 +181,9 @@
       const f = parseTags(el.textContent);
       if (f) el.setAttribute('data-auto-fields', JSON.stringify(f));
     });
+    document.querySelectorAll('.card .stats-table tbody tr:first-child').forEach(tr => {
+      tr.setAttribute('data-auto-last5', statCells(tr).join('|'));
+    });
   }
 
   function layoutOf(container) {
@@ -283,10 +290,14 @@
       if (rows.length < 2) return;
       const savedLast5 = statCells(rows[0]);
       const savedSeason = statCells(rows[1]);
-      const last5WasAutoCopy = savedLast5.join('|') === savedSeason.join('|') ||
-        savedLast5.every(v => v === '-' || v === '');
+      const autoLast5 = rows[0].getAttribute('data-auto-last5');
+      const last5IsAuto = autoLast5 == null || savedLast5.join('|') === autoLast5 ||
+        savedLast5.join('|') === savedSeason.join('|') || savedLast5.every(v => v === '-' || v === '');
       setStatCells(rows[1], fresh.season);
-      if (last5WasAutoCopy) setStatCells(rows[0], fresh.last5);
+      if (last5IsAuto && !fresh.last5.every(v => v === '-' || v === '')) {
+        setStatCells(rows[0], fresh.last5);
+        rows[0].setAttribute('data-auto-last5', fresh.last5.join('|'));
+      }
     });
   }
 

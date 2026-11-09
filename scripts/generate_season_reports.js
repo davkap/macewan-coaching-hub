@@ -149,7 +149,10 @@ function updateOpponentScout(slug, oppData, allData) {
     const pos = rMatch ? rMatch.pos : 'G/F';
     const yr = rMatch ? rMatch.elig : '-';
 
-    personnelTable += `| ${num} | ${p.name} | ${pos} | ${yr} | ${p.mpg} | ${p.ppg} | ${p.rpg} | ${p.a} | ${p.fg3Pct}% | ${role} |\n`;
+    // usportshoops gives total assists ("a"): show per game like the other columns.
+    const gp = parseFloat(p.gp || 0);
+    const apg = gp > 0 ? (parseFloat(p.a || 0) / gp).toFixed(1) : '0.0';
+    personnelTable += `| ${num} | ${p.name} | ${pos} | ${yr} | ${p.mpg} | ${p.ppg} | ${p.rpg} | ${apg} | ${p.fg3Pct}% | ${role} |\n`;
   }
 
   // Games table

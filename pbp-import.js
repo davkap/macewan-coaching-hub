@@ -139,7 +139,9 @@
   const firstLast = n => { const s = clean(n); if (!s.includes(",")) return s; const [l, f] = s.split(","); return clean(f) + " " + clean(l); };
 
   /* ---------- turning plays into tracker events ---------- */
-  const SHOT_RE = /^(GOOD|MISS)\s+(3PTR|JUMPER|LAYUP|DUNK|TIPIN|FT|HOOK|FADEAWAY)\b/;
+  /* Some scorers leave the shot type out ("GOOD by WILMES,DAVID", Winnipeg Nov 6 2026):
+     that is a two-point field goal of unknown type (a three is always written 3PTR). */
+  const SHOT_RE = /^(GOOD|MISS)(?:\s+(3PTR|JUMPER|LAYUP|DUNK|TIPIN|FT|HOOK|FADEAWAY)\b|\s*$)/;
 
   /* One play row → an action. `by` is the name after "by", flags are the
      scorer's bracketed notes: (fastbreak), (in the paint), (2nd chance)… */
@@ -151,7 +153,7 @@
     const by = m ? clean(m[2]) : "";
     const a = { what, by: /^TEAM$/i.test(by) ? "" : by, flags };
     const sh = what.match(SHOT_RE);
-    if (sh) { a.kind = sh[2] === "FT" ? "ft" : "shot"; a.made = sh[1] === "GOOD"; a.shot = sh[2]; }
+    if (sh) { a.kind = sh[2] === "FT" ? "ft" : "shot"; a.made = sh[1] === "GOOD"; a.shot = sh[2] || "FG"; }
     else if (/^REBOUND/.test(what)) { a.kind = "reb"; a.rtype = (what.match(/OFF|DEF|DEADB/) || [""])[0]; }
     else if (/^TURNOVE?R/.test(what)) a.kind = "to";
     else if (/^STEAL/.test(what)) a.kind = "stl";

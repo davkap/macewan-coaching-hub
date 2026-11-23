@@ -82,6 +82,22 @@ async function run() {
     fs.mkdirSync(dataDir, { recursive: true });
   }
 
+  // Box-score game logs go to their own file per team (data/games/<slug>.json),
+  // read by the team stats page and the player pages, so the main data file
+  // every page loads stays small. A team that failed to load keeps its old file.
+  const GAMES_DIR = path.join(dataDir, 'games');
+  if (!fs.existsSync(GAMES_DIR)) fs.mkdirSync(GAMES_DIR, { recursive: true });
+  for (const [slug, team] of Object.entries(results)) {
+    if (!team || !team.games) continue;
+    const file = {
+      slug, season: team.season, updatedAt: new Date().toISOString(), teamCode: team.teamCode || '',
+      fields: team.gameLogFields || [], games: team.games, logs: team.gameLogs || {}
+    };
+    fs.writeFileSync(path.join(GAMES_DIR, slug + '.json'), JSON.stringify(file), 'utf-8');
+    delete team.games; delete team.gameLogs; delete team.gameLogFields; delete team.teamCode;
+  }
+  console.log(`✅ Wrote box-score game logs to ${GAMES_DIR}`);
+
   fs.writeFileSync(DATA_JSON, JSON.stringify(results, null, 2), 'utf-8');
   console.log(`✅ Saved master dataset to ${DATA_JSON}`);
 

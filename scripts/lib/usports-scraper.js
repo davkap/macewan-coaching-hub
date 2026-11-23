@@ -293,11 +293,27 @@ function parseBoxScore(html) {
     }
     if (!cur) continue;
     const raw = row.split(/(?=<t[dh][\s>])/i).filter(c => /^<t[dh]/i.test(c));
+    // Team totals row: "* UBC Totals" in one cell spanning name/number/starter
+    // (name, |, mins, |, 3pt, %, |, FG, %, |, FT, %, |, OR, DR, REB, |, PF, |, A, TO, BLK, STL, |, PTS)
+    if (raw.length && /colspan=["']?3/i.test(raw[0]) && /totals/i.test(stripTags(raw[0]))) {
+      const tc = raw.map(c => stripTags(c.replace(/^<t[dh][^>]*>/i, '').split(/<\/t(?:d|h|able)>/i)[0]));
+      if (tc.length >= 25) {
+        const [fg3m, fg3a] = splitMadeAtt(tc[4]);
+        const [fgm, fga] = splitMadeAtt(tc[7]);
+        const [ftm, fta] = splitMadeAtt(tc[10]);
+        cur.totals = {
+          mins: num(tc[2]), fg3m, fg3a, fgm, fga, ftm, fta,
+          oreb: num(tc[13]), dreb: num(tc[14]), reb: num(tc[15]), pf: num(tc[17]),
+          a: num(tc[19]), to: num(tc[20]), blk: num(tc[21]), stl: num(tc[22]), pts: num(tc[24])
+        };
+      }
+      continue;
+    }
     // The player's name is the first left-aligned cell (some box scores leave
     // out the jersey-number column, so positions are counted from the name).
     const n = raw.findIndex(c => /^<td[^>]*align=["']?left/i.test(c));
     if (n < 0) continue;
-    const cells = raw.map(c => stripTags(c.replace(/^<t[dh][^>]*>/i, '').split(/<\/t[dh]>/i)[0]));
+    const cells = raw.map(c => stripTags(c.replace(/^<t[dh][^>]*>/i, '').split(/<\/t(?:d|h|able)>/i)[0]));
     // name, starter mark, |, mins, |, 3pt, %, |, FG, %, |, FT, %, |, OR, DR, REB, |, PF, |, A, TO, BLK, STL, |, PTS
     if (cells.length < n + 26) continue;
     const name = cells[n];
@@ -316,12 +332,22 @@ function parseBoxScore(html) {
   return sections;
 }
 
+// Date / location / game type at the top of a box score page.
+function parseBoxScoreMeta(html) {
+  const field = label => {
+    const m = String(html || '').match(new RegExp('<td>\\s*' + label + ':\\s*<td>([^<]*)', 'i'));
+    return m ? stripTags(m[1]) : '';
+  };
+  return { date: field('Date'), location: field('Location'), game: field('Game') };
+}
+
 const boxScoreCache = new Map();
 function getBoxScore(key) {
   if (!boxScoreCache.has(key)) {
     const [season, id] = key.split('|');
     boxScoreCache.set(key, fetchUrl(`https://usportshoops.ca/history/show-game-report.php?Gender=MBB&Season=${season}&Gameid=${id}`)
-      .then(parseBoxScore).catch(() => []));
+      .then(html => { const secs = parseBoxScore(html); secs.meta = parseBoxScoreMeta(html); secs.key = key; return secs; })
+      .catch(() => []));
   }
   return boxScoreCache.get(key);
 }
@@ -339,6 +365,7 @@ async function addBoxScoreStats(data) {
   }
   const rosterNames = new Set((data.roster || []).map(p => norm(p.name)).concat((data.playerStats || []).map(p => norm(p.name))));
   const lines = {};                                      // player -> [game lines, oldest first]
+  const gameList = [];                                   // [{ id, date, loc, opp, home, us, them }]
   let counted = 0;
   for (const sections of games) {
     if (!sections.length) continue;
@@ -347,6 +374,31 @@ async function addBoxScoreStats(data) {
       .sort((a, b) => b.hits - a.hits)[0];
     if (!ours || !ours.hits) continue;
     counted++;
+    // Whole-game totals for both teams (team stats, opponent stats, pace, ratings)
+    const theirs = sections.find(sec => sec !== ours.sec);
+    const sum = sec => {
+      if (!sec) return null;
+      if (sec.totals) return sec.totals;
+      const t = {};
+      ['mins', 'fg3m', 'fg3a', 'fgm', 'fga', 'ftm', 'fta', 'oreb', 'dreb', 'reb', 'pf', 'a', 'to', 'blk', 'stl', 'pts']
+        .forEach(k => { t[k] = sec.players.reduce((n, p) => n + (p[k] || 0), 0); });
+      return t;
+    };
+    const id = String(sections.key || '').split('|')[1] || '';
+    const ymd = id.match(/^M(\d{4})(\d{2})(\d{2})/);
+    gameList.push({
+      id,
+      date: (sections.meta && sections.meta.date) || '',
+      ymd: ymd ? `${ymd[1]}-${ymd[2]}-${ymd[3]}` : '',
+      loc: (sections.meta && sections.meta.location) || '',
+      type: (sections.meta && sections.meta.game) || '',
+      opp: theirs ? theirs.team : '',
+      home: null,                                        // set below from the game ids
+      us: sum(ours.sec),
+      them: sum(theirs)
+    });
+    const gi = gameList.length - 1;
+    ours.sec.players.forEach(p => { p.g = gi; });
     // Not every box score marks its starters; only those count for starts.
     const marked = ours.sec.players.some(p => p.starter);
     if (marked) data.startersMarkedGames = (data.startersMarkedGames || 0) + 1;
@@ -372,6 +424,24 @@ async function addBoxScoreStats(data) {
       };
     }
   }
+  // Every game's box score and each player's game log, kept for the team stats /
+  // rankings and the player pages (update_usports_data.js moves them out of the
+  // main data file into data/games/<slug>.json).
+  const L = ['g', 'starter', 'mins', 'fgm', 'fga', 'fg3m', 'fg3a', 'ftm', 'fta', 'oreb', 'dreb', 'reb', 'a', 'to', 'stl', 'blk', 'pf', 'pts'];
+  // Game ids look like M20261121UBCEWN: date, then home team code, then visitors.
+  // Our code is the one in (nearly) every id.
+  const codeCount = {};
+  gameList.forEach(g => [g.id.slice(9, 12), g.id.slice(12, 15)].forEach(c => { if (c) codeCount[c] = (codeCount[c] || 0) + 1; }));
+  const myCode = Object.keys(codeCount).sort((a, b) => codeCount[b] - codeCount[a])[0];
+  if (myCode && gameList.length >= 2) gameList.forEach(g => { g.home = g.id.slice(9, 12) === myCode; });
+  data.teamCode = myCode || '';
+  data.games = gameList;
+  data.gameLogs = {};
+  for (const ps of data.playerStats || []) {
+    const mine = lines[norm(ps.name)] || [];
+    if (mine.length) data.gameLogs[ps.name] = mine.map(g => L.map(k => (k === 'starter' ? (g.starter ? 1 : 0) : (g[k] || 0))));
+  }
+  data.gameLogFields = L;
   delete data.boxScoreIds;
   return data;
 }
@@ -400,6 +470,7 @@ module.exports = {
   stripTags,
   parseUSportsPage,
   parseBoxScore,
+  parseBoxScoreMeta,
   extractBoxScoreIds,
   addBoxScoreStats,
   scrapeTeam,

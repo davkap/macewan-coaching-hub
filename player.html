@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="auth-lock.js"></script>
+  <script src="offseason-sc-app/tracking-config.js"></script>
+  <script src="site-tracking.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/site-responsive.css">
+  <title>Player Stats | MacEwan Griffins Coaching Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --maroon: #98002e; --maroon-light: #b30036; --gold: #d1ad7d; --gold-soft: rgba(209,173,125,0.14);
+      --bg: #0f1219; --card: #181d28; --card-2: #1f2533; --line: rgba(209,173,125,0.22);
+      --text: #f3f4f6; --mute: #9ca3af; --good: #6ee7a0; --bad: #fca5a5;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--text); }
+    body { font-family: Inter, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 15px; line-height: 1.5; }
+    a { color: var(--gold); }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 18px 16px 60px; }
+    .topbar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 10px; }
+    .topbar a { text-decoration: none; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; min-height: 44px; }
+    .hero { background: linear-gradient(135deg, rgba(152,0,46,0.6), rgba(152,0,46,0.12) 60%), var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin-bottom: 14px; display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+    .jersey { width: 78px; height: 78px; border-radius: 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; font: 800 30px Montserrat, sans-serif; color: var(--gold); flex: none; }
+    .hero .who { min-width: 0; flex: 1; }
+    .kicker { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); font-weight: 700; }
+    h1 { font-family: Montserrat, sans-serif; font-size: 30px; margin: 2px 0 4px; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+    .bio { color: #d1d5db; font-size: 14px; }
+    .bio span + span::before { content: ' · '; color: var(--mute); }
+    .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .badge { font-size: 12px; font-weight: 700; background: rgba(0,0,0,0.3); border: 1px solid var(--line); border-radius: 6px; padding: 2px 8px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; min-width: 0; }
+    h2 { font-family: Montserrat, sans-serif; font-size: 15px; margin: 0 0 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+    h2 small { text-transform: none; letter-spacing: 0; font-family: Inter, sans-serif; font-weight: 500; color: var(--mute); font-size: 12px; margin-left: 6px; }
+    h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--mute); margin: 14px 0 8px; }
+    .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+    .tile { background: var(--card-2); border-radius: 10px; padding: 10px 12px; min-width: 0; }
+    .tile .l { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--mute); font-weight: 700; }
+    .tile .v { font: 800 22px Montserrat, sans-serif; margin-top: 2px; }
+    .tile .s { font-size: 11.5px; color: var(--mute); margin-top: 2px; min-height: 17px; }
+    .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    th, td { padding: 7px 8px; border-bottom: 1px solid rgba(255,255,255,0.06); text-align: right; white-space: nowrap; }
+    th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--mute); font-weight: 700; }
+    td.l, th.l { text-align: left; }
+    tr.w td:first-child { box-shadow: inset 3px 0 0 #2ecc71; }
+    tr.ls td:first-child { box-shadow: inset 3px 0 0 #ff5e5e; }
+    .res-w { color: var(--good); font-weight: 700; } .res-l { color: var(--bad); font-weight: 700; }
+    .note { font-size: 12.5px; color: var(--mute); margin: 10px 0 0; }
+    .empty { color: var(--mute); font-size: 14px; }
+    .reads { margin: 0; padding-left: 20px; }
+    .reads li { margin-bottom: 6px; }
+    .reads b { color: var(--gold); }
+    .bar { display: inline-block; height: 7px; background: var(--maroon); border-radius: 4px; margin-left: 6px; vertical-align: 1px; }
+    .syn-warn { font-size: 12px; color: var(--mute); }
+    .pill { font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 4px; background: rgba(255,255,255,0.08); }
+    .pill.up { background: rgba(46,204,113,0.18); color: var(--good); } .pill.dn { background: rgba(255,94,94,0.16); color: var(--bad); }
+    .msg { padding: 30px 0; color: var(--mute); }
+    @media (max-width: 760px) {
+      .grid2 { grid-template-columns: 1fr; }
+      h1 { font-size: 24px; }
+      .tile .v { font-size: 19px; }
+      th, td { padding: 6px 6px; font-size: 12.5px; }
+    }
+    @media print { .topbar { display: none; } body { background: #fff; } }
+  </style>
+</head>
+<body>
+<div class="wrap cw-dark">
+  <div class="topbar" id="topbar">
+    <a href="index.html">← Coaching Hub</a>
+    <a href="team-stats.html?tab=players" id="lnkStats">Canada West player stats</a>
+  </div>
+  <div id="page"><p class="msg">Loading…</p></div>
+</div>
+
+<script src="cw-stats.js"></script>
+<script src="synergy-view.js"></script>
+<script>
+(function () {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const esc = s => GriffinCW.esc(s);
+  const fmt = (k, v) => GriffinCW.fmt(k, v);
+  const f1 = v => (v == null || !isFinite(v) ? '–' : (+v).toFixed(1));
+  const pctS = (m, a) => (a ? (100 * m / a).toFixed(1) + '%' : '–');
+  const params = new URLSearchParams(location.search);
+  const slug = GriffinCW.canon(params.get('team'));
+  const pname = params.get('p') || '';
+  const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z]/g, '');
+
+  function rk(p, k) { return p.ranks && p.ranks[k] ? GriffinCW.rank(p.ranks[k][0], p.ranks[k][1], (window.__neutral || new Set()).has(k) ? 'neutral' : '') : ''; }
+  function tile(p, k, label, sub) {
+    return `<div class="tile"><div class="l">${esc(label)}</div><div class="v">${fmt(k, p[k])}</div><div class="s">${rk(p, k)}${sub ? ' ' + sub : ''}</div></div>`;
+  }
+  const teamRank = (p, k) => (p.teamRanks && p.teamRanks[k] ? `<span title="Rank on his team">${GriffinCW.ord(p.teamRanks[k])} on team</span>` : '');
+
+  function splitsTable(s) {
+    const L = [['last5', 'Last 5 games'], ['conf', 'Canada West games'], ['home', 'Home'], ['away', 'Away'], ['wins', 'Wins'], ['losses', 'Losses'], ['starter', 'As a starter'], ['bench', 'Off the bench']];
+    const rows = L.filter(([k]) => s && s[k]).map(([k, l]) => { const x = s[k]; return `<tr><td class="l">${l}</td><td>${x.g}</td><td>${f1(x.mpg)}</td><td><b>${f1(x.ppg)}</b></td><td>${f1(x.rpg)}</td><td>${f1(x.apg)}</td><td>${f1(x.topg)}</td><td>${f1(x.spg)}</td><td>${f1(x.bpg)}</td><td>${fmt('fgPct', x.fgPct)}</td><td>${fmt('fg3Pct', x.fg3Pct)}</td><td>${fmt('ftPct', x.ftPct)}</td><td>${fmt('ts', x.ts)}</td></tr>`; });
+    if (!rows.length) return '<p class="empty">No box scores for him yet.</p>';
+    return `<div class="tbl-wrap"><table><thead><tr><th class="l">Split</th><th>G</th><th>MIN</th><th>PTS</th><th>REB</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th><th>FG%</th><th>3P%</th><th>FT%</th><th>TS%</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+  }
+
+  function gameLog(g, name) {
+    if (!g || !g.logs) return '<p class="empty">No box scores yet.</p>';
+    const log = g.logs[name] || g.logs[Object.keys(g.logs).find(k => norm(k) === norm(name))];
+    if (!log || !log.length) return '<p class="empty">No box scores for him yet.</p>';
+    const F = g.fields;
+    const rows = log.map(r => Object.fromEntries(F.map((f, i) => [f, r[i]]))).slice().reverse();
+    return `<div class="tbl-wrap"><table><thead><tr><th class="l">Date</th><th class="l">Opponent</th><th class="l">Result</th><th>GS</th><th>MIN</th><th>PTS</th><th>REB</th><th>O-D</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th><th>PF</th><th>FG</th><th>3PT</th><th>FT</th></tr></thead><tbody>
+      ${rows.map(r => {
+        const gm = g.games[r.g] || {};
+        const won = gm.us && gm.them ? gm.us.pts > gm.them.pts : null;
+        const d = gm.ymd ? new Date(gm.ymd + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric' }) : esc(gm.date || '');
+        const conf = /league/i.test(gm.type || '') ? '' : ' <span class="pill" title="Non-conference">NC</span>';
+        return `<tr class="${won === true ? 'w' : won === false ? 'ls' : ''}"><td class="l">${d}</td><td class="l">${gm.home === false ? '@ ' : gm.home === true ? 'vs ' : ''}${esc(gm.opp || '')}${conf}</td>
+          <td class="l">${won == null ? '' : `<span class="${won ? 'res-w' : 'res-l'}">${won ? 'W' : 'L'}</span> ${gm.us.pts}-${gm.them.pts}`}</td>
+          <td>${r.starter ? '★' : ''}</td><td>${r.mins}</td><td><b>${r.pts}</b></td><td>${r.reb}</td><td>${r.oreb}-${r.dreb}</td><td>${r.a}</td><td>${r.to}</td><td>${r.stl}</td><td>${r.blk}</td><td>${r.pf}</td>
+          <td>${r.fgm}-${r.fga}</td><td>${r.fg3m}-${r.fg3a}</td><td>${r.ftm}-${r.fta}</td></tr>`;
+      }).join('')}</tbody></table></div><p class="note">★ = started. Newest first. From usportshoops.ca box scores.</p>`;
+  }
+
+  // ---- Synergy (logged-in users only; numbers never leave the browser) ----
+  const SHOTS = [['At Rim', 'At the rim'], ['Runner', 'Runners / floaters'], ['Short to 17', 'Short mid (<17 ft)'], ['Medium 17 to < 3 Pts', 'Long mid (17 ft–3)'], ['Long 3 pts', 'Threes'], ['Catch and Shoot', 'Catch & shoot'], ['Dribble Jumper', 'Off the dribble']];
+  function synergySection(d, me, teamPlayers) {
+    const V = window.GriffinSynergyView;
+    if (!V) return '';
+    if (d.error) {
+      const m = d.error === 'login' ? 'Log in to the Hub to see his Synergy numbers.' : d.error === 'none' ? 'No Synergy numbers for this team yet.' : 'Could not load Synergy numbers right now.';
+      return `<div class="card"><h2>Synergy <small>advanced</small></h2><p class="empty">${m}</p></div>`;
+    }
+    const cards = teamPlayers.map(p => ({ name: p.name, num: p.num }));
+    const mine = V.byPlayer(d, cards)[me.name];
+    if (!mine) return `<div class="card"><h2>Synergy <small>advanced</small></h2><p class="empty">Synergy hasn't logged any possessions for him yet (or his name doesn't match Synergy's list).</p></div>`;
+    const R = V.R, short = V.short;
+    const team = {};
+    ((d.pt && d.pt.off) || []).forEach(r => { team[r[R.name]] = r; });
+    const types = Object.entries(mine.pp || {}).filter(([, v]) => v[0] > 0).sort((a, b) => b[1][0] - a[1][0]);
+    const poss = types.reduce((s, [, v]) => s + v[0], 0);
+    const pts = types.reduce((s, [, v]) => s + v[1], 0);
+    const all = ((d.sit && d.sit.off) || []).find(r => r[R.name] === 'All Possessions');
+    const teamPoss = all ? all[R.poss] : 0;
+    const max = Math.max(1, ...types.map(([, v]) => v[0]));
+    const ptRows = types.map(([t, v]) => {
+      const ppp = v[1] / v[0], tp = team[t] ? team[t][R.ppp] : null;
+      const diff = tp != null && v[0] >= 8 ? ppp - tp : null;
+      return `<tr><td class="l">${esc(short(t))}</td><td>${v[0]}<span class="bar" style="width:${Math.round(40 * v[0] / max)}px"></span></td><td>${Math.round(100 * v[0] / poss)}%</td><td>${v[1]}</td><td><b>${ppp.toFixed(2)}</b></td>
+        <td>${tp != null ? tp.toFixed(2) : '–'}${diff != null ? ` <span class="pill ${diff >= 0.1 ? 'up' : diff <= -0.1 ? 'dn' : ''}">${diff >= 0 ? '+' : ''}${diff.toFixed(2)}</span>` : ''}</td></tr>`;
+    }).join('');
+    const ps = mine.ps || {};
+    const fgaAll = (ps['All Field Goal Attempts'] || [0, 0])[0] || SHOTS.slice(0, 5).reduce((s, [k]) => s + ((ps[k] || [0])[0] || 0), 0);
+    const shotRows = SHOTS.filter(([k]) => ps[k] && ps[k][0]).map(([k, l]) => {
+      const [a, m] = ps[k];
+      const three = k === 'Long 3 pts';
+      return `<tr><td class="l">${esc(l)}</td><td>${m}-${a}</td><td><b>${pctS(m, a)}</b></td><td>${three ? (150 * m / a).toFixed(1) + '%' : pctS(m, a)}</td><td>${fgaAll ? Math.round(100 * a / fgaAll) + '%' : '–'}</td></tr>`;
+    }).join('');
+
+    // Plain-language reads for the scout (rules only, from his Synergy numbers).
+    const reads = [];
+    const sized = types.filter(([, v]) => v[0] >= 10).map(([t, v]) => [t, v[0], v[1] / v[0]]);
+    if (types.length) reads.push(`Most used: ${types.slice(0, 3).map(([t, v]) => `<b>${esc(short(t))}</b> ${Math.round(100 * v[0] / poss)}%`).join(', ')}.`);
+    const best = sized.slice().sort((a, b) => b[2] - a[2])[0], worst = sized.slice().sort((a, b) => a[2] - b[2])[0];
+    if (best && best[2] >= 1.0) reads.push(`Most dangerous: <b>${esc(short(best[0]))}</b>, ${best[2].toFixed(2)} PPP on ${best[1]} possessions. Take it away.`);
+    if (worst && worst !== best && worst[2] < 0.8) reads.push(`Least efficient: <b>${esc(short(worst[0]))}</b>, ${worst[2].toFixed(2)} PPP. Live with it.`);
+    const sh = k => ps[k] || [0, 0];
+    const cs = sh('Catch and Shoot'), od = sh('Dribble Jumper'), rim = sh('At Rim'), thr = sh('Long 3 pts');
+    if (cs[0] >= 8 || od[0] >= 8) reads.push(`Jumpers: catch &amp; shoot ${pctS(cs[1], cs[0])} (${cs[0]} att), off the dribble ${pctS(od[1], od[0])} (${od[0]} att).${cs[0] >= 8 && od[0] >= 8 ? (cs[1] / cs[0] > od[1] / od[0] + 0.08 ? ' Better spotting up: run him off the line, make him dribble.' : od[1] / od[0] > cs[1] / cs[0] + 0.08 ? ' Better off the bounce: no hard closeouts, contain the drive-pull-up.' : '') : ''}`);
+    if (fgaAll >= 15) reads.push(`Shot diet: ${Math.round(100 * rim[0] / fgaAll)}% at the rim (${pctS(rim[1], rim[0])}), ${Math.round(100 * thr[0] / fgaAll)}% threes (${pctS(thr[1], thr[0])}).`);
+    const games = (d.games || []).length;
+    return `<div class="card"><h2>Synergy <small>${games} game${games === 1 ? '' : 's'} logged · updated ${esc(new Date(d.pulledAt).toLocaleDateString([], { month: 'short', day: 'numeric' }))}</small></h2>
+      <div class="tiles">
+        <div class="tile"><div class="l">Possessions</div><div class="v">${poss}</div><div class="s">${teamPoss ? Math.round(100 * poss / teamPoss) + '% of team poss' : ''}</div></div>
+        <div class="tile"><div class="l">Points / poss</div><div class="v">${poss ? (pts / poss).toFixed(2) : '–'}</div><div class="s">${all ? 'team ' + (+all[R.ppp]).toFixed(2) : ''}</div></div>
+        <div class="tile"><div class="l">Points</div><div class="v">${pts}</div><div class="s">on Synergy plays</div></div>
+        <div class="tile"><div class="l">Rim FG%</div><div class="v">${pctS(rim[1], rim[0])}</div><div class="s">${rim[0]} att</div></div>
+        <div class="tile"><div class="l">C&amp;S FG%</div><div class="v">${pctS(cs[1], cs[0])}</div><div class="s">${cs[0]} att</div></div>
+        <div class="tile"><div class="l">Off dribble FG%</div><div class="v">${pctS(od[1], od[0])}</div><div class="s">${od[0]} att</div></div>
+      </div>
+      ${reads.length ? `<h3>Scout reads</h3><ul class="reads">${reads.map(r => `<li>${r}</li>`).join('')}</ul>` : ''}
+      <div class="grid2">
+        <div><h3>Play types</h3>${ptRows ? `<div class="tbl-wrap"><table><thead><tr><th class="l">Play type</th><th>Poss</th><th>Share</th><th>Pts</th><th>PPP</th><th>Team PPP</th></tr></thead><tbody>${ptRows}</tbody></table></div>` : '<p class="empty">None logged.</p>'}</div>
+        <div><h3>Shot types</h3>${shotRows ? `<div class="tbl-wrap"><table><thead><tr><th class="l">Shot</th><th>FGM-A</th><th>FG%</th><th>eFG%</th><th>Share</th></tr></thead><tbody>${shotRows}</tbody></table></div>` : '<p class="empty">None logged.</p>'}</div>
+      </div>
+      <p class="note">PPP = points per possession. Team PPP = his team's PPP in that play type (green/red when he is 0.10 better/worse, 8+ possessions). Catch &amp; shoot and off the dribble overlap the distance rows. <span class="syn-warn">Source: Synergy Sports, MacEwan's subscription. Don't share outside the team.</span></p>
+    </div>`;
+  }
+
+  async function init() {
+    GriffinCW.css();
+    const D = await GriffinCW.load();
+    if (!D || !D.players) { $('page').innerHTML = '<p class="msg">The player stats have not been built yet. They appear after the next stats refresh.</p>'; return; }
+    window.__neutral = new Set(D.playerNeutral || []);
+    const teamPlayers = D.players.filter(p => p.team === slug);
+    const me = teamPlayers.find(p => p.name === pname) || teamPlayers.find(p => norm(p.name) === norm(pname));
+    const team = D.teams[slug] || {};
+    if (!me) { $('page').innerHTML = `<p class="msg">Couldn't find ${esc(pname)} on ${esc(team.name || slug)}. <a href="team-stats.html?tab=players">Find a player</a></p>`; return; }
+    document.title = `${me.name} (${team.name || ''}) | Player Stats`;
+    const folder = GriffinCW.folder(slug);
+    $('topbar').insertAdjacentHTML('beforeend', `<a href="/opponents/${folder}/scout-cards.html">${esc(team.short || '')} scout cards</a>${slug !== 'macewan' ? `<a href="${GriffinCW.teamUrl(slug)}">${esc(team.short || '')} scouting report</a>` : ''}<a href="team-stats.html?team=${slug}">${esc(team.short || '')} roster stats</a>`);
+
+    const bio = [me.pos, me.ht, me.elig ? 'Year ' + me.elig : '', me.hometown, me.school].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join('');
+    const started = me.gs ? `${me.gs} start${me.gs === 1 ? '' : 's'}` : 'Bench';
+    const detail = await fetch(`/data/players/${slug}.json`, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : {})).catch(() => ({}));
+    const extra = detail[me.name] || {};
+    me.splits = extra.splits; me.doubleDoubles = extra.doubleDoubles || 0;
+    const highs = extra.highs || {};
+    const HL = [['pts', 'Points'], ['reb', 'Rebounds'], ['a', 'Assists'], ['stl', 'Steals'], ['blk', 'Blocks'], ['fg3m', 'Threes']];
+    const opp = s => String(s || '').replace(/^(UBC Okanagan|[A-Z][\w.]*(?: [A-Z][\w.]*)?)\s.*$/, '$1');
+
+    $('page').innerHTML = `
+      <div class="hero">
+        <div class="jersey">${me.num !== '' ? '#' + esc(me.num) : '–'}</div>
+        <div class="who">
+          <div class="kicker">${esc(team.name || slug)} · ${esc(D.season || '')}</div>
+          <h1>${esc(me.name)}</h1>
+          <div class="bio">${bio}</div>
+          <div class="badges"><span class="badge">${me.gp} GP · ${started}</span><span class="badge">${f1(me.mpg)} MIN</span>${me.doubleDoubles ? `<span class="badge">${me.doubleDoubles} double-double${me.doubleDoubles === 1 ? '' : 's'}</span>` : ''}${me.qualified ? '' : '<span class="badge" title="' + esc(D.qualifier) + '">Not enough games/minutes for CW ranks</span>'}</div>
+        </div>
+      </div>
+
+      <div class="card"><h2>Season averages <small>small chip = rank among qualified Canada West players</small></h2>
+        <div class="tiles">
+          ${tile(me, 'ppg', 'Points', teamRank(me, 'ppg'))}${tile(me, 'rpg', 'Rebounds', teamRank(me, 'rpg'))}${tile(me, 'apg', 'Assists', teamRank(me, 'apg'))}
+          ${tile(me, 'spg', 'Steals')}${tile(me, 'bpg', 'Blocks')}${tile(me, 'topg', 'Turnovers')}
+          ${tile(me, 'fgPct', 'FG%', `${me.fgm}-${me.fga}`)}${tile(me, 'fg3Pct', '3P%', `${me.fg3m}-${me.fg3a}`)}${tile(me, 'ftPct', 'FT%', `${me.ftm}-${me.fta}`)}
+          ${tile(me, 'orpg', 'Off reb')}${tile(me, 'drpg', 'Def reb')}${tile(me, 'mpg', 'Minutes', teamRank(me, 'mpg'))}
+        </div>
+      </div>
+
+      <div class="card"><h2>Advanced <small>how efficient, how much of the offence runs through him</small></h2>
+        <div class="tiles">
+          ${tile(me, 'ts', 'True shooting')}${tile(me, 'efg', 'Effective FG%')}${tile(me, 'usg', 'Usage %')}${tile(me, 'astPct', 'Assist %')}
+          ${tile(me, 'astTo', 'AST / TO')}${tile(me, 'orebPct', 'OREB %')}${tile(me, 'drebPct', 'DREB %')}${tile(me, 'stlPct', 'Steal %')}
+          ${tile(me, 'blkPct', 'Block %')}${tile(me, 'gmsc', 'Game Score')}${tile(me, 'fg3aRate', '3PA rate')}${tile(me, 'ftRate', 'FT rate')}
+          ${tile(me, 'pts40', 'Pts / 40')}${tile(me, 'reb40', 'Reb / 40')}${tile(me, 'ast40', 'Ast / 40')}${tile(me, 'fg3mPg', '3PM / game')}
+        </div>
+        <p class="note">True shooting counts threes and free throws (≈55% is good in U Sports). Usage % = share of team plays he finishes (shot, FT trip or turnover) while on the floor. Assist % / rebound % / steal % / block % = share of teammates' baskets he assists, available rebounds he grabs, opponent possessions he steals, opponent twos he blocks, while on the floor. 3PA rate = threes per shot; FT rate = free throws per shot. Game Score ≈ overall box-score impact per game (10 = solid, 20 = great).</p>
+      </div>
+
+      <div id="synergyBox"></div>
+
+      <div class="card"><h2>Splits</h2>${splitsTable(me.splits)}</div>
+
+      ${Object.keys(highs).length ? `<div class="card"><h2>Season highs</h2><div class="tiles">${HL.filter(([k]) => highs[k]).map(([k, l]) => `<div class="tile"><div class="l">${l}</div><div class="v">${highs[k].v}</div><div class="s">${esc(opp(highs[k].opp))}${highs[k].date ? ', ' + esc(String(highs[k].date).replace(/^\w+ /, '').replace(/, \d{4}$/, '')) : ''}</div></div>`).join('')}</div></div>` : ''}
+
+      <div class="card"><h2>Game log</h2><div id="gameLog"><p class="empty">Loading…</p></div></div>
+    `;
+
+    fetch(`/data/games/${slug}.json`, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : null)).catch(() => null)
+      .then(g => { $('gameLog').innerHTML = gameLog(g, me.name); });
+    if (window.GriffinSynergyView) {
+      GriffinSynergyView.css();
+      const d = await GriffinSynergyView.load(folder);
+      $('synergyBox').innerHTML = synergySection(d, me, teamPlayers);
+    }
+  }
+  init();
+})();
+</script>
+</body>
+</html>

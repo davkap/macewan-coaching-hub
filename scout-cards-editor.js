@@ -715,7 +715,8 @@
     if (!container) return '';
     const clone = container.cloneNode(true);
     // .synergy-box: Synergy numbers drawn live by synergy-view.js, never saved.
-    clone.querySelectorAll('.delete-card-btn, .role-toggle-btn, .card-reorder-group, .photo-upload-overlay, .edit-profile-btn, .synergy-box').forEach(el => el.remove());
+    // .cw-link: "Full stats" link added live by cw-stats.js, never saved.
+    clone.querySelectorAll('.delete-card-btn, .role-toggle-btn, .card-reorder-group, .photo-upload-overlay, .edit-profile-btn, .synergy-box, .cw-link').forEach(el => el.remove());
     clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
     return clone.outerHTML;
   }

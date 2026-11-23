@@ -7,6 +7,7 @@
 //   GET  ?team=<slug>                     -> { ok, team: <compact data> }
 //   GET  ?list=1                          -> { ok, teams: { slug: { pulledAt, gp } } }
 //   POST { action: 'put', team, data }    staff pass only
+//   POST { action: 'reindex', teams: [slug…] }  staff pass: rebuild index entries from the saved teams
 //
 // The data comes from scripts/synergy/extract.js, run in a logged-in Synergy
 // tab, and is uploaded from synergy.html.
@@ -18,7 +19,9 @@ const HEADERS = { 'Content-Type': 'application/json', 'Cache-Control': 'no-store
 const reply = (statusCode, body) => ({ statusCode, headers: HEADERS, body: JSON.stringify(body) });
 const slugOk = s => /^[a-z0-9-]{2,60}$/.test(String(s || ''));
 
-function store() { try { return getStore('synergy'); } catch (e) { return null; } }
+// Strong consistency: each upload reads the index right after the previous one wrote it
+// (Nov 2026: with the default eventual consistency, back-to-back uploads lost index entries).
+function store() { try { return getStore({ name: 'synergy', consistency: 'strong' }); } catch (e) { return null; } }
 async function get(key) {
   const s = store();
   try { if (s) { const v = await s.get(key); return v ? JSON.parse(v) : null; } } catch (e) {}
@@ -49,6 +52,16 @@ exports.handler = async function (event) {
   if (!staffToken.check(token)) return reply(401, { ok: false, message: 'Staff pass needed to update Synergy numbers.' });
   let body;
   try { body = JSON.parse(event.body || '{}'); } catch (e) { return reply(400, { ok: false, message: 'Bad request.' }); }
+  if (body.action === 'reindex') {
+    const list = (Array.isArray(body.teams) ? body.teams : []).filter(slugOk).slice(0, 40);
+    const index = (await get('index')) || {};
+    for (const slug of list) {
+      const d = await get('team_' + slug);
+      if (d) index[slug] = { pulledAt: d.pulledAt, gp: d.gp, games: (d.games || []).length };
+    }
+    await put('index', index);
+    return reply(200, { ok: true, teams: index });
+  }
   if (body.action !== 'put' || !slugOk(body.team)) return reply(400, { ok: false, message: 'Bad request.' });
   const d = body.data || {};
   if (d.v !== 1 || !d.pt || !d.sit) return reply(400, { ok: false, message: 'That does not look like Synergy data from extract.js.' });

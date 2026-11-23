@@ -22,6 +22,10 @@ Netlify runs `npm run update-stats` on every build (see `netlify.toml`):
    `data/stats-meta.json` (the "Stats last refreshed" label), rewrites `my-team/roster.md`,
    and regenerates opponent `profile.md` / `scouts/2026-27-scout.md` files
    (`scripts/generate_season_reports.js`). A team that fails to load keeps its previous data.
+   It also writes every game's box score (both teams' totals) and each player's game log to
+   `data/games/<slug>.json` (kept out of the main data file).
+   Then `scripts/build_cw_stats.js` writes `data/cw-stats.json` (team stats + Canada West ranks,
+   player season/advanced stats + ranks) and `data/players/<slug>.json` (splits, season highs).
 2. `build_scout_cards.js` regenerates every `opponents/*/scout-cards.html` from the data JSON.
 3. `build_canadawest_hub.js` generates `canadawest-scout-2026-27.html` (the big scouting hub
    page) from the opponent markdown files, the data JSON and `data/*-concepts.json`.
@@ -40,6 +44,7 @@ Edit the source, then regenerate. Hand edits to these get wiped on the next buil
 | `data/usports-rosters-stats.json`, `data/stats-meta.json` | `scripts/update_usports_data.js` / `scripts/lib/usports-scraper.js` |
 | `my-team/roster.md`, `opponents/*/profile.md`, `opponents/*/scouts/2026-27-scout.md` | `scripts/update_usports_data.js`, `scripts/generate_season_reports.js` (a "Coach's Note" section in a profile is preserved) |
 | `opponents/*/scout-cards.html` | `build_scout_cards.js` |
+| `data/games/*.json`, `data/cw-stats.json`, `data/players/*.json` | `scripts/lib/usports-scraper.js` (`addBoxScoreStats`), `scripts/build_cw_stats.js` |
 | `systems/index.html`, `templates/index.html` | `scripts/build_library_pages.js` |
 | `lineup-logger.html` | `scripts/build_lineup_logger.js` |
 
@@ -218,6 +223,24 @@ Search looks through both tabs, matching from the start of words, and shows only
 terms/beliefs; concept chips filter the open tab; `?q=word` opens the page with a search.
 Search/filter state is stripped before saving. The automatic quiz questions read this same saved
 version, so changing a term changes its questions.
+
+## Canada West stats, rankings and player pages (Nov 2026)
+
+- `team-stats.html`: every Canada West team's stats with a rank chip (1st = best; pace and 3PA rate
+  are ranked most-to-least without good/bad colours), all games or conference games only, plus a
+  sortable player table (per game, shooting, advanced, per 40). Team numbers come from the box
+  scores (so opponent stats, pace and Off/Def rating per 100 possessions are possible); win % uses
+  the official records. Player season lines are the official usportshoops.ca totals.
+- `player.html?team=<slug>&p=<name>`: one player's full page (season averages, advanced, CW ranks,
+  splits, season highs, game log). For logged-in users it adds his Synergy play types, shot types
+  and rule-written "scout reads" (`synergy-view.js` `byPlayer`), in the browser only.
+- Qualified for player ranks: half his team's games and 10+ minutes a game; shooting % ranks also
+  need volume (`PCT_MIN` in `scripts/build_cw_stats.js`).
+- `cw-stats.js` (`GriffinCW`) is shared: it draws the "Canada West team stats & ranks" panel above
+  the Synergy panel on `opponent-scout.html`, and adds a "Full stats & Synergy" link to every scout
+  card (`.cw-link`, stripped by `scout-cards-editor.js` before a coach's edit is saved).
+- The data file calls MacEwan `macewan`; opponents folder and Synergy use `macewan-griffins`
+  (`GriffinCW.canon` / `GriffinCW.folder`).
 
 ## Synergy numbers (`synergy.html`, `synergy-view.js`)
 

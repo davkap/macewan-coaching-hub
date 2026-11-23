@@ -488,6 +488,7 @@ ${bench.length > 0 ? `
 
 <script src="../../scout-cards-editor.js"></script>
 <script src="../../synergy-view.js"></script>
+<script src="../../cw-stats.js"></script>
 </body>
 </html>`;
 }

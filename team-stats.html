@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="auth-lock.js"></script>
+  <script src="offseason-sc-app/tracking-config.js"></script>
+  <script src="site-tracking.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/site-responsive.css">
+  <title>Canada West Stats &amp; Rankings | MacEwan Griffins Coaching Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --maroon: #98002e; --maroon-light: #b30036; --gold: #d1ad7d; --gold-soft: rgba(209,173,125,0.14);
+      --bg: #0f1219; --card: #181d28; --card-2: #1f2533; --line: rgba(209,173,125,0.22);
+      --text: #f3f4f6; --mute: #9ca3af;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--text); }
+    body { font-family: Inter, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 15px; line-height: 1.5; }
+    a { color: var(--gold); }
+    .wrap { max-width: 1280px; margin: 0 auto; padding: 18px 16px 60px; }
+    .topbar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 10px; }
+    .topbar a { text-decoration: none; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; min-height: 44px; }
+    .hero { background: linear-gradient(135deg, rgba(152,0,46,0.55), rgba(152,0,46,0.12) 60%), var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin-bottom: 14px; }
+    .kicker { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); font-weight: 700; }
+    h1 { font-family: Montserrat, sans-serif; font-size: 28px; margin: 6px 0 4px; letter-spacing: -0.01em; }
+    .sub { color: #d1d5db; font-size: 14px; margin: 0; }
+    .tabs, .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+    .tab, .chip { background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 9px 14px; font: 700 14px Inter, sans-serif; cursor: pointer; min-height: 44px; }
+    .chip { font-size: 13px; padding: 7px 12px; min-height: 38px; }
+    .tab.on, .chip.on { background: var(--maroon); border-color: var(--maroon); color: #fff; }
+    .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
+    .bar label { font-size: 13px; color: var(--mute); display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
+    select, input[type=search] { background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font: 500 14px Inter, sans-serif; min-height: 40px; }
+    input[type=search] { min-width: 0; width: 200px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 4px 0; margin-bottom: 14px; }
+    .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    th, td { padding: 8px 8px; border-bottom: 1px solid rgba(255,255,255,0.06); text-align: right; white-space: nowrap; }
+    th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--mute); font-weight: 700; cursor: pointer; user-select: none; position: sticky; top: 0; background: var(--card); }
+    th:hover { color: var(--gold); }
+    th.sorted { color: var(--gold); }
+    th.sorted::after { content: ' ▼'; font-size: 9px; }
+    th.sorted.asc::after { content: ' ▲'; }
+    td.l, th.l { text-align: left; }
+    td.sticky, th.sticky { position: sticky; left: 0; background: var(--card); z-index: 1; }
+    th.sticky { z-index: 2; }
+    tr.mac td { background: rgba(152,0,46,0.22); }
+    tr.mac td.sticky { background: #3a1724; }
+    td .nm { font-weight: 700; color: var(--text); text-decoration: none; }
+    td .nm:hover { color: var(--gold); text-decoration: underline; }
+    td .tm { color: var(--mute); font-size: 12px; margin-left: 4px; }
+    td.rk { color: var(--mute); width: 30px; text-align: left; }
+    .note { font-size: 12.5px; color: var(--mute); margin: 8px 16px 12px; }
+    .more { display: block; margin: 8px auto 12px; }
+    .empty { color: var(--mute); padding: 20px; }
+    .cw-rk { margin-left: 3px; font-size: 10px; }
+    .show-ranks td .cw-rk { display: inline-block; }
+    .hide-ranks td .cw-rk { display: none; }
+    @media (max-width: 600px) {
+      h1 { font-size: 22px; }
+      th, td { padding: 7px 6px; font-size: 12.5px; }
+      input[type=search] { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap cw-dark">
+  <div class="topbar">
+    <a href="index.html">← Coaching Hub</a>
+    <a href="canadawest-scout-2026-27.html">CW Scouting Hub</a>
+    <a href="game-week.html">Game Week</a>
+  </div>
+  <div class="hero">
+    <div class="kicker">Canada West · <span id="season">2026-27</span></div>
+    <h1>Team stats, rankings &amp; player stats</h1>
+    <p class="sub" id="updated">Loading…</p>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab on" data-tab="teams">Teams</button>
+    <button class="tab" data-tab="players">Players</button>
+  </div>
+
+  <section id="teams">
+    <div class="bar">
+      <div class="chips" id="teamViews"></div>
+    </div>
+    <div class="bar">
+      <label>Games <select id="scope"><option value="all">All U Sports games</option><option value="conf">Canada West games only</option></select></label>
+      <label><input type="checkbox" id="showRanksT" checked> Show ranks</label>
+    </div>
+    <div class="card"><div class="tbl-wrap"><table id="teamTbl"></table></div>
+      <p class="note">Small number = rank among the 17 Canada West teams (1st = best; for pace and 3PA rate, 1st = most). Team numbers come from the usportshoops.ca box scores (exhibitions against NCAA or other non-U Sports teams have only one team's box score, so they're left out); win % uses the official records. Off/Def rating = points scored/allowed per 100 possessions. Tap a team for its scouting report.</p>
+    </div>
+  </section>
+
+  <section id="players" hidden>
+    <div class="bar"><div class="chips" id="playerViews"></div></div>
+    <div class="bar">
+      <label>Team <select id="teamFilter"><option value="">All Canada West</option></select></label>
+      <label>Position <select id="posFilter"><option value="">All</option><option value="g">Guards</option><option value="f">Forwards</option><option value="c">Centres</option></select></label>
+      <label><input type="checkbox" id="qualOnly" checked> Qualified only</label>
+      <label><input type="checkbox" id="showRanksP" checked> Show CW ranks</label>
+      <input type="search" id="q" placeholder="Find a player…" aria-label="Find a player">
+    </div>
+    <div class="card"><div class="tbl-wrap"><table id="playerTbl"></table></div>
+      <button class="chip more" id="moreBtn" hidden>Show all</button>
+      <p class="note" id="qualNote"></p>
+    </div>
+  </section>
+</div>
+
+<script src="cw-stats.js"></script>
+<script>
+(function () {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const esc = s => GriffinCW.esc(s);
+  const fmt = (k, v) => GriffinCW.fmt(k, v);
+
+  const TEAM_VIEWS = {
+    Overview: ['winPct', 'ppg', 'oppPpg', 'margin', 'ortg', 'drtg', 'net', 'pace', 'rpg', 'apg', 'topg', 'spg', 'bpg'],
+    Shooting: ['fgPct', 'fg3Pct', 'ftPct', 'efg', 'ts', 'fg3mPg', 'fg3aRate', 'ftRate'],
+    'Ball & boards': ['apg', 'astRate', 'topg', 'tovPct', 'astTo', 'rpg', 'orpg', 'drpg', 'orebPct', 'drebPct'],
+    Defence: ['oppPpg', 'drtg', 'oppFgPct', 'oppFg3Pct', 'oppEfg', 'oppTovPct', 'oppFtRate', 'oppFg3aRate', 'spg', 'bpg', 'pfpg']
+  };
+  const PLAYER_VIEWS = {
+    'Per game': ['gp', 'gs', 'mpg', 'ppg', 'rpg', 'apg', 'spg', 'bpg', 'topg', 'fgPct', 'fg3Pct', 'ftPct'],
+    Shooting: ['ppg', 'fgPct', 'fg3Pct', 'ftPct', 'efg', 'ts', 'fg3mPg', 'fg3aRate', 'ftRate', 'ftaPg'],
+    Advanced: ['mpg', 'usg', 'ts', 'astPct', 'astTo', 'orebPct', 'drebPct', 'stlPct', 'blkPct', 'gmsc'],
+    'Per 40': ['mpg', 'pts40', 'reb40', 'ast40', 'ppg', 'rpg', 'apg']
+  };
+  const SHORT = { winPct: 'Win%', ppg: 'PTS', oppPpg: 'Opp PTS', margin: '+/-', ortg: 'ORtg', drtg: 'DRtg', net: 'Net', pace: 'Pace', rpg: 'REB', apg: 'AST', topg: 'TO', spg: 'STL', bpg: 'BLK', pfpg: 'PF',
+    fgPct: 'FG%', fg3Pct: '3P%', ftPct: 'FT%', efg: 'eFG%', ts: 'TS%', fg3mPg: '3PM', fg3aRate: '3PA rate', ftRate: 'FT rate', astRate: 'AST%', tovPct: 'TOV%', astTo: 'AST/TO', orpg: 'OREB', drpg: 'DREB',
+    orebPct: 'OREB%', drebPct: 'DREB%', oppFgPct: 'Opp FG%', oppFg3Pct: 'Opp 3P%', oppEfg: 'Opp eFG%', oppTovPct: 'Forced TO%', oppFtRate: 'Opp FT rate', oppFg3aRate: 'Opp 3PA rate',
+    gp: 'GP', gs: 'GS', mpg: 'MIN', ftaPg: 'FTA', usg: 'USG%', astPct: 'AST%', stlPct: 'STL%', blkPct: 'BLK%', gmsc: 'GmSc', pts40: 'PTS/40', reb40: 'REB/40', ast40: 'AST/40' };
+
+  let D = null;
+  const st = { tab: 'teams', tView: 'Overview', pView: 'Per game', tSort: 'winPct', tAsc: false, pSort: 'ppg', pAsc: false, limit: 50 };
+  try { Object.assign(st, JSON.parse(sessionStorage.getItem('cw_stats_view') || '{}')); } catch (e) {}
+  const save = () => { try { sessionStorage.setItem('cw_stats_view', JSON.stringify(st)); } catch (e) {} };
+
+  function chips(el, views, cur, onPick) {
+    el.innerHTML = Object.keys(views).map(v => `<button class="chip${v === cur ? ' on' : ''}" data-v="${esc(v)}">${esc(v)}</button>`).join('');
+    el.querySelectorAll('.chip').forEach(b => b.onclick = () => onPick(b.dataset.v));
+  }
+  const lowerBetter = (set, k) => (set || []).indexOf(k) >= 0;
+
+  function drawTeams() {
+    const scope = $('scope').value;
+    const cols = TEAM_VIEWS[st.tView];
+    if (cols.indexOf(st.tSort) < 0) { st.tSort = cols[0]; st.tAsc = lowerBetter(D.teamLower, st.tSort); }
+    const neutral = new Set(D.teamNeutral || []);
+    const rows = Object.entries(D.teams).map(([slug, t]) => ({ slug, t, s: t.scope[scope] })).filter(r => r.s);
+    rows.sort((a, b) => { const x = a.s[st.tSort], y = b.s[st.tSort]; if (x == null) return 1; if (y == null) return -1; return st.tAsc ? x - y : y - x; });
+    const head = `<tr><th class="l rk">#</th><th class="l sticky">Team</th><th class="l">CW</th><th class="l">All</th>${cols.map(k => `<th data-k="${k}" class="${k === st.tSort ? 'sorted' + (st.tAsc ? ' asc' : '') : ''}" title="${esc(D.teamMetrics[k] || k)}">${esc(SHORT[k] || k)}</th>`).join('')}</tr>`;
+    const body = rows.map((r, i) => `<tr class="${r.slug === 'macewan' ? 'mac' : ''}"><td class="l rk">${i + 1}</td>
+      <td class="l sticky"><a class="nm" href="${GriffinCW.teamUrl(r.slug)}">${esc(r.t.name)}</a></td><td class="l">${esc(r.t.conf)}</td><td class="l">${esc(r.t.overall)}</td>
+      ${cols.map(k => `<td>${fmt(k, r.s[k])}${GriffinCW.rank(r.s.ranks && r.s.ranks[k], r.s.rankOf, neutral.has(k) ? 'neutral' : '')}</td>`).join('')}</tr>`).join('');
+    $('teamTbl').innerHTML = `<thead>${head}</thead><tbody>${body || '<tr><td class="empty l" colspan="20">No box scores yet.</td></tr>'}</tbody>`;
+    $('teamTbl').className = $('showRanksT').checked ? 'show-ranks' : 'hide-ranks';
+    $('teamTbl').querySelectorAll('th[data-k]').forEach(th => th.onclick = () => {
+      const k = th.dataset.k;
+      if (st.tSort === k) st.tAsc = !st.tAsc; else { st.tSort = k; st.tAsc = lowerBetter(D.teamLower, k); }
+      save(); drawTeams();
+    });
+  }
+
+  function posOk(p, f) {
+    if (!f) return true;
+    const s = String(p.pos || '').toLowerCase();
+    return f === 'g' ? /g/.test(s) && !/^f/.test(s) : f === 'f' ? /f/.test(s) : /c/.test(s);
+  }
+  function drawPlayers() {
+    const cols = PLAYER_VIEWS[st.pView];
+    if (cols.indexOf(st.pSort) < 0) { st.pSort = cols.indexOf('ppg') >= 0 ? 'ppg' : cols[1]; st.pAsc = false; }
+    const team = $('teamFilter').value, qual = $('qualOnly').checked, pos = $('posFilter').value;
+    const q = $('q').value.trim().toLowerCase();
+    const neutral = new Set(D.playerNeutral || []);
+    let rows = D.players.filter(p => p.gp > 0 && (!team || p.team === team) && (!qual || p.qualified || team) && posOk(p, pos) && (!q || p.name.toLowerCase().includes(q)));
+    rows.sort((a, b) => { const x = a[st.pSort], y = b[st.pSort]; if (x == null) return 1; if (y == null) return -1; return st.pAsc ? x - y : y - x; });
+    const total = rows.length;
+    if (!team && !q) rows = rows.slice(0, st.limit);
+    const head = `<tr><th class="l rk">#</th><th class="l sticky">Player</th><th class="l">Team</th><th class="l">Pos</th>${cols.map(k => `<th data-k="${k}" class="${k === st.pSort ? 'sorted' + (st.pAsc ? ' asc' : '') : ''}" title="${esc(D.playerMetrics[k] || k)}">${esc(SHORT[k] || k)}</th>`).join('')}</tr>`;
+    const body = rows.map((p, i) => `<tr class="${p.team === 'macewan' ? 'mac' : ''}"><td class="l rk">${i + 1}</td>
+      <td class="l sticky"><a class="nm" href="${GriffinCW.playerUrl(p.team, p.name)}">${p.num ? '#' + esc(p.num) + ' ' : ''}${esc(p.name)}</a></td>
+      <td class="l">${esc((D.teams[p.team] || {}).short || p.team)}</td><td class="l">${esc(p.pos)}</td>
+      ${cols.map(k => `<td>${fmt(k, p[k])}${p.ranks && p.ranks[k] ? GriffinCW.rank(p.ranks[k][0], p.ranks[k][1], neutral.has(k) ? 'neutral' : '') : ''}</td>`).join('')}</tr>`).join('');
+    $('playerTbl').innerHTML = `<thead>${head}</thead><tbody>${body || '<tr><td class="empty l" colspan="20">No players match.</td></tr>'}</tbody>`;
+    $('playerTbl').className = $('showRanksP').checked ? 'show-ranks' : 'hide-ranks';
+    $('moreBtn').hidden = !(total > rows.length);
+    $('moreBtn').textContent = `Show all ${total}`;
+    $('playerTbl').querySelectorAll('th[data-k]').forEach(th => th.onclick = () => {
+      const k = th.dataset.k;
+      if (st.pSort === k) st.pAsc = !st.pAsc; else { st.pSort = k; st.pAsc = lowerBetter(D.playerLower, k); }
+      save(); drawPlayers();
+    });
+  }
+
+  function showTab(t) {
+    st.tab = t; save();
+    document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
+    $('teams').hidden = t !== 'teams';
+    $('players').hidden = t !== 'players';
+  }
+
+  async function init() {
+    GriffinCW.css();
+    D = await GriffinCW.load();
+    if (!D || !D.teams) { $('updated').textContent = 'The stats have not been built yet. They appear after the next stats refresh.'; return; }
+    $('season').textContent = D.season || '2026-27';
+    $('updated').textContent = `Updated ${new Date(D.updatedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })} from usportshoops.ca. ${D.players.length} players on ${Object.keys(D.teams).length} teams. Tap a player for his full stats page.`;
+    $('qualNote').textContent = D.qualifier + ' Picking one team shows his whole roster. Ranks are always among qualified Canada West players.';
+    Object.entries(D.teams).sort((a, b) => a[1].name.localeCompare(b[1].name)).forEach(([slug, t]) => {
+      const o = document.createElement('option'); o.value = slug; o.textContent = t.name; $('teamFilter').appendChild(o);
+    });
+    const url = new URLSearchParams(location.search);
+    if (url.get('tab')) st.tab = url.get('tab');
+    if (url.get('team')) { st.tab = 'players'; $('teamFilter').value = GriffinCW.canon(url.get('team')); }
+    const pickT = v => { st.tView = v; save(); chips($('teamViews'), TEAM_VIEWS, v, pickT); drawTeams(); };
+    const pickP = v => { st.pView = v; save(); chips($('playerViews'), PLAYER_VIEWS, v, pickP); drawPlayers(); };
+    chips($('teamViews'), TEAM_VIEWS, st.tView, pickT);
+    chips($('playerViews'), PLAYER_VIEWS, st.pView, pickP);
+    document.querySelectorAll('.tab').forEach(b => b.onclick = () => showTab(b.dataset.tab));
+    ['scope', 'showRanksT'].forEach(id => $(id).onchange = drawTeams);
+    ['teamFilter', 'posFilter', 'qualOnly', 'showRanksP'].forEach(id => $(id).onchange = () => { st.limit = 50; drawPlayers(); });
+    $('q').oninput = drawPlayers;
+    $('moreBtn').onclick = () => { st.limit = 9999; drawPlayers(); };
+    showTab(st.tab === 'players' ? 'players' : 'teams');
+    drawTeams(); drawPlayers();
+  }
+  init();
+})();
+</script>
+</body>
+</html>

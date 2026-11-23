@@ -211,7 +211,7 @@
     me.splits = extra.splits; me.doubleDoubles = extra.doubleDoubles || 0;
     const highs = extra.highs || {};
     const HL = [['pts', 'Points'], ['reb', 'Rebounds'], ['a', 'Assists'], ['stl', 'Steals'], ['blk', 'Blocks'], ['fg3m', 'Threes']];
-    const opp = s => String(s || '').replace(/^(UBC Okanagan|[A-Z][\w.]*(?: [A-Z][\w.]*)?)\s.*$/, '$1');
+    const opp = s => String(s || '');
 
     $('page').innerHTML = `
       <div class="hero">

@@ -116,11 +116,11 @@
     return `<div class="tbl-wrap"><table><thead><tr><th class="l">Date</th><th class="l">Opponent</th><th class="l">Result</th><th>GS</th><th>MIN</th><th>PTS</th><th>REB</th><th>O-D</th><th>AST</th><th>TO</th><th>STL</th><th>BLK</th><th>PF</th><th>FG</th><th>3PT</th><th>FT</th></tr></thead><tbody>
       ${rows.map(r => {
         const gm = g.games[r.g] || {};
-        const won = gm.us && gm.them ? gm.us.pts > gm.them.pts : null;
+        const won = gm.us && gm.them && gm.them.pts != null ? gm.us.pts > gm.them.pts : null;
         const d = gm.ymd ? new Date(gm.ymd + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric' }) : esc(gm.date || '');
         const conf = /league/i.test(gm.type || '') ? '' : ' <span class="pill" title="Non-conference">NC</span>';
-        return `<tr class="${won === true ? 'w' : won === false ? 'ls' : ''}"><td class="l">${d}</td><td class="l">${gm.home === false ? '@ ' : gm.home === true ? 'vs ' : ''}${esc(gm.opp || '')}${conf}</td>
-          <td class="l">${won == null ? '' : `<span class="${won ? 'res-w' : 'res-l'}">${won ? 'W' : 'L'}</span> ${gm.us.pts}-${gm.them.pts}`}</td>
+        return `<tr class="${won === true ? 'w' : won === false ? 'ls' : ''}"><td class="l">${d}</td><td class="l">${gm.opp ? (gm.home === false ? '@ ' : gm.home === true ? 'vs ' : '') + esc(gm.opp) : esc(/NCAA|USA/i.test(gm.type || '') ? 'Exhibition (NCAA)' : 'Exhibition')}${conf}</td>
+          <td class="l">${won == null ? (gm.us ? `${gm.us.pts} pts` : '') : `<span class="${won ? 'res-w' : 'res-l'}">${won ? 'W' : 'L'}</span> ${gm.us.pts}-${gm.them.pts}`}</td>
           <td>${r.starter ? '★' : ''}</td><td>${r.mins}</td><td><b>${r.pts}</b></td><td>${r.reb}</td><td>${r.oreb}-${r.dreb}</td><td>${r.a}</td><td>${r.to}</td><td>${r.stl}</td><td>${r.blk}</td><td>${r.pf}</td>
           <td>${r.fgm}-${r.fga}</td><td>${r.fg3m}-${r.fg3a}</td><td>${r.ftm}-${r.fta}</td></tr>`;
       }).join('')}</tbody></table></div><p class="note">★ = started. Newest first. From usportshoops.ca box scores.</p>`;
@@ -247,7 +247,7 @@
 
       <div class="card"><h2>Splits</h2>${splitsTable(me.splits)}</div>
 
-      ${Object.keys(highs).length ? `<div class="card"><h2>Season highs</h2><div class="tiles">${HL.filter(([k]) => highs[k]).map(([k, l]) => `<div class="tile"><div class="l">${l}</div><div class="v">${highs[k].v}</div><div class="s">${esc(opp(highs[k].opp))}${highs[k].date ? ', ' + esc(String(highs[k].date).replace(/^\w+ /, '').replace(/, \d{4}$/, '')) : ''}</div></div>`).join('')}</div></div>` : ''}
+      ${Object.keys(highs).length ? `<div class="card"><h2>Season highs</h2><div class="tiles">${HL.filter(([k]) => highs[k]).map(([k, l]) => `<div class="tile"><div class="l">${l}</div><div class="v">${highs[k].v}</div><div class="s">${esc(opp(highs[k].opp) || 'Exhibition')}${highs[k].date ? ', ' + esc(String(highs[k].date).replace(/^\w+ /, '').replace(/, \d{4}$/, '')) : ''}</div></div>`).join('')}</div></div>` : ''}
 
       <div class="card"><h2>Game log</h2><div id="gameLog"><p class="empty">Loading…</p></div></div>
     `;

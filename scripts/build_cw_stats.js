@@ -58,7 +58,10 @@ function sumGames(games, side) {
 }
 const possOf = t => t.fga - t.oreb + t.to + 0.44 * t.fta;
 
-function teamLine(games) {
+function teamLine(allGames) {
+  // Only games with both teams' box scores (exhibitions vs NCAA / other teams
+  // have just one side on usportshoops.ca).
+  const games = allGames.filter(g => g.us && g.them && g.them.fga);
   const gp = games.length;
   if (!gp) return null;
   const us = sumGames(games, 'us'), th = sumGames(games, 'them');
@@ -136,14 +139,13 @@ function playerLine(ps, team, log, fields, games) {
     const rows = log.map(r => Object.fromEntries(fields.map((f, i) => [f, r[i]])));
     const played = rows.filter(r => r.mins > 0);
     const sum = (list, k) => list.reduce((t, r) => t + (r[k] || 0), 0);
-    let tm = 0, tOreb = 0, tDreb = 0, oOreb = 0, oDreb = 0, oPoss = 0, oFga = 0, o3a = 0;
+    let tm = 0, pm = 0, tOreb = 0, tDreb = 0, oOreb = 0, oDreb = 0, oPoss = 0, oFga = 0, o3a = 0;
     played.forEach(r => {
       const g = games[r.g];
-      if (!g || !g.us || !g.them) return;
-      tm += g.us.mins || 200; tOreb += g.us.oreb; tDreb += g.us.dreb; oOreb += g.them.oreb; oDreb += g.them.dreb;
+      if (!g || !g.us || !g.them || !g.them.fga) return;
+      pm += r.mins; tm += g.us.mins || 200; tOreb += g.us.oreb; tDreb += g.us.dreb; oOreb += g.them.oreb; oDreb += g.them.dreb;
       oPoss += possOf(g.them); oFga += g.them.fga; o3a += g.them.fg3a;
     });
-    const pm = sum(played, 'mins');
     if (pm && tm) {
       const share = (tm / 5) / pm;
       out.orebPct = r1(100 * sum(played, 'oreb') * share / (tOreb + oDreb));
@@ -162,11 +164,12 @@ function playerLine(ps, team, log, fields, games) {
       };
     };
     const isConf = r => /league/i.test((games[r.g] || {}).type || '');
-    const won = r => { const g = games[r.g]; return g && g.us && g.them && g.us.pts > g.them.pts; };
+    const both = r => { const g = games[r.g]; return !!(g && g.us && g.them && g.them.pts != null); };
+    const won = r => both(r) && games[r.g].us.pts > games[r.g].them.pts;
     out.splits = {
       last5: split(played.slice(-5)), conf: split(played.filter(isConf)),
       home: split(played.filter(r => (games[r.g] || {}).home === true)), away: split(played.filter(r => (games[r.g] || {}).home === false)),
-      wins: split(played.filter(won)), losses: split(played.filter(r => !won(r))),
+      wins: split(played.filter(won)), losses: split(played.filter(r => both(r) && !won(r))),
       starter: split(played.filter(r => r.starter)), bench: split(played.filter(r => !r.starter))
     };
     const high = k => played.reduce((b, r) => (r[k] > (b ? b[k] : -1) ? r : b), null);
@@ -192,6 +195,7 @@ function run() {
     try { g = JSON.parse(fs.readFileSync(path.join(GAMES, slug + '.json'), 'utf-8')); } catch (e) {}
     const games = (g && g.games) || [];
     const confGames = games.filter(x => /league/i.test(x.type || ''));
+    const twoSided = games.filter(x => x.us && x.them && x.them.fga);
     const [cw, cl] = wl(team.recordSummary && team.recordSummary.conf);
     const [ow, ol] = wl(team.recordSummary && team.recordSummary.overall);
     const all = teamLine(games);
@@ -201,7 +205,7 @@ function run() {
     if (conf) conf.winPct = cw + cl ? r3(cw / (cw + cl)) : conf.winPct;
     teams[slug] = {
       name: NAMES[slug] || team.usportsName, short: team.usportsName, coach: team.headCoach || '',
-      conf: `${cw}-${cl}`, overall: `${ow}-${ol}`, boxGames: games.length, confBoxGames: confGames.length,
+      conf: `${cw}-${cl}`, overall: `${ow}-${ol}`, boxGames: twoSided.length, confBoxGames: confGames.filter(x => x.them && x.them.fga).length,
       scope: { all, conf }
     };
     const rosterBy = new Map((team.roster || []).map(p => [String(p.name).toLowerCase().trim(), p]));
